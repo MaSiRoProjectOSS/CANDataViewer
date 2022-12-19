@@ -107,12 +107,12 @@ bool DriverEsp32can::interrupt()
         }
 #if DEBUG_MODE && 0
         if (false == result) {
-            sprintf(buffer, "[%d] NO MESSAGE", SETTING_SYSTEM_ID);
+            sprintf(buffer, "NO MESSAGE");
             happened_message(false, buffer);
         }
 #endif
     } catch (...) {
-        sprintf(buffer, "[%d] Receive panic", SETTING_SYSTEM_ID);
+        sprintf(buffer, "Receive panic");
         happened_message(true, buffer);
     }
     return result;

@@ -219,10 +219,9 @@ bool CanCommunicationImpl::send(CanData data)
 #if OUTPUT_MESSAGE_FOR_SERIAL
     char buffer[255];
     sprintf(buffer,
-            "SEND[%d]   "
+            "SEND   "
             " : id = 0x%02lX / %02d / "
             "0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X",
-            SETTING_SYSTEM_ID,
             data.Id,
             data.Length,
             data.Data[0],
@@ -413,10 +412,9 @@ void CanCommunicationImpl::happened_received(CanData data)
         if (0 != data.Id) {
             char buffer[255];
             sprintf(buffer,
-                    "RECEIVE[%d][%d/%d]"
+                    "RECEIVE[%d/%d]"
                     " : id = 0x%02lX / %02d / "
                     "0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X",
-                    SETTING_SYSTEM_ID,
                     index,
                     size,
                     item.Id,
@@ -437,10 +435,9 @@ void CanCommunicationImpl::happened_received(CanData data)
     if (0 != data.Id) {
         char buffer[255];
         sprintf(buffer,
-                "RECEIVE[%d]"
+                "RECEIVE"
                 " : id = 0x%02lX / %02d / "
                 "0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X",
-                SETTING_SYSTEM_ID,
                 data.Id,
                 data.Length,
                 data.Data[0],

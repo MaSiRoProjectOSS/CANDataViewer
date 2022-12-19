@@ -13,6 +13,10 @@
 
 #include "conf/pin_setting.h"
 
+#ifndef LIB_ESP32CAN
+#define LIB_ESP32CAN 1
+#endif
+
 #if LIB_ESP32CAN
 #include <CAN_config.h>
 #else

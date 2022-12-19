@@ -167,18 +167,18 @@ bool DriverMcp2515::interrupt()
                 result = true;
                 happened_received(data);
             } else {
-                sprintf(buffer, "[%d] Receive failed", SETTING_SYSTEM_ID);
+                sprintf(buffer, "Receive failed");
                 happened_message(true, buffer);
             }
         }
-#if DEBUG_MODE && 0
+#if DEBUG_MODE
         if (false == result) {
-            sprintf(buffer, "[%d] NO MESSAGE", SETTING_SYSTEM_ID);
+            sprintf(buffer, "NO MESSAGE");
             happened_message(false, buffer);
         }
 #endif
     } catch (...) {
-        sprintf(buffer, "[%d] Receive panic", SETTING_SYSTEM_ID);
+        sprintf(buffer, "Receive panic");
         happened_message(true, buffer);
     }
     return result;
