@@ -11,14 +11,12 @@
 #ifndef MASIRO_PROJECT_TOY_BOX_CAN_COMMUNICATION_HPP
 #define MASIRO_PROJECT_TOY_BOX_CAN_COMMUNICATION_HPP
 
-#include "can/can_info.hpp"
+#include "can_data_viewer_info.hpp"
 
 #include <SPI.h>
 #include <vector>
 
 namespace MaSiRoProject
-{
-namespace ToyBox
 {
 namespace CAN
 {
@@ -27,9 +25,12 @@ class CanCommunication {
 public:
     CanCommunication();
     ~CanCommunication();
+    bool set_callback_message(MessageFunction callback);
+    bool set_callback_changed_mode(ChangedModeFunction callback);
+    bool set_callback_received(GetReceivedFunction callback);
+    bool set_callback_setting_default(SettingDefaultFunction callback);
 
 public:
-    bool setup(MessageFunction callback_message, CAN::CanCommunicationChangedModeFunction callback_changed_mode);
     bool begin();
 
 public:
@@ -51,19 +52,15 @@ public:
     bool request_pause();
     bool request_running();
     bool change_mode(CAN_CTRL_STATE mode);
+    bool set_resume(CanData data);
+    bool setup_default(void);
+    bool setup_callback(void);
+    bool sendable(CAN_CTRL_STATE state, CanData *data);
 
 private:
     byte interrupt;
-
-protected:
-    bool set_resume(CanData data);
-    virtual bool setup_default(void);
-    virtual bool setup_callback(void);
-    virtual bool send_for_ready(CanData *data);
-    virtual bool send_for_running(CanData *data);
-    virtual bool send_for_stopping(CanData *data);
+    SettingDefaultFunction callback_setting_default;
 };
 } // namespace CAN
-} // namespace ToyBox
 } // namespace MaSiRoProject
 #endif

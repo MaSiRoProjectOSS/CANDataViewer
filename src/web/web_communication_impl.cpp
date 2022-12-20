@@ -8,11 +8,9 @@
  * @copyright Copyright (c) 2022 / MaSiRo Project.
  *
  */
-#include <web/web_communication_impl.hpp>
+#include "web_communication_impl.hpp"
 
 namespace MaSiRoProject
-{
-namespace ToyBox
 {
 namespace WEB
 {
@@ -148,5 +146,4 @@ WebCommunicationImpl::~WebCommunicationImpl()
 ////////////////////////////////////////////////
 
 } // namespace WEB
-} // namespace ToyBox
 } // namespace MaSiRoProject

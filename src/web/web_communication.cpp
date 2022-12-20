@@ -8,26 +8,20 @@
  * @copyright Copyright (c) 2022 / MaSiRo Project.
  *
  */
-#include "web/web_communication.hpp"
+#include "web_communication.hpp"
 
-#include "web/web_communication_impl.hpp"
+#include "can_data_viewer_conf.hpp"
+#include "web_communication_impl.hpp"
 
 #include <WiFi.h>
-#include <conf/setting.h>
 
 namespace MaSiRoProject
 {
-namespace ToyBox
-{
 namespace WEB
 {
-typedef std::function<void(bool, const char *, bool)> MessageFunction;
 ////////////////////////////////////////////////////////////////////////////////////////////////
 #define THREAD_NAME_WIFI     "ThreadWiFi"
 #define THREAD_INTERVAL_WIFI (50)
-#ifndef THREAD_CORE_WIFI
-#define THREAD_CORE_WIFI 1
-#endif
 volatile bool flag_thread_wifi_initialized = false;
 volatile bool flag_thread_wifi_fin         = false;
 WebCommunicationImpl *ctrl_web;
@@ -84,6 +78,7 @@ bool WebCommunication::set_callback_message(MessageFunction callback)
     }
     return result;
 }
+
 void WebCommunication::happened_message(bool is_error, const char *message)
 {
     if (nullptr != this->callback_message) {
@@ -163,5 +158,4 @@ WebCommunication::~WebCommunication()
 #pragma endregion
 
 } // namespace WEB
-} // namespace ToyBox
 } // namespace MaSiRoProject

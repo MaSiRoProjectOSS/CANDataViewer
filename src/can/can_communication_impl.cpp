@@ -10,10 +10,13 @@
  */
 #include "can_communication_impl.hpp"
 
-#include "can/can_config.h"
-#include "conf/setting.h"
+#include "can_config.h"
+#include "can_data_viewer_info.hpp"
 
-using namespace MaSiRoProject::ToyBox::CAN;
+namespace MaSiRoProject
+{
+namespace CAN
+{
 
 /////////////////////////////////
 // Send
@@ -107,12 +110,14 @@ std::vector<CanData> CanCommunicationImpl::get_received()
     copy(this->received_list.begin(), this->received_list.end(), back_inserter(result_data));
     return result_data;
 }
+
 std::vector<CanData> CanCommunicationImpl::get_resume()
 {
     std::vector<CanData> result_data;
     copy(this->send_resume.begin(), this->send_resume.end(), back_inserter(result_data));
     return result_data;
 }
+
 CanDeviceInfo CanCommunicationImpl::get_device_info()
 {
     CanDeviceInfo buffer        = this->can->get_device_info();
@@ -121,6 +126,7 @@ CanDeviceInfo CanCommunicationImpl::get_device_info()
     sprintf(this->device_info.can_speed_txt, buffer.can_speed_txt);
     return this->device_info;
 }
+
 bool CanCommunicationImpl::send_one_shot()
 {
     bool result           = false;
@@ -141,6 +147,7 @@ bool CanCommunicationImpl::send_one_shot()
     }
     return result;
 }
+
 bool CanCommunicationImpl::send_loop_shot()
 {
     bool result           = false;
@@ -170,38 +177,12 @@ bool CanCommunicationImpl::send_loop_shot()
     return result;
 }
 
-bool CanCommunicationImpl::data_send_ready()
+bool CanCommunicationImpl::data_sendable(CAN_CTRL_STATE state)
 {
     bool result = true;
-    if (nullptr != this->callback_send_ready) {
+    if (nullptr != this->callback_sendable) {
         CanData data;
-        result = this->callback_send_ready(&data);
-        if (0 != data.Id) {
-            data.loop_interval = 0;
-            (void)this->send(data);
-        }
-    }
-    return result;
-}
-bool CanCommunicationImpl::data_send_running()
-{
-    bool result = true;
-    if (nullptr != this->callback_send_running) {
-        CanData data;
-        result = this->callback_send_running(&data);
-        if (0 != data.Id) {
-            data.loop_interval = 0;
-            (void)this->send(data);
-        }
-    }
-    return result;
-}
-bool CanCommunicationImpl::data_send_stopping()
-{
-    bool result = true;
-    if (nullptr != this->callback_send_stopping) {
-        CanData data;
-        result = this->callback_send_stopping(&data);
+        result = this->callback_sendable(state, &data);
         if (0 != data.Id) {
             data.loop_interval = 0;
             (void)this->send(data);
@@ -313,48 +294,12 @@ void CanCommunicationImpl::request_pause()
 // Callback
 /////////////////////////////////
 #pragma region Callback
-bool CanCommunicationImpl::setup_callback(MessageFunction callback_message, CAN::CanCommunicationChangedModeFunction callback_changed_mode)
-{
-    bool result = true;
-    ///////////////////////////
-    if (true == result) {
-        result = this->can->set_callback_message(callback_message);
-    }
-    if (true == result) {
-        result = this->set_callback_message(callback_message);
-    }
-    if (true == result) {
-        result = this->set_callback_changed_mode(callback_changed_mode);
-    }
-    ///////////////////////////
-    return result;
-}
-bool CanCommunicationImpl::set_callback_send_ready(CanCommunicationSendEventFunction callback)
+bool CanCommunicationImpl::set_callback_sendable(SendEventFunction callback)
 {
     bool result = false;
     try {
-        this->callback_send_ready = callback;
-        result                    = true;
-    } catch (...) {
-    }
-    return result;
-}
-bool CanCommunicationImpl::set_callback_send_running(CanCommunicationSendEventFunction callback)
-{
-    bool result = false;
-    try {
-        this->callback_send_running = callback;
-        result                      = true;
-    } catch (...) {
-    }
-    return result;
-}
-bool CanCommunicationImpl::set_callback_send_stopping(CanCommunicationSendEventFunction callback)
-{
-    bool result = false;
-    try {
-        this->callback_send_stopping = callback;
-        result                       = true;
+        this->callback_sendable = callback;
+        result                  = true;
     } catch (...) {
     }
     return result;
@@ -369,7 +314,7 @@ bool CanCommunicationImpl::set_callback_message(MessageFunction callback)
     }
     return result;
 }
-bool CanCommunicationImpl::set_callback_changed_mode(CAN::CanCommunicationChangedModeFunction callback)
+bool CanCommunicationImpl::set_callback_changed_mode(ChangedModeFunction callback)
 {
     bool result = false;
     try {
@@ -379,6 +324,18 @@ bool CanCommunicationImpl::set_callback_changed_mode(CAN::CanCommunicationChange
     }
     return result;
 }
+
+bool CanCommunicationImpl::set_callback_received(GetReceivedFunction callback)
+{
+    bool result = false;
+    try {
+        this->callback_received = callback;
+        result                  = true;
+    } catch (...) {
+    }
+    return result;
+}
+
 #pragma endregion
 
 /////////////////////////////////
@@ -401,37 +358,10 @@ void CanCommunicationImpl::happened_received(CanData data)
     }
     this->received_list.push_back(data);
 
+    if (nullptr != this->callback_received) {
+        this->callback_received(data);
+    }
 #if OUTPUT_MESSAGE_FOR_SERIAL
-#if 0
-    int size = received_list.size();
-    index    = 1;
-    if (size > 0) {
-        happened_message(false, "================================");
-    }
-    for (CanData item : received_list) {
-        if (0 != data.Id) {
-            char buffer[255];
-            sprintf(buffer,
-                    "RECEIVE[%d/%d]"
-                    " : id = 0x%02lX / %02d / "
-                    "0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X",
-                    index,
-                    size,
-                    item.Id,
-                    item.Length,
-                    item.Data[0],
-                    item.Data[1],
-                    item.Data[2],
-                    item.Data[3],
-                    item.Data[4],
-                    item.Data[5],
-                    item.Data[6],
-                    item.Data[7]);
-            happened_message(false, buffer);
-        }
-        index++;
-    }
-#else
     if (0 != data.Id) {
         char buffer[255];
         sprintf(buffer,
@@ -448,9 +378,8 @@ void CanCommunicationImpl::happened_received(CanData data)
                 data.Data[5],
                 data.Data[6],
                 data.Data[7]);
-        happened_message(false, buffer);
+        output_message(false, buffer, true);
     }
-#endif
 #endif
 }
 void CanCommunicationImpl::happened_message(bool is_error, const char *message)
@@ -539,19 +468,19 @@ bool CanCommunicationImpl::loop()
         }
         switch (this->mode_current) {
             case CAN_CTRL_STATE::MODE_READY:
-                if (true == this->data_send_ready()) {
+                if (true == this->data_sendable(CAN_CTRL_STATE::MODE_READY)) {
                     this->request_run();
                 }
                 break;
             case CAN_CTRL_STATE::MODE_RUNNING:
                 if (false == this->send_one_shot()) {
                     if (false == this->send_loop_shot()) {
-                        this->data_send_running();
+                        this->data_sendable(CAN_CTRL_STATE::MODE_RUNNING);
                     }
                 }
                 break;
             case CAN_CTRL_STATE::MODE_STOPPING:
-                if (true == this->data_send_stopping()) {
+                if (true == this->data_sendable(CAN_CTRL_STATE::MODE_STOPPING)) {
                     this->request_sleep();
                 }
                 break;
@@ -598,3 +527,5 @@ CanCommunicationImpl::~CanCommunicationImpl()
 #pragma endregion
 
 //////////////////////////////////////////////////////////////////////////
+} // namespace CAN
+} // namespace MaSiRoProject

@@ -11,22 +11,17 @@
 #ifndef MASIRO_PROJECT_TOY_BOX_WEB_COMMUNICATION_IMPL_HPP
 #define MASIRO_PROJECT_TOY_BOX_WEB_COMMUNICATION_IMPL_HPP
 
-#include "conf/setting.h"
+#include "can_data_viewer_info.hpp"
+#include "web_communication.hpp"
 
 #include <WiFi.h>
-#include <web/web_communication.hpp>
 
 namespace MaSiRoProject
-{
-namespace ToyBox
 {
 namespace WEB
 {
 class WebCommunicationImpl {
     friend class WebCommunication;
-
-public:
-    typedef std::function<void(bool, const char *, bool)> MessageFunction;
 
 public:
     WebCommunicationImpl();
@@ -63,6 +58,5 @@ private:
 };
 
 } // namespace WEB
-} // namespace ToyBox
 } // namespace MaSiRoProject
 #endif

@@ -8,15 +8,15 @@
  * @copyright Copyright (c) 2022 / MaSiRo Project.
  *
  */
-#include "web/controller_page.hpp"
+#include "controller_page.hpp"
 
-#include <conf/setting.h>
 #include <iostream>
 #include <string>
 
 namespace MaSiRoProject
 {
-namespace ToyBox
+
+namespace WEB
 {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -87,7 +87,7 @@ void ControllerPage::handle_root()
 
 std::string ControllerPage::page()
 {
-    CAN::CanDeviceInfo device_info;
+    CanDeviceInfo device_info;
     if (nullptr != callback_device_info) {
         device_info = this->callback_device_info();
     }
@@ -262,7 +262,7 @@ void ControllerPage::set_mode_on()
     this->happened_message(false, "ControllerPage : set_mode_on()");
 #endif
     if (nullptr != callback_can_mode) {
-        this->callback_can_mode(CAN::CAN_CTRL_STATE::MODE_RUNNING);
+        this->callback_can_mode(CAN_CTRL_STATE::MODE_RUNNING);
     }
     this->get_server()->send(200, "text/html", this->handle_page(this->page().c_str()));
 }
@@ -273,7 +273,7 @@ void ControllerPage::set_mode_off()
     this->happened_message(false, "ControllerPage : set_mode_off()");
 #endif
     if (nullptr != callback_can_mode) {
-        this->callback_can_mode(CAN::CAN_CTRL_STATE::MODE_STOPPING);
+        this->callback_can_mode(CAN_CTRL_STATE::MODE_STOPPING);
     }
     this->get_server()->send(200, "text/html", this->handle_page(this->page().c_str()));
 }
@@ -283,7 +283,7 @@ void ControllerPage::get_can_data()
 #if DEBUG_MODE
     this->happened_message(false, "ControllerPage : get_can_data()");
 #endif
-    CAN::CanDeviceInfo device_info;
+    CanDeviceInfo device_info;
     if (nullptr != callback_device_info) {
         device_info = this->callback_device_info();
     }
@@ -312,12 +312,12 @@ void ControllerPage::set_change_mode()
 #if DEBUG_MODE
     this->happened_message(false, "ControllerPage : set_change_mode()");
 #endif
-    CAN::CAN_CTRL_STATE mode = CAN::CAN_CTRL_STATE::MODE_UNKNOW;
+    CAN_CTRL_STATE mode = CAN_CTRL_STATE::MODE_UNKNOW;
     if (this->get_server()->args() > 0) {
         if (this->get_server()->hasArg("mode")) {
             int value = this->to_int(this->get_server()->arg("mode"));
-            if ((0 <= value) && (value <= CAN::CAN_CTRL_STATE::MODE_FINISHED)) {
-                mode = (CAN::CAN_CTRL_STATE)value;
+            if ((0 <= value) && (value <= CAN_CTRL_STATE::MODE_FINISHED)) {
+                mode = (CAN_CTRL_STATE)value;
             }
         }
     }
@@ -325,7 +325,7 @@ void ControllerPage::set_change_mode()
         this->callback_can_mode(mode);
     }
     delay(10);
-    CAN::CanDeviceInfo device_info;
+    CanDeviceInfo device_info;
     if (nullptr != callback_device_info) {
         device_info = this->callback_device_info();
     }
@@ -348,7 +348,7 @@ void ControllerPage::set_can_data()
     bool result = false;
     ////////////////////////////////////////////////////////////////////////////////////
     bool flag_loop = false;
-    CAN::CanData data;
+    CanData data;
     try {
         WebServer *server = this->get_server();
 
@@ -440,8 +440,7 @@ void ControllerPage::set_can_data()
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-bool ControllerPage::setup_callback(MessageFunction message,
-                                    RequestCanDataFunction data_request_send,
+bool ControllerPage::setup_callback(RequestCanDataFunction data_request_send,
                                     RequestCanDataFunction data_request_received,
                                     RequestCanDataFunction data_request_resume,
                                     GetCanInfoFunction device_info,
@@ -454,9 +453,6 @@ bool ControllerPage::setup_callback(MessageFunction message,
 {
     bool result = true;
     try {
-        if (nullptr != message) {
-            this->callback_message = message;
-        }
         if (nullptr != data_request_send) {
             this->callback_data_request_send = data_request_send;
         }
@@ -497,12 +493,12 @@ std::string ControllerPage::get_can_data_text(RequestCanDataFunction callback)
     char buffer[255];
     bool flag_first  = true;
     std::string json = "";
-    std::vector<CAN::CanData> received_list;
+    std::vector<CanData> received_list;
     if (nullptr != callback) {
         received_list = callback();
-        std::sort(received_list.begin(), received_list.end(), CAN::CanData::compar_Id);
+        std::sort(received_list.begin(), received_list.end(), CanData::compar_Id);
     }
-    for (CAN::CanData item : received_list) {
+    for (CanData item : received_list) {
         if (true != flag_first) {
             json.append(",");
         } else {
@@ -525,13 +521,6 @@ std::string ControllerPage::get_can_data_text(RequestCanDataFunction callback)
         json.append(buffer);
     }
     return json;
-}
-
-void ControllerPage::happened_message(bool is_error, const char *message)
-{
-    if (nullptr != this->callback_message) {
-        this->callback_message(is_error, message, true);
-    }
 }
 
 String ControllerPage::ip_to_string(IPAddress ip)
@@ -577,6 +566,5 @@ ControllerPage::~ControllerPage()
 {
 }
 /////////////////////////////////////////////////
-
-} // namespace ToyBox
+} // namespace WEB
 } // namespace MaSiRoProject
