@@ -10,12 +10,9 @@
  */
 #include "web/web_communication.hpp"
 
-#include "common/common_function_def.hpp"
 #include "web/web_communication_impl.hpp"
 
 #include <WiFi.h>
-#include <common/common_function.hpp>
-#include <conf/pin_setting.h>
 #include <conf/setting.h>
 
 namespace MaSiRoProject
@@ -24,15 +21,18 @@ namespace ToyBox
 {
 namespace WEB
 {
+typedef std::function<void(bool, const char *, bool)> MessageFunction;
 ////////////////////////////////////////////////////////////////////////////////////////////////
 #define THREAD_NAME_WIFI     "ThreadWiFi"
 #define THREAD_INTERVAL_WIFI (50)
-#define THREAD_CORE_WIFI     (CORE_NUM_01)
+#ifndef THREAD_CORE_WIFI
+#define THREAD_CORE_WIFI 1
+#endif
 volatile bool flag_thread_wifi_initialized = false;
 volatile bool flag_thread_wifi_fin         = false;
 WebCommunicationImpl *ctrl_web;
 WebServer *ctrl_server;
-ToyBoxMessageFunction callback_mess;
+MessageFunction callback_mess;
 
 void thread_wifi(void *args)
 {
@@ -72,7 +72,7 @@ void thread_wifi(void *args)
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
-bool WebCommunication::set_callback_message(ToyBoxMessageFunction callback)
+bool WebCommunication::set_callback_message(MessageFunction callback)
 {
     bool result = false;
     try {

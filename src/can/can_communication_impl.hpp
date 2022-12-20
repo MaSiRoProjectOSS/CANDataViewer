@@ -12,8 +12,6 @@
 #define MASIRO_PROJECT_TOY_BOX_CAN_COMMUNICATION_IMPL_HPP
 
 #include "can/can_info.hpp"
-#include "common/common_function_def.hpp"
-#include "conf/pin_setting.h"
 
 #if LIB_ESP32CAN
 #include "driver/driver_esp32can.hpp"
@@ -21,7 +19,6 @@
 #include "driver/driver_mcp2515.hpp"
 #endif
 
-#include <Arduino.h>
 #include <SPI.h>
 #include <vector>
 
@@ -33,6 +30,7 @@ namespace CAN
 {
 class CanCommunicationImpl {
     friend class CanCommunication;
+
     /////////////////////////////////
     // Constructor
     /////////////////////////////////
@@ -44,7 +42,7 @@ public:
     // Setup
     /////////////////////////////////
 public:
-    bool setup_callback(ToyBoxMessageFunction callback_message, CAN::CanCommunicationChangedModeFunction callback_changed_mode);
+    bool setup_callback(MessageFunction callback_message, CAN::CanCommunicationChangedModeFunction callback_changed_mode);
 
     /////////////////////////////////
     // Public
@@ -59,14 +57,14 @@ public:
     // Callback
     /////////////////////////////////
 public:
-    bool set_callback_message(ToyBoxMessageFunction callback);
+    bool set_callback_message(MessageFunction callback);
     bool set_callback_changed_mode(CAN::CanCommunicationChangedModeFunction callback);
     bool set_callback_send_ready(CAN::CanCommunicationSendEventFunction callback);
     bool set_callback_send_running(CAN::CanCommunicationSendEventFunction callback);
     bool set_callback_send_stopping(CAN::CanCommunicationSendEventFunction callback);
 
 private:
-    ToyBoxMessageFunction callback_message;
+    MessageFunction callback_message;
     CAN::CanCommunicationChangedModeFunction callback_changed_mode;
     CAN::CanCommunicationSendEventFunction callback_send_ready;
     CAN::CanCommunicationSendEventFunction callback_send_running;

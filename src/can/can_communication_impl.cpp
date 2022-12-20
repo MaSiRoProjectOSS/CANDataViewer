@@ -313,7 +313,7 @@ void CanCommunicationImpl::request_pause()
 // Callback
 /////////////////////////////////
 #pragma region Callback
-bool CanCommunicationImpl::setup_callback(ToyBoxMessageFunction callback_message, CAN::CanCommunicationChangedModeFunction callback_changed_mode)
+bool CanCommunicationImpl::setup_callback(MessageFunction callback_message, CAN::CanCommunicationChangedModeFunction callback_changed_mode)
 {
     bool result = true;
     ///////////////////////////
@@ -359,7 +359,7 @@ bool CanCommunicationImpl::set_callback_send_stopping(CanCommunicationSendEventF
     }
     return result;
 }
-bool CanCommunicationImpl::set_callback_message(ToyBoxMessageFunction callback)
+bool CanCommunicationImpl::set_callback_message(MessageFunction callback)
 {
     bool result = false;
     try {

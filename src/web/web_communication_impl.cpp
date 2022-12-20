@@ -20,7 +20,7 @@ namespace WEB
 #define CONTROLLER_PAGE_STARTUP_STA_TIMEOUT_MS (50 * CONTROLLER_PAGE_STARTUP_STA_SLEEP_MS)
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
-bool WebCommunicationImpl::set_callback_message(ToyBoxMessageFunction callback)
+bool WebCommunicationImpl::set_callback_message(MessageFunction callback)
 {
     bool result = false;
     try {

@@ -26,6 +26,7 @@ namespace ToyBox
 {
 namespace CAN
 {
+typedef std::function<void(bool, const char *, bool)> MessageFunction;
 class CanData {
 public:
     unsigned long Id            = 0;

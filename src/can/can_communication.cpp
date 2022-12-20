@@ -13,8 +13,6 @@
 #include "can/can_config.h"
 #include "can/can_info.hpp"
 #include "can_communication_impl.hpp"
-#include "common/common_function.hpp"
-#include "common/common_function_def.hpp"
 
 namespace MaSiRoProject
 {
@@ -25,7 +23,9 @@ namespace CAN
 
 ///////////////////////////////////////////////////////////////////
 #define THREAD_NAME_CAN "ThreadCAN"
-#define THREAD_CORE_CAN (CORE_NUM_00)
+#ifndef THREAD_CORE_CAN
+#define THREAD_CORE_CAN 0
+#endif
 CanCommunicationImpl *can;
 ///////////////////////////////////////////////////////////////////
 volatile bool flag_thread_can_fin          = false;
@@ -36,7 +36,7 @@ volatile CAN_CTRL_STATE request_mode       = CAN_CTRL_STATE::MODE_NOT_INITIALIZE
 volatile CAN_CTRL_STATE current_mode       = CAN_CTRL_STATE::MODE_NOT_INITIALIZE;
 ///////////////////////////////////////////////////////////////////
 CanCommunicationChangedModeFunction callback_changed_mode = nullptr;
-ToyBoxMessageFunction callback_mess;
+MessageFunction callback_mess;
 ///////////////////////////////////////////////////////////////////
 
 void change_can_mode(CAN_CTRL_STATE mode, const char *text)
@@ -239,7 +239,7 @@ bool CanCommunication::delete_resume(unsigned long Id)
 }
 
 bool CanCommunication::setup( //
-        ToyBoxMessageFunction callback_message,
+        MessageFunction callback_message,
         CanCommunicationChangedModeFunction callback_changed_mode)
 {
     bool result   = true;

@@ -12,10 +12,7 @@
 #define MASIRO_PROJECT_TOY_BOX_CAN_COMMUNICATION_HPP
 
 #include "can/can_info.hpp"
-#include "common/common_function_def.hpp"
-#include "conf/pin_setting.h"
 
-#include <Arduino.h>
 #include <SPI.h>
 #include <vector>
 
@@ -27,13 +24,12 @@ namespace CAN
 {
 
 class CanCommunication {
-private:
 public:
     CanCommunication();
     ~CanCommunication();
 
 public:
-    bool setup(ToyBoxMessageFunction callback_message, CAN::CanCommunicationChangedModeFunction callback_changed_mode);
+    bool setup(MessageFunction callback_message, CAN::CanCommunicationChangedModeFunction callback_changed_mode);
     bool begin();
 
 public:

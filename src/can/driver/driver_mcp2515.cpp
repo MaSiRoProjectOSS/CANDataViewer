@@ -13,8 +13,6 @@
 #include "can/can_config.h"
 #if !LIB_ESP32CAN
 
-#include "common/common_function.hpp"
-
 #include <mcp_can.h>
 
 namespace MaSiRoProject
@@ -196,7 +194,7 @@ bool DriverMcp2515::send(CanData data)
 /////////////////////////////////
 // set callback
 /////////////////////////////////
-bool DriverMcp2515::set_callback_message(ToyBoxMessageFunction callback)
+bool DriverMcp2515::set_callback_message(MessageFunction callback)
 {
     bool result = false;
     try {

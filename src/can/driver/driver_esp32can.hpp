@@ -14,9 +14,7 @@
 #if LIB_ESP32CAN
 
 #include "can/can_info.hpp"
-#include "common/common_function_def.hpp"
 
-#include <Arduino.h>
 #include <CAN_config.h>
 #include <ESP32CAN.h>
 
@@ -27,6 +25,8 @@ namespace ToyBox
 namespace CAN
 {
 class DriverEsp32can {
+public:
+    typedef std::function<void(bool, const char *, bool)> MessageFunction;
     /////////////////////////////////
     // setup function
     /////////////////////////////////
@@ -47,7 +47,7 @@ public:
     // set callback
     /////////////////////////////////
 public:
-    bool set_callback_message(ToyBoxMessageFunction callback);
+    bool set_callback_message(MessageFunction callback);
     bool set_callback_get_received(CAN::CanCommunicationGetReceivedFunction callback);
 
     /////////////////////////////////
@@ -66,7 +66,7 @@ private:
     bool setup_filter();
 
 private:
-    ToyBoxMessageFunction callback_message;
+    MessageFunction callback_message;
     CAN::CanCommunicationGetReceivedFunction callback_get_received;
     CAN_speed_t can_speed   = CAN_COMMUNICATION_ESP32CAN_SPEED;
     const int rx_queue_size = CAN_COMMUNICATION_ESP32CAN_QUEUE_SIZE;

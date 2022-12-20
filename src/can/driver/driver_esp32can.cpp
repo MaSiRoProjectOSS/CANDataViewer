@@ -12,7 +12,6 @@
 
 #include "can/can_config.h"
 #if LIB_ESP32CAN
-#include "common/common_function.hpp"
 
 CAN_device_t CAN_cfg;
 namespace MaSiRoProject
@@ -147,7 +146,7 @@ bool DriverEsp32can::send(CanData data)
 /////////////////////////////////
 // set callback
 /////////////////////////////////
-bool DriverEsp32can::set_callback_message(ToyBoxMessageFunction callback)
+bool DriverEsp32can::set_callback_message(MessageFunction callback)
 {
     bool result = false;
     try {

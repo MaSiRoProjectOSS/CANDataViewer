@@ -12,11 +12,9 @@
 #define MASIRO_PROJECT_TOY_BOX_CAN_DRIVER_MCP2515_HPP
 
 #include "can/can_config.h"
-#include "common/common_function_def.hpp"
 #if !LIB_ESP32CAN
 #include "can/can_info.hpp"
 
-#include <Arduino.h>
 #include <mcp_can.h>
 
 namespace MaSiRoProject
@@ -26,6 +24,8 @@ namespace ToyBox
 namespace CAN
 {
 class DriverMcp2515 {
+public:
+    typedef std::function<void(bool, const char *, bool)> MessageFunction;
     /////////////////////////////////
     // setup function
     /////////////////////////////////
@@ -46,7 +46,7 @@ public:
     // set callback
     /////////////////////////////////
 public:
-    bool set_callback_message(ToyBoxMessageFunction callback);
+    bool set_callback_message(MessageFunction callback);
     bool set_callback_get_received(CAN::CanCommunicationGetReceivedFunction callback);
 
     /////////////////////////////////
@@ -65,7 +65,7 @@ private:
     bool setup_filter();
 
 private:
-    ToyBoxMessageFunction callback_message;
+    MessageFunction callback_message;
     CAN::CanCommunicationGetReceivedFunction callback_get_received;
     MCP_CAN *can;
     byte can_mode  = CAN_COMMUNICATION_MCP2515_MODE;

@@ -39,5 +39,5 @@
 **/.vscode/launch.json
 **/.vscode/ipch
 **/.vscode/VC.DB*
-lib/UsrLib/include/Conf/private_setting.h
+**/private_setting.h
 **/.vscode/pinned-files.json

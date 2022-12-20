@@ -11,8 +11,6 @@
 #ifndef MASIRO_PROJECT_TOY_BOX_WEB_COMMUNICATION_HPP
 #define MASIRO_PROJECT_TOY_BOX_WEB_COMMUNICATION_HPP
 
-#include "common/common_function_def.hpp"
-
 #include <WebServer.h>
 
 namespace MaSiRoProject
@@ -24,13 +22,16 @@ namespace WEB
 
 class WebCommunication {
 public:
+    typedef std::function<void(bool, const char *, bool)> MessageFunction;
+
+public:
     WebCommunication();
     ~WebCommunication();
 
 public:
     bool setup();
     bool begin();
-    bool set_callback_message(ToyBoxMessageFunction callback);
+    bool set_callback_message(MessageFunction callback);
 
 protected:
     WebServer *get_server();
@@ -40,7 +41,7 @@ protected:
 
 private:
     bool initialized = false;
-    ToyBoxMessageFunction callback_message;
+    MessageFunction callback_message;
     void happened_message(bool is_error, const char *message);
 };
 } // namespace WEB

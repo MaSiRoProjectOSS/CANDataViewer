@@ -11,10 +11,8 @@
 #ifndef MASIRO_PROJECT_TOY_BOX_WEB_COMMUNICATION_IMPL_HPP
 #define MASIRO_PROJECT_TOY_BOX_WEB_COMMUNICATION_IMPL_HPP
 
-#include "common/common_function_def.hpp"
 #include "conf/setting.h"
 
-#include <Arduino.h>
 #include <WiFi.h>
 #include <web/web_communication.hpp>
 
@@ -26,6 +24,9 @@ namespace WEB
 {
 class WebCommunicationImpl {
     friend class WebCommunication;
+
+public:
+    typedef std::function<void(bool, const char *, bool)> MessageFunction;
 
 public:
     WebCommunicationImpl();
@@ -40,8 +41,8 @@ public:
     char *get_ssid();
 
 private:
-    bool set_callback_message(ToyBoxMessageFunction callback);
-    ToyBoxMessageFunction callback_message;
+    bool set_callback_message(MessageFunction callback);
+    MessageFunction callback_message;
     void happened_message(bool is_error, const char *message);
     bool reconnect();
 
