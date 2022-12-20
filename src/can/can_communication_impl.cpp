@@ -378,7 +378,7 @@ void CanCommunicationImpl::happened_received(CanData data)
                 data.Data[5],
                 data.Data[6],
                 data.Data[7]);
-        output_message(false, buffer, true);
+        happened_message(false, buffer);
     }
 #endif
 }
