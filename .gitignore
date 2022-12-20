@@ -41,4 +41,4 @@
 **/.vscode/VC.DB*
 **/private_setting.h
 **/.vscode/pinned-files.json
-doxygen_html
+**/doxygen
