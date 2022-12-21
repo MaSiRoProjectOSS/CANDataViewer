@@ -129,9 +129,9 @@ bool CanDataViewer::add_one_shot(CanData data)
     return ctrl_can.add_one_shot(data);
 }
 
-bool CanDataViewer::set_resume(CanData data)
+bool CanDataViewer::add_resume(CanData data)
 {
-    return ctrl_can.set_resume(data);
+    return ctrl_can.add_resume(data);
 }
 
 bool CanDataViewer::add_loop_shot(CanData data, int interval)

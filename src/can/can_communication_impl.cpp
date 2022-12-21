@@ -195,7 +195,7 @@ bool CanCommunicationImpl::send(CanData data)
 {
     bool result = this->can->send(data);
     if (true == result) {
-        this->set_resume(data);
+        this->add_resume(data);
     }
 #if OUTPUT_MESSAGE_FOR_SERIAL
     char buffer[255];
@@ -220,7 +220,7 @@ bool CanCommunicationImpl::send(CanData data)
     return result;
 }
 
-bool CanCommunicationImpl::set_resume(CanData data)
+bool CanCommunicationImpl::add_resume(CanData data)
 {
     bool result           = true;
     bool flag_duplication = false;

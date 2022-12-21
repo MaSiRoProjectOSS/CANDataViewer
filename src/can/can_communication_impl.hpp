@@ -106,7 +106,7 @@ private:
     std::vector<CanData> send_loop_list;
     std::vector<CanData> received_list;
     std::vector<CanData> send_resume;
-    bool set_resume(CanData data);
+    bool add_resume(CanData data);
 
     /////////////////////////////////
     // Happened

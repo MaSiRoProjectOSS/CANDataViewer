@@ -180,10 +180,10 @@ bool CanCommunication::setup_callback(void)
 {
     return true;
 }
-bool CanCommunication::set_resume(CanData data)
+bool CanCommunication::add_resume(CanData data)
 {
     data.time = 0;
-    return can->set_resume(data);
+    return can->add_resume(data);
 }
 bool CanCommunication::setup_default(void)
 {

@@ -35,11 +35,11 @@ public:
 
 public:
     bool set_mode(CAN_CTRL_STATE mode);
-    bool add_one_shot(CanData data);
     bool clear_resume(void);
-    bool set_resume(CanData data);
-    bool add_loop_shot(CanData data, int interval);
     bool clear_loop_shot(void);
+    bool add_one_shot(CanData data);
+    bool add_loop_shot(CanData data, int interval);
+    bool add_resume(CanData data);
 };
 
 #endif
