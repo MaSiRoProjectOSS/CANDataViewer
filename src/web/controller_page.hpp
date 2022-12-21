@@ -11,23 +11,19 @@
 #ifndef MASIRO_PROJECT_TOY_BOX_CONTROLLER_PAGE
 #define MASIRO_PROJECT_TOY_BOX_CONTROLLER_PAGE
 
-#include <WebServer.h>
-#include <can/can_info.hpp>
-#include <web/web_communication.hpp>
+#include "web_communication.hpp"
 
 namespace MaSiRoProject
 {
-namespace ToyBox
+namespace WEB
 {
+
 class ControllerPage : public WEB::WebCommunication {
 public:
-    typedef std::function<void(bool, const char *, bool)> MessageFunction;
-
-public:
-    typedef std::function<std::vector<CAN::CanData>(void)> RequestCanDataFunction;
-    typedef std::function<bool(CAN::CanData)> SetCanDataFunction;
-    typedef std::function<CAN::CanDeviceInfo(void)> GetCanInfoFunction;
-    typedef std::function<bool(CAN::CAN_CTRL_STATE)> SetCanModeFunction;
+    typedef std::function<std::vector<CanData>(void)> RequestCanDataFunction;
+    typedef std::function<bool(CanData)> SetCanDataFunction;
+    typedef std::function<CanDeviceInfo(void)> GetCanInfoFunction;
+    typedef std::function<bool(CAN_CTRL_STATE)> SetCanModeFunction;
     typedef std::function<bool(int)> SetAnyFunction;
 
 public:
@@ -35,8 +31,7 @@ public:
     ~ControllerPage();
 
 public:
-    bool setup_callback(MessageFunction message,
-                        RequestCanDataFunction data_request_send,
+    bool setup_callback(RequestCanDataFunction data_request_send,
                         RequestCanDataFunction data_request_received,
                         RequestCanDataFunction data_request_resume,
                         GetCanInfoFunction device_info,
@@ -51,8 +46,6 @@ protected:
     bool setup_server(WebServer *server) override;
 
 private:
-    MessageFunction callback_message;
-    void happened_message(bool is_error, const char *message);
     RequestCanDataFunction callback_data_request_send;
     RequestCanDataFunction callback_data_request_received;
     RequestCanDataFunction callback_data_request_resume;
@@ -87,7 +80,6 @@ private:
     int to_int(String data);
     unsigned long to_ulong(String data);
 };
-
-} // namespace ToyBox
+} // namespace WEB
 } // namespace MaSiRoProject
 #endif

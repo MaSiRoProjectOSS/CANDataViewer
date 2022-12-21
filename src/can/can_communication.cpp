@@ -8,24 +8,19 @@
  * @copyright Copyright (c) 2022 / MaSiRo Project.
  *
  */
-#include "can/can_communication.hpp"
+#include "can_communication.hpp"
 
-#include "can/can_config.h"
-#include "can/can_info.hpp"
 #include "can_communication_impl.hpp"
+#include "can_config.h"
+#include "can_data_viewer_conf.hpp"
 
 namespace MaSiRoProject
-{
-namespace ToyBox
 {
 namespace CAN
 {
 
 ///////////////////////////////////////////////////////////////////
 #define THREAD_NAME_CAN "ThreadCAN"
-#ifndef THREAD_CORE_CAN
-#define THREAD_CORE_CAN 0
-#endif
 CanCommunicationImpl *can;
 ///////////////////////////////////////////////////////////////////
 volatile bool flag_thread_can_fin          = false;
@@ -35,7 +30,7 @@ volatile bool flag_thread_can_change_mode  = false;
 volatile CAN_CTRL_STATE request_mode       = CAN_CTRL_STATE::MODE_NOT_INITIALIZE;
 volatile CAN_CTRL_STATE current_mode       = CAN_CTRL_STATE::MODE_NOT_INITIALIZE;
 ///////////////////////////////////////////////////////////////////
-CanCommunicationChangedModeFunction callback_changed_mode = nullptr;
+ChangedModeFunction callback_changed_mode = nullptr;
 MessageFunction callback_mess;
 ///////////////////////////////////////////////////////////////////
 
@@ -47,16 +42,6 @@ void change_can_mode(CAN_CTRL_STATE mode, const char *text)
     }
 }
 
-bool set_callback_changed_mode(CanCommunicationChangedModeFunction callback)
-{
-    bool result = false;
-    try {
-        callback_changed_mode = callback;
-        result                = true;
-    } catch (...) {
-    }
-    return result;
-}
 ///////////////////////////////////////////////////////////////////
 
 void IRAM_ATTR thread_can_on_interrupt()
@@ -159,23 +144,15 @@ bool CanCommunication::change_mode(CAN_CTRL_STATE mode = CAN_CTRL_STATE::MODE_UN
 }
 bool CanCommunication::request_pause()
 {
-    return this->change_mode(MaSiRoProject::ToyBox::CAN::CAN_CTRL_STATE::MODE_PAUSE);
+    return this->change_mode(CAN_CTRL_STATE::MODE_PAUSE);
 }
 bool CanCommunication::request_running()
 {
-    return this->change_mode(MaSiRoProject::ToyBox::CAN::CAN_CTRL_STATE::MODE_PAUSE);
+    return this->change_mode(CAN_CTRL_STATE::MODE_PAUSE);
 }
 ////////////////////////////////////////////////////////////////////////////////////////////
 
-bool CanCommunication::send_for_ready(CanData *data)
-{
-    return true;
-}
-bool CanCommunication::send_for_running(CanData *data)
-{
-    return true;
-}
-bool CanCommunication::send_for_stopping(CanData *data)
+bool CanCommunication::sendable(CAN_CTRL_STATE state, CanData *data)
 {
     return true;
 }
@@ -210,7 +187,11 @@ bool CanCommunication::set_resume(CanData data)
 }
 bool CanCommunication::setup_default(void)
 {
-    return this->clear_loop_shot();
+    bool result = true;
+    if (nullptr != this->callback_setting_default) {
+        result = this->callback_setting_default();
+    }
+    return result;
 }
 bool CanCommunication::add_one_shot(CanData data)
 {
@@ -238,14 +219,44 @@ bool CanCommunication::delete_resume(unsigned long Id)
     return can->delete_resume(Id);
 }
 
-bool CanCommunication::setup( //
-        MessageFunction callback_message,
-        CanCommunicationChangedModeFunction callback_changed_mode)
+bool CanCommunication::set_callback_message(MessageFunction callback)
 {
     bool result   = true;
-    callback_mess = callback_message;
-    set_callback_changed_mode(callback_changed_mode);
-    can->setup_callback(callback_message, &change_can_mode);
+    callback_mess = callback;
+    can->set_callback_message(callback);
+    return result;
+}
+bool CanCommunication::set_callback_changed_mode(ChangedModeFunction callback)
+{
+    bool result = false;
+    try {
+        callback_changed_mode = callback;
+        can->set_callback_changed_mode(&change_can_mode);
+        result = true;
+    } catch (...) {
+    }
+    return result;
+}
+
+bool CanCommunication::set_callback_received(GetReceivedFunction callback)
+{
+    bool result = false;
+    try {
+        can->set_callback_received(callback);
+        result = true;
+    } catch (...) {
+    }
+    return result;
+}
+
+bool CanCommunication::set_callback_setting_default(SettingDefaultFunction callback)
+{
+    bool result = false;
+    try {
+        this->callback_setting_default = callback;
+        result                         = true;
+    } catch (...) {
+    }
     return result;
 }
 
@@ -274,9 +285,7 @@ bool CanCommunication::begin()
 CanCommunication::CanCommunication() : interrupt(CAN_COMMUNICATION_PIN_INTERRUPT)
 {
     can = new CanCommunicationImpl();
-    can->set_callback_send_ready(std::bind(&CanCommunication::send_for_ready, this, std::placeholders::_1));
-    can->set_callback_send_running(std::bind(&CanCommunication::send_for_running, this, std::placeholders::_1));
-    can->set_callback_send_stopping(std::bind(&CanCommunication::send_for_stopping, this, std::placeholders::_1));
+    can->set_callback_sendable(std::bind(&CanCommunication::sendable, this, std::placeholders::_1, std::placeholders::_2));
 }
 
 CanCommunication::~CanCommunication()
@@ -285,5 +294,4 @@ CanCommunication::~CanCommunication()
 }
 ////////////////////////////////////////////////////////////////////////////////////////////
 } // namespace CAN
-} // namespace ToyBox
 } // namespace MaSiRoProject

@@ -11,7 +11,7 @@
 #ifndef MASIRO_PROJECT_TOY_BOX_CAN_COMMUNICATION_IMPL_HPP
 #define MASIRO_PROJECT_TOY_BOX_CAN_COMMUNICATION_IMPL_HPP
 
-#include "can/can_info.hpp"
+#include "can_data_viewer_info.hpp"
 
 #if LIB_ESP32CAN
 #include "driver/driver_esp32can.hpp"
@@ -23,8 +23,6 @@
 #include <vector>
 
 namespace MaSiRoProject
-{
-namespace ToyBox
 {
 namespace CAN
 {
@@ -42,12 +40,6 @@ public:
     // Setup
     /////////////////////////////////
 public:
-    bool setup_callback(MessageFunction callback_message, CAN::CanCommunicationChangedModeFunction callback_changed_mode);
-
-    /////////////////////////////////
-    // Public
-    /////////////////////////////////
-public:
     bool begin();
     bool loop();
 
@@ -58,17 +50,15 @@ public:
     /////////////////////////////////
 public:
     bool set_callback_message(MessageFunction callback);
-    bool set_callback_changed_mode(CAN::CanCommunicationChangedModeFunction callback);
-    bool set_callback_send_ready(CAN::CanCommunicationSendEventFunction callback);
-    bool set_callback_send_running(CAN::CanCommunicationSendEventFunction callback);
-    bool set_callback_send_stopping(CAN::CanCommunicationSendEventFunction callback);
+    bool set_callback_changed_mode(ChangedModeFunction callback);
+    bool set_callback_received(GetReceivedFunction callback);
+    bool set_callback_sendable(SendEventFunction callback);
 
 private:
     MessageFunction callback_message;
-    CAN::CanCommunicationChangedModeFunction callback_changed_mode;
-    CAN::CanCommunicationSendEventFunction callback_send_ready;
-    CAN::CanCommunicationSendEventFunction callback_send_running;
-    CAN::CanCommunicationSendEventFunction callback_send_stopping;
+    ChangedModeFunction callback_changed_mode;
+    GetReceivedFunction callback_received;
+    SendEventFunction callback_sendable;
 
     /////////////////////////////////
     // Receive
@@ -94,9 +84,7 @@ private:
     // Send
     /////////////////////////////////
 public:
-    bool data_send_ready();
-    bool data_send_running();
-    bool data_send_stopping();
+    bool data_sendable(CAN_CTRL_STATE state);
 
 public:
     bool add_one_shot(CanData data);
@@ -145,6 +133,5 @@ private:
     bool initialized;
 };
 } // namespace CAN
-} // namespace ToyBox
 } // namespace MaSiRoProject
 #endif

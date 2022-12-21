@@ -8,26 +8,20 @@
  * @copyright Copyright (c) 2022 / MaSiRo Project.
  *
  */
-#include "web/web_communication.hpp"
+#include "web_communication.hpp"
 
-#include "web/web_communication_impl.hpp"
+#include "can_data_viewer_conf.hpp"
+#include "web_communication_impl.hpp"
 
 #include <WiFi.h>
-#include <conf/setting.h>
 
 namespace MaSiRoProject
 {
-namespace ToyBox
-{
 namespace WEB
 {
-typedef std::function<void(bool, const char *, bool)> MessageFunction;
 ////////////////////////////////////////////////////////////////////////////////////////////////
 #define THREAD_NAME_WIFI     "ThreadWiFi"
 #define THREAD_INTERVAL_WIFI (50)
-#ifndef THREAD_CORE_WIFI
-#define THREAD_CORE_WIFI 1
-#endif
 volatile bool flag_thread_wifi_initialized = false;
 volatile bool flag_thread_wifi_fin         = false;
 WebCommunicationImpl *ctrl_web;
@@ -46,6 +40,7 @@ void thread_wifi(void *args)
     while (false == flag_thread_wifi_fin) {
         try {
             delay(1000);
+            ctrl_web->setup();
             if (false == ctrl_web->begin()) {
                 sprintf(buffer, "<%s> - NOT setup()", THREAD_NAME_WIFI);
                 if (nullptr != callback_mess) {
@@ -84,6 +79,7 @@ bool WebCommunication::set_callback_message(MessageFunction callback)
     }
     return result;
 }
+
 void WebCommunication::happened_message(bool is_error, const char *message)
 {
     if (nullptr != this->callback_message) {
@@ -142,7 +138,10 @@ IPAddress WebCommunication::get_ip()
 {
     return ctrl_web->get_ip();
 }
-
+bool WebCommunication::set_wifi_info(std::string ssid, std::string pass, bool ap_mode)
+{
+    return ctrl_web->save_information(ssid, pass, ap_mode, true);
+}
 /////////////////////////////////
 // Constructor
 /////////////////////////////////
@@ -163,5 +162,4 @@ WebCommunication::~WebCommunication()
 #pragma endregion
 
 } // namespace WEB
-} // namespace ToyBox
 } // namespace MaSiRoProject

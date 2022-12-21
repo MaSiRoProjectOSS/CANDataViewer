@@ -11,19 +11,16 @@
 #ifndef MASIRO_PROJECT_TOY_BOX_WEB_COMMUNICATION_HPP
 #define MASIRO_PROJECT_TOY_BOX_WEB_COMMUNICATION_HPP
 
+#include "../can_data_viewer_conf.hpp"
+#include "can_data_viewer_info.hpp"
+
 #include <WebServer.h>
 
 namespace MaSiRoProject
 {
-namespace ToyBox
-{
 namespace WEB
 {
-
 class WebCommunication {
-public:
-    typedef std::function<void(bool, const char *, bool)> MessageFunction;
-
 public:
     WebCommunication();
     ~WebCommunication();
@@ -32,6 +29,7 @@ public:
     bool setup();
     bool begin();
     bool set_callback_message(MessageFunction callback);
+    bool set_wifi_info(std::string ssid, std::string pass, bool ap_mode);
 
 protected:
     WebServer *get_server();
@@ -39,12 +37,13 @@ protected:
     virtual void handle_not_found();
     IPAddress get_ip();
 
+protected:
+    void happened_message(bool is_error, const char *message);
+
 private:
     bool initialized = false;
     MessageFunction callback_message;
-    void happened_message(bool is_error, const char *message);
 };
 } // namespace WEB
-} // namespace ToyBox
 } // namespace MaSiRoProject
 #endif

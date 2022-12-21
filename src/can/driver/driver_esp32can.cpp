@@ -10,13 +10,11 @@
  */
 #include "driver_esp32can.hpp"
 
-#include "can/can_config.h"
 #if LIB_ESP32CAN
 
 CAN_device_t CAN_cfg;
+
 namespace MaSiRoProject
-{
-namespace ToyBox
 {
 namespace CAN
 {
@@ -156,7 +154,7 @@ bool DriverEsp32can::set_callback_message(MessageFunction callback)
     }
     return result;
 }
-bool DriverEsp32can::set_callback_get_received(CanCommunicationGetReceivedFunction callback)
+bool DriverEsp32can::set_callback_get_received(GetReceivedFunction callback)
 {
     bool result = false;
     try {
@@ -212,6 +210,5 @@ bool DriverEsp32can::setup_filter()
     return result;
 }
 } // namespace CAN
-} // namespace ToyBox
 } // namespace MaSiRoProject
 #endif

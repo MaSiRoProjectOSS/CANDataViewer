@@ -10,14 +10,9 @@
  */
 #include "driver_mcp2515.hpp"
 
-#include "can/can_config.h"
 #if !LIB_ESP32CAN
 
-#include <mcp_can.h>
-
 namespace MaSiRoProject
-{
-namespace ToyBox
 {
 namespace CAN
 {
@@ -204,7 +199,7 @@ bool DriverMcp2515::set_callback_message(MessageFunction callback)
     }
     return result;
 }
-bool DriverMcp2515::set_callback_get_received(CanCommunicationGetReceivedFunction callback)
+bool DriverMcp2515::set_callback_get_received(GetReceivedFunction callback)
 {
     bool result = false;
     try {
@@ -279,6 +274,5 @@ bool DriverMcp2515::setup_filter()
 }
 
 } // namespace CAN
-} // namespace ToyBox
 } // namespace MaSiRoProject
 #endif

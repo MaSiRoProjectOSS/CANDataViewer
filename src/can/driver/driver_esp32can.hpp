@@ -13,20 +13,16 @@
 #include "can/can_config.h"
 #if LIB_ESP32CAN
 
-#include "can/can_info.hpp"
+#include "can_data_viewer_info.hpp"
 
 #include <CAN_config.h>
 #include <ESP32CAN.h>
 
 namespace MaSiRoProject
 {
-namespace ToyBox
-{
 namespace CAN
 {
 class DriverEsp32can {
-public:
-    typedef std::function<void(bool, const char *, bool)> MessageFunction;
     /////////////////////////////////
     // setup function
     /////////////////////////////////
@@ -48,7 +44,7 @@ public:
     /////////////////////////////////
 public:
     bool set_callback_message(MessageFunction callback);
-    bool set_callback_get_received(CAN::CanCommunicationGetReceivedFunction callback);
+    bool set_callback_get_received(GetReceivedFunction callback);
 
     /////////////////////////////////
     // Constructor
@@ -67,13 +63,12 @@ private:
 
 private:
     MessageFunction callback_message;
-    CAN::CanCommunicationGetReceivedFunction callback_get_received;
+    GetReceivedFunction callback_get_received;
     CAN_speed_t can_speed   = CAN_COMMUNICATION_ESP32CAN_SPEED;
     const int rx_queue_size = CAN_COMMUNICATION_ESP32CAN_QUEUE_SIZE;
     CanDeviceInfo device_info;
 };
 } // namespace CAN
-} // namespace ToyBox
 } // namespace MaSiRoProject
 #endif
 #endif
