@@ -1,5 +1,5 @@
 /**
- * @file driver_mcp2515.hpp
+ * @file driver_esp32can.hpp
  * @author Akari (masiro.to.akari@gmail.com)
  * @brief
  * @version 0.1
@@ -8,26 +8,21 @@
  * @copyright Copyright (c) 2022 / MaSiRo Project.
  *
  */
-#ifndef MASIRO_PROJECT_TOY_BOX_CAN_DRIVER_MCP2515_HPP
-#define MASIRO_PROJECT_TOY_BOX_CAN_DRIVER_MCP2515_HPP
+#ifndef MASIRO_PROJECT_TOY_BOX_CAN_DRIVER_ESP32CAN_HPP
+#define MASIRO_PROJECT_TOY_BOX_CAN_DRIVER_ESP32CAN_HPP
 
-#include "can/can_config.h"
-#if !LIB_ESP32CAN
-#include "can_data_viewer_info.hpp"
-
-#include <Arduino.h>
-#include <mcp_can.h>
+#include "driver_esp32can_config.hpp"
 
 namespace MaSiRoProject
 {
 namespace CAN
 {
-class DriverMcp2515 {
+class DriverEsp32can {
     /////////////////////////////////
     // setup function
     /////////////////////////////////
 public:
-    bool setup_can(byte mode, byte speed, byte clock);
+    bool setup_can(CAN_speed_t speed);
     bool begin();
     bool output_error();
     CanDeviceInfo get_device_info();
@@ -50,8 +45,8 @@ public:
     // Constructor
     /////////////////////////////////
 public:
-    DriverMcp2515();
-    ~DriverMcp2515();
+    DriverEsp32can();
+    ~DriverEsp32can();
 
     /////////////////////////////////
     // private function
@@ -64,13 +59,10 @@ private:
 private:
     MessageFunction callback_message;
     GetReceivedFunction callback_get_received;
-    MCP_CAN *can;
-    byte can_mode  = CAN_COMMUNICATION_MCP2515_MODE;
-    byte can_speed = CAN_COMMUNICATION_MCP2515_SPEED;
-    byte can_clock = CAN_COMMUNICATION_MCP2515_CLOCK;
+    CAN_speed_t can_speed   = CAN_COMMUNICATION_ESP32CAN_SPEED;
+    const int rx_queue_size = CAN_COMMUNICATION_ESP32CAN_QUEUE_SIZE;
     CanDeviceInfo device_info;
 };
 } // namespace CAN
 } // namespace MaSiRoProject
-#endif
 #endif

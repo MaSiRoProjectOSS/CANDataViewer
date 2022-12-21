@@ -10,6 +10,9 @@
  */
 #include "can_data_viewer.hpp"
 
+#include "can/can_communication.hpp"
+#include "web/controller_page.hpp"
+
 MaSiRoProject::WEB::ControllerPage ctrl_page;
 MaSiRoProject::CAN::CanCommunication ctrl_can;
 

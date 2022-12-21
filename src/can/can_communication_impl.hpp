@@ -14,9 +14,9 @@
 #include "can_data_viewer_info.hpp"
 
 #if LIB_ESP32CAN
-#include "driver/driver_esp32can.hpp"
+#include "driver/esp32can/driver_esp32can.hpp"
 #else
-#include "driver/driver_mcp2515.hpp"
+#include "driver/mcp2515/driver_mcp2515.hpp"
 #endif
 
 #include <SPI.h>

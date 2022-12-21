@@ -10,8 +10,6 @@
  */
 #include "driver_mcp2515.hpp"
 
-#if !LIB_ESP32CAN
-
 namespace MaSiRoProject
 {
 namespace CAN
@@ -275,4 +273,3 @@ bool DriverMcp2515::setup_filter()
 
 } // namespace CAN
 } // namespace MaSiRoProject
-#endif

@@ -10,8 +10,6 @@
  */
 #include "driver_esp32can.hpp"
 
-#if LIB_ESP32CAN
-
 CAN_device_t CAN_cfg;
 
 namespace MaSiRoProject
@@ -211,4 +209,3 @@ bool DriverEsp32can::setup_filter()
 }
 } // namespace CAN
 } // namespace MaSiRoProject
-#endif

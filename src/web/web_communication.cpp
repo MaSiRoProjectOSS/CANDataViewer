@@ -10,10 +10,7 @@
  */
 #include "web_communication.hpp"
 
-#include "can_data_viewer_conf.hpp"
 #include "web_communication_impl.hpp"
-
-#include <WiFi.h>
 
 namespace MaSiRoProject
 {

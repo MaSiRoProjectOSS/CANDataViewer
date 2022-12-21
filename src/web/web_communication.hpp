@@ -11,7 +11,6 @@
 #ifndef MASIRO_PROJECT_TOY_BOX_WEB_COMMUNICATION_HPP
 #define MASIRO_PROJECT_TOY_BOX_WEB_COMMUNICATION_HPP
 
-#include "../can_data_viewer_conf.hpp"
 #include "can_data_viewer_info.hpp"
 
 #include <WebServer.h>

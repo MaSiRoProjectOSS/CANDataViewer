@@ -3,10 +3,15 @@
     "version": "0.2",
     "description": "View CAN data in a browser",
     "keywords": "M5Stack, ATOM Lite",
+    "homepage": "https://github.com/MaSiRo-Project-OSS/CAN-Data-Viewer",
     "authors": {
         "name": "MaSiRo Project.",
         "email": "masiro.to.akari@gmail.com",
         "url": "https://github.com/MaSiRo-Project-OSS/CAN-Data-Viewer"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/MaSiRo-Project-OSS/CAN-Data-Viewer.git"
     },
     "license": "MIT",
     "frameworks": "arduino",
@@ -15,8 +20,38 @@
         "coryjfowler/mcp_can": "^1.5.0",
         "miwagner/ESP32CAN": "~0.0.1"
     },
+    "headers": [
+        "can_data_viewer.hpp",
+        "can_data_viewer_info.hpp"
+    ],
+    "examples": [
+        {
+            "name": "PlatformIO",
+            "base": "examples/PlatformIO",
+            "files": [
+                "platformio.ini",
+                "include/examples.h",
+                "src/main.c",
+                "README"
+            ]
+        },
+        {
+            "name": "Arduino",
+            "base": "examples/can_data_viewer",
+            "files": [
+                "can_data_viewer.ino"
+            ]
+        }
+    ],
     "build": {
         "includeDir": "include",
-        "srcDir": "src"
+        "srcDir": "src",
+        "flags": [
+            "-DOUTPUT_MESSAGE_FOR_SERIAL=1",
+            "-DLIB_ESP32CAN=0",
+            "-DSTORAGE_SPI_FS=1",
+            "-DSTORAGE_SPI_FS_INITIALIZE=0",
+            "-DSTORAGE_SPI_FS_FORMAT=1"
+        ]
     }
 }

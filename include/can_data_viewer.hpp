@@ -12,10 +12,8 @@
 #define MASIRO_PROJECT_CAN_DATA_VIEWER_HPP
 
 #include "can_data_viewer_info.hpp"
-//////////////////////////////////////
-#include "can/can_communication.hpp"
-#include "web/controller_page.hpp"
 
+#include <WebServer.h>
 #if STORAGE_SPI_FS
 #include <SPIFFS.h>
 #endif

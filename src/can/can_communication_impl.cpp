@@ -10,9 +10,6 @@
  */
 #include "can_communication_impl.hpp"
 
-#include "can_config.h"
-#include "can_data_viewer_info.hpp"
-
 namespace MaSiRoProject
 {
 namespace CAN
