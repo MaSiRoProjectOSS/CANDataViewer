@@ -20,14 +20,32 @@ namespace MaSiRoProject
 namespace WEB
 {
 ////////////////////////////////////////////////////////////////////////////////////////////////
-#define THREAD_NAME_WIFI     "ThreadWiFi"
-#define THREAD_INTERVAL_WIFI (50)
-volatile bool flag_thread_wifi_initialized = false;
-volatile bool flag_thread_wifi_fin         = false;
+#define THREAD_NAME_WIFI                  "ThreadWiFi"
+#define THREAD_INTERVAL_WIFI              (50)
+#define THREAD_SEEK_INTERVAL_WIFI         (1000)
+#define THREAD_RECONNECTION_INTERVAL_WIFI (1000)
+volatile bool flag_thread_wifi_initialized            = false;
+volatile bool flag_thread_wifi_fin                    = false;
+volatile unsigned long flag_thread_request_connection = 0;
 WebCommunicationImpl *ctrl_web;
 WebServer *ctrl_server;
 MessageFunction callback_mess;
-
+std::string request_ssid;
+std::string request_pass;
+bool request_ap_mode;
+inline bool reconnection(void)
+{
+    bool result = true;
+    if (0 != flag_thread_request_connection) {
+        if (flag_thread_request_connection <= millis()) {
+            flag_thread_request_connection = 0;
+            result                         = ctrl_web->save_information(request_ssid, request_pass, request_ap_mode, true, true);
+            request_ssid                   = "";
+            request_pass                   = "";
+        }
+    }
+    return result;
+}
 void thread_wifi(void *args)
 {
     char buffer[255];
@@ -37,23 +55,41 @@ void thread_wifi(void *args)
         callback_mess(false, buffer, true);
     }
 #endif
+#if SETTING_WIFI_MODE_AP_AUTO_TRANSITIONS
+    unsigned long err_begin = millis() + SETTING_WIFI_MODE_AP_AUTO_TRANSITIONS_TIMEOUT;
+#endif
+    ctrl_web->setup();
     while (false == flag_thread_wifi_fin) {
         try {
-            delay(1000);
-            ctrl_web->setup();
+            delay(THREAD_SEEK_INTERVAL_WIFI);
+            reconnection();
             if (false == ctrl_web->begin()) {
                 sprintf(buffer, "<%s> - NOT setup()", THREAD_NAME_WIFI);
                 if (nullptr != callback_mess) {
                     callback_mess(true, buffer, true);
                 }
-            } else {
-                ctrl_server->begin();
-                while (false == flag_thread_wifi_fin) {
-                    ctrl_web->loop();
-                    if (nullptr != ctrl_server) {
-                        ctrl_server->handleClient();
+#if SETTING_WIFI_MODE_AP_AUTO_TRANSITIONS
+                if (true != ctrl_web->is_ap_mode()) {
+                    if (err_begin < millis()) {
+                        err_begin = millis() + SETTING_WIFI_MODE_AP_AUTO_TRANSITIONS_TIMEOUT;
+                        ctrl_web->save_information(SETTING_WIFI_SSID_AP, SETTING_WIFI_PASS_AP, true, false, false);
                     }
-                    delay(THREAD_INTERVAL_WIFI);
+                }
+#endif
+            } else {
+                if (nullptr != ctrl_server) {
+                    ctrl_server->begin();
+                    while (false == flag_thread_wifi_fin) {
+                        ctrl_web->loop();
+                        ctrl_server->handleClient();
+                        if (false == reconnection()) {
+                            break;
+                        } else if (true != ctrl_web->is_connected()) {
+                            break;
+                        }
+                        delay(THREAD_INTERVAL_WIFI);
+                    }
+                    ctrl_server->close();
                 }
             }
         } catch (...) {
@@ -140,7 +176,14 @@ IPAddress WebCommunication::get_ip()
 }
 bool WebCommunication::set_wifi_info(std::string ssid, std::string pass, bool ap_mode)
 {
-    return ctrl_web->save_information(ssid, pass, ap_mode, true);
+    return ctrl_web->save_information(ssid, pass, ap_mode, true, true);
+}
+void WebCommunication::request_reconnect(std::string ssid, std::string pass, bool ap_mode)
+{
+    flag_thread_request_connection = millis() + THREAD_RECONNECTION_INTERVAL_WIFI;
+    request_ssid                   = ssid;
+    request_pass                   = pass;
+    request_ap_mode                = ap_mode;
 }
 /////////////////////////////////
 // Constructor

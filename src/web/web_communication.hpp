@@ -38,6 +38,7 @@ protected:
     IPAddress get_ip();
 
 protected:
+    void request_reconnect(std::string ssid, std::string pass, bool ap_mode);
     void happened_message(bool is_error, const char *message);
 
 private:

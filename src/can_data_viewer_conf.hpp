@@ -11,6 +11,10 @@
 #ifndef CAN_DATA_VIEWER_CONF_HPP
 #define CAN_DATA_VIEWER_CONF_HPP
 
+#ifndef CAN_THREAD_INTERVAL
+#define CAN_THREAD_INTERVAL (5)
+#endif
+
 #ifndef THREAD_CORE_CAN
 #define THREAD_CORE_CAN (0)
 #endif
@@ -48,6 +52,22 @@
 #define SETTING_WIFI_INFOMATION "/info_wifi.txt"
 #endif
 
+#ifndef SETTING_WIFI_MODE_AP_AUTO_TRANSITIONS
+/**
+ * @brief Specify Wifi mode : the system transitions to AP mode
+ * when If connection is not possible for a certain period of time in STA mode.
+ *
+ */
+#define SETTING_WIFI_MODE_AP_AUTO_TRANSITIONS 0
+#endif
+#ifndef SETTING_WIFI_MODE_AP_AUTO_TRANSITIONS_TIMEOUT
+/**
+ * @brief Time to wait for transition
+ *
+ */
+#define SETTING_WIFI_MODE_AP_AUTO_TRANSITIONS_TIMEOUT (60 * 1000)
+#endif
+
 #ifndef SETTING_WIFI_MODE_AP
 /**
  * @brief Specify Wifi mode : Access point
@@ -56,20 +76,35 @@
 #define SETTING_WIFI_MODE_AP true
 #endif
 
-#ifndef SETTING_WIFI_SSID
+#ifndef SETTING_WIFI_SSID_AP
 /**
  * @brief Specify Wifi SSID
  *
  */
-#define SETTING_WIFI_SSID "AP_CAN_DATA_VIEWER"
+#define SETTING_WIFI_SSID_AP "AP_CAN_DATA_VIEWER"
 #endif
 
-#ifndef SETTING_WIFI_PASS
+#ifndef SETTING_WIFI_PASS_AP
 /**
  * @brief Specify Wifi SSID password
  *
  */
-#define SETTING_WIFI_PASS "password"
+#define SETTING_WIFI_PASS_AP "password"
+#endif
+#ifndef SETTING_WIFI_SSID_STA
+/**
+ * @brief Specify Wifi SSID
+ *
+ */
+#define SETTING_WIFI_SSID_STA "STA_CAN_DATA_VIEWER"
+#endif
+
+#ifndef SETTING_WIFI_PASS_STA
+/**
+ * @brief Specify Wifi SSID password
+ *
+ */
+#define SETTING_WIFI_PASS_STA "password"
 #endif
 
 #endif

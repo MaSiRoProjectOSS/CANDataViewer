@@ -68,6 +68,15 @@
 			"typeinfo": "cpp",
 			"utility": "cpp"
 		},
+		"files.watcherExclude": {
+			"**/.git/objects/**": true,
+			"**/.git/subtree-cache/**": true,
+			"**/node_modules/*/**": true,
+			"**/.hg/store/**": true,
+			"**/doxygen_html": true,
+			"**/.pio": true,
+			"**/Doxyfile": true
+		},
 		"es6-css-minify.cssMapSource": "/miniature/web/min",
 		"es6-css-minify.jsMinPath": "/miniature/web/min",
 		"es6-css-minify.cssMinPath": "/miniature/web/min",

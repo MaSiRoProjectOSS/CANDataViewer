@@ -30,11 +30,16 @@ public:
 public:
     virtual bool setup() final;
     bool begin();
-    bool end();
+    bool connect(std::string ssid, std::string pass, bool ap_mode);
+    bool is_connected(bool force = false);
+    bool disconnect();
     bool loop();
+
+public:
+    bool is_ap_mode();
     IPAddress get_ip();
     const char *get_ssid();
-    bool save_information(std::string ssid, std::string pass, bool ap_mode, bool reconnecting);
+    bool save_information(std::string ssid, std::string pass, bool ap_mode, bool reconnecting, bool is_save);
 
 private:
     bool set_callback_message(MessageFunction callback);
@@ -44,21 +49,19 @@ private:
     bool load_information();
 
 private:
-#if STORAGE_SPI_FS
-    bool open_fs = false;
-#endif
+    bool _open_fs = false;
     bool _mode_ap = SETTING_WIFI_MODE_AP;
 
     /**
      * @brief AP SSID
      *
      */
-    std::string _ssid = SETTING_WIFI_SSID;
+    std::string _ssid = SETTING_WIFI_SSID_AP;
     /**
      * @brief AP password
      *
      */
-    std::string _pass = SETTING_WIFI_PASS;
+    std::string _pass = SETTING_WIFI_PASS_AP;
 };
 
 } // namespace WEB

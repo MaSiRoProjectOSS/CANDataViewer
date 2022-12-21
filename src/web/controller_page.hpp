@@ -64,6 +64,7 @@ private:
     void set_clear();
     void set_default();
     void set_delete();
+    void set_network();
 
 private:
     String handle_page(const char *body);
@@ -73,6 +74,10 @@ private:
     void handle_js_ajax();
     void handle_js_can_controller();
     void handle_js_table_view();
+    void handle_network_css();
+    void handle_network_js();
+    void handle_network_html();
+
     String ip_to_string(IPAddress ip);
     std::string get_can_data_text(RequestCanDataFunction callback);
 

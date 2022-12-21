@@ -103,7 +103,7 @@ bool DriverMcp2515::begin()
     bool result = false;
     //////////////////////////////////
     SPI.end();
-    SPI.begin(CAN_COMMUNICATION_MCP2515_PIN_CLK, CAN_COMMUNICATION_MCP2515_PIN_MISO, CAN_COMMUNICATION_MCP2515_PIN_MOSI, CAN_COMMUNICATION_MCP2515_PIN_CS);
+    SPI.begin(CAN_COMMUNICATION_SPI_PIN_CLK, CAN_COMMUNICATION_SPI_PIN_MISO, CAN_COMMUNICATION_SPI_PIN_MOSI, CAN_COMMUNICATION_SPI_PIN_CS);
     if (CAN_OK == this->can->begin(this->can_mode, this->can_speed, this->can_clock)) {
         this->can->setMode(MCP_NORMAL);
         this->setup_filter();
@@ -213,7 +213,7 @@ bool DriverMcp2515::set_callback_get_received(GetReceivedFunction callback)
 /////////////////////////////////
 // Constructor
 /////////////////////////////////
-DriverMcp2515::DriverMcp2515() : can(new MCP_CAN(CAN_COMMUNICATION_MCP2515_PIN_CS))
+DriverMcp2515::DriverMcp2515() : can(new MCP_CAN(CAN_COMMUNICATION_SPI_PIN_CS))
 {
     this->setup_can(this->can_mode, this->can_speed, this->can_clock);
 }
