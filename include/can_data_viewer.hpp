@@ -16,6 +16,10 @@
 #include "can/can_communication.hpp"
 #include "web/controller_page.hpp"
 
+#if STORAGE_SPI_FS
+#include <SPIFFS.h>
+#endif
+
 class CanDataViewer {
 public:
     CanDataViewer();
@@ -26,7 +30,8 @@ public:
     bool set_callback_changed_mode(ChangedModeFunction callback);
     bool set_callback_received(GetReceivedFunction callback);
     bool set_callback_setting_default(SettingDefaultFunction callback);
-    bool begin();
+    bool set_wifi_info(std::string ssid, std::string pass, bool ap_mode);
+    bool begin(std::string ssid = "", std::string pass = "", bool ap_mode = true);
 
 public:
     bool set_mode(CAN_CTRL_STATE mode);

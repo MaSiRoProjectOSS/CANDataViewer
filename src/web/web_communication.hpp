@@ -29,6 +29,7 @@ public:
     bool setup();
     bool begin();
     bool set_callback_message(MessageFunction callback);
+    bool set_wifi_info(std::string ssid, std::string pass, bool ap_mode);
 
 protected:
     WebServer *get_server();

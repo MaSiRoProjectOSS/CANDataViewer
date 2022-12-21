@@ -28,33 +28,37 @@ public:
     ~WebCommunicationImpl();
 
 public:
-    bool setup();
+    virtual bool setup() final;
     bool begin();
     bool end();
     bool loop();
     IPAddress get_ip();
-    char *get_ssid();
+    const char *get_ssid();
+    bool save_information(std::string ssid, std::string pass, bool ap_mode, bool reconnecting);
 
 private:
     bool set_callback_message(MessageFunction callback);
     MessageFunction callback_message;
     void happened_message(bool is_error, const char *message);
     bool reconnect();
+    bool load_information();
 
 private:
-    bool mode_ap = SETTING_WIFI_MODE_AP;
+#if STORAGE_SPI_FS
+    bool open_fs = false;
+#endif
+    bool _mode_ap = SETTING_WIFI_MODE_AP;
 
-private:
     /**
      * @brief AP SSID
      *
      */
-    char ssid[64];
+    std::string _ssid = SETTING_WIFI_SSID;
     /**
      * @brief AP password
      *
      */
-    char pass[64];
+    std::string _pass = SETTING_WIFI_PASS;
 };
 
 } // namespace WEB

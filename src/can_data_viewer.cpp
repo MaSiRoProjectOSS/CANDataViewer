@@ -114,6 +114,10 @@ bool CanDataViewer::set_callback_setting_default(SettingDefaultFunction callback
     ctrl_can.set_callback_setting_default(callback);
     return result;
 }
+bool CanDataViewer::set_wifi_info(std::string ssid, std::string pass, bool ap_mode)
+{
+    return ctrl_page.set_wifi_info(ssid, pass, ap_mode);
+}
 
 bool CanDataViewer::clear_resume(void)
 {
@@ -147,7 +151,7 @@ CanDataViewer::CanDataViewer()
 CanDataViewer::~CanDataViewer()
 {
 }
-bool CanDataViewer::begin()
+bool CanDataViewer::begin(std::string ssid, std::string pass, bool ap_mode)
 {
     bool result = false;
     try {
@@ -163,6 +167,11 @@ bool CanDataViewer::begin()
                                  &can_data_default,
                                  &can_data_delete);
         ctrl_page.setup();
+        if ("" != ssid) {
+            if ("" != pass) {
+                this->set_wifi_info(ssid, pass, ap_mode);
+            }
+        }
         ctrl_page.begin();
         ////////////////////////////////////////////////////////
         ctrl_can.begin();

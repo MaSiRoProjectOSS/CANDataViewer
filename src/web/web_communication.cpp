@@ -40,6 +40,7 @@ void thread_wifi(void *args)
     while (false == flag_thread_wifi_fin) {
         try {
             delay(1000);
+            ctrl_web->setup();
             if (false == ctrl_web->begin()) {
                 sprintf(buffer, "<%s> - NOT setup()", THREAD_NAME_WIFI);
                 if (nullptr != callback_mess) {
@@ -137,7 +138,10 @@ IPAddress WebCommunication::get_ip()
 {
     return ctrl_web->get_ip();
 }
-
+bool WebCommunication::set_wifi_info(std::string ssid, std::string pass, bool ap_mode)
+{
+    return ctrl_web->save_information(ssid, pass, ap_mode, true);
+}
 /////////////////////////////////
 // Constructor
 /////////////////////////////////

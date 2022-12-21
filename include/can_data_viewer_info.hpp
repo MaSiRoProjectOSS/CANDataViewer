@@ -20,30 +20,50 @@
 
 typedef enum can_ctrl_state
 {
-    MODE_UNKNOW = 0,
-    MODE_NOT_INITIALIZE,
-    MODE_READY,
-    MODE_RUNNING,
-    MODE_INACTIVE,
-    MODE_STOPPING,
-    MODE_ABORT,
-    MODE_PAUSE,
-    MODE_FINISHED
+    MODE_UNKNOW = 0,     //!< unknow
+    MODE_NOT_INITIALIZE, //!< Not Initialize
+    MODE_READY,          //!< Ready
+    MODE_RUNNING,        //!< Running
+    MODE_INACTIVE,       //!< Inactive
+    MODE_STOPPING,       //!< Stopping
+    MODE_ABORT,          //!< Abort
+    MODE_PAUSE,          //!< Pause
+    MODE_FINISHED        //!< Finished
 } CAN_CTRL_STATE;
 ////////////////////////////////////////////////////////////////
 
+/**
+ * @brief Structure of CAN data
+ *
+ */
 class CanData {
 public:
-    unsigned long Id            = 0;
-    byte Length                 = 0;
-    byte ExtFlag                = 0;
-    byte Data[CAN_MESSAGE_SIZE] = { 0 };
+    unsigned long Id            = 0;     //!< CAN ID
+    byte ExtFlag                = 0;     //!< 0: Standard CAN 1: Extended CAN
+    byte Length                 = 0;     //!< Data length
+    byte Data[CAN_MESSAGE_SIZE] = { 0 }; //!< Data
 
 public:
-    int loop_interval  = 0;
-    unsigned long time = millis();
+    int loop_interval  = 0;        //!< Loop interval
+    unsigned long time = millis(); //!< Time processed
 
+    /**
+     * @brief Sort by ID
+     *
+     * @param left
+     * @param right
+     * @return true
+     * @return false
+     */
     static bool compar_Id(const CanData &left, const CanData &right) { return left.Id < right.Id; }
+    /**
+     * @brief Sort by time
+     *
+     * @param left
+     * @param right
+     * @return true
+     * @return false
+     */
     static bool compar_Time(const CanData &left, const CanData &right) { return left.time > right.time; }
 };
 
