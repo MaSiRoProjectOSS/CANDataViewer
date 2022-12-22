@@ -121,9 +121,34 @@ void setup()
 
 void loop()
 {
+    static int SPAN               = (3 * 1000);
+    static unsigned long next_run = millis();
+    unsigned long current_time    = millis();
     (void)M5.update();
     ////////////////////////////////////////////////////////
     if (M5.Btn.wasPressed()) {
+        ctr.set_mode();
+    }
+    if (next_run <= current_time) {
+        do {
+            next_run += SPAN;
+        } while (next_run < current_time);
+
+#if DEBUG_MODE
+        UBaseType_t stack_can    = ctr.get_stack_high_water_mark_can();
+        UBaseType_t stack_server = ctr.get_stack_high_water_mark_server();
+        UBaseType_t max_can      = ctr.get_stack_size_can();
+        UBaseType_t max_server   = ctr.get_stack_size_server();
+
+        char msg_buffer[512];
+        sprintf(msg_buffer,
+                "STACK SIZE : can[%d/%d] server[%d/%d]", //
+                (max_can - stack_can),
+                max_can,
+                (max_server - stack_server),
+                max_server);
+        output_message(false, msg_buffer);
+#endif
     }
     ////////////////////////////////////////////////////////
     (void)delay(SETTING_LOOP_TIME_SLEEP_DETECT);

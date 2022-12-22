@@ -43,11 +43,6 @@ bool ControllerPage::setup_server(WebServer *server)
         server->on("/set/default", std::bind(&ControllerPage::set_default, this));
         server->on("/set/delete", std::bind(&ControllerPage::set_delete, this));
 
-        server->on("/set/network", std::bind(&ControllerPage::set_network, this));
-        server->on("/network.css", std::bind(&ControllerPage::handle_network_css, this));
-        server->on("/network.js", std::bind(&ControllerPage::handle_network_js, this));
-        server->on("/network", std::bind(&ControllerPage::handle_network_html, this));
-
         result = true;
 #if DEBUG_MODE
         this->happened_message(false, "ControllerPage : setup()");
@@ -59,30 +54,6 @@ bool ControllerPage::setup_server(WebServer *server)
 }
 
 /////////////////////////////////////////////////
-void ControllerPage::handle_network_css()
-{
-    this->get_server()->sendHeader("Location", String("http://") + this->get_ip().toString(), true);
-    // TODO:
-    std::string css = "";
-    this->get_server()->send(200, "text/css", css.c_str());
-}
-void ControllerPage::handle_network_js()
-{
-    this->get_server()->sendHeader("Location", String("http://") + this->get_ip().toString(), true);
-    // TODO:
-    std::string js = "if(!JS_Network)var JS_Network={};";
-
-    this->get_server()->send(200, "text/javascript", js.c_str());
-}
-void ControllerPage::handle_network_html()
-{
-    this->get_server()->sendHeader("Location", String("http://") + this->get_ip().toString(), true);
-    std::string html = "<link href='/network.css' rel='stylesheet' type='text/css' media='all'>";
-    html.append("<script type='text/javascript' src='/network.js'></script>");
-    // TODO:
-
-    this->get_server()->send(200, "text/html", this->handle_page(html.c_str()));
-}
 
 void ControllerPage::handle_css()
 {
@@ -286,48 +257,6 @@ void ControllerPage::set_delete()
 
     this->get_server()->sendHeader("Location", String("http://") + this->get_ip().toString(), true);
     this->get_server()->send(200, "application/json", json.c_str());
-}
-
-void ControllerPage::set_network()
-{
-#if DEBUG_MODE
-    this->happened_message(false, "ControllerPage : set_network()");
-#endif
-    bool result  = false;
-    String ssid  = "";
-    String pass  = "";
-    bool mode_ap = false;
-
-    std::string json = "{";
-    if (this->get_server()->args() > 0) {
-        if (this->get_server()->hasArg("ap")) {
-            int value = this->to_int(this->get_server()->arg("ap"));
-            if (value == 1) {
-                mode_ap = true;
-            }
-            if (this->get_server()->hasArg("id")) {
-                ssid = this->to_int(this->get_server()->arg("id"));
-                if (this->get_server()->hasArg("pa")) {
-                    pass   = this->get_server()->arg("pa");
-                    result = true;
-                }
-            }
-        }
-    }
-    if (true == result) {
-        json.append("\"result\":\"OK\"");
-    } else {
-        json.append("\"result\":\"NG\"");
-    }
-    json.append(",\"status\":{\"num\": 200, \"messages\": \"\"}");
-    json.append("}");
-
-    this->get_server()->sendHeader("Location", String("http://") + this->get_ip().toString(), true);
-    this->get_server()->send(200, "application/json", json.c_str());
-
-    if (true == result) {
-        this->request_reconnect(ssid.c_str(), pass.c_str(), mode_ap);
-    }
 }
 
 void ControllerPage::set_mode_on()
@@ -597,42 +526,6 @@ std::string ControllerPage::get_can_data_text(RequestCanDataFunction callback)
     return json;
 }
 
-String ControllerPage::ip_to_string(IPAddress ip)
-{
-    String res = "";
-    for (int i = 0; i < 3; i++) {
-        res += String((ip >> (8 * i)) & 0xFF) + ".";
-    }
-    res += String(((ip >> 8 * 3)) & 0xFF);
-    return res;
-}
-byte ControllerPage::to_byte(String data)
-{
-    if (true != data.isEmpty()) {
-        int value = std::stoi(data.c_str());
-        return (byte)(value);
-    } else {
-        return 0;
-    }
-}
-unsigned long ControllerPage::to_ulong(String data)
-{
-    if (true != data.isEmpty()) {
-        unsigned long value = std::stoul(data.c_str());
-        return value;
-    } else {
-        return 0;
-    }
-}
-int ControllerPage::to_int(String data)
-{
-    if (true != data.isEmpty()) {
-        int value = std::stoi(data.c_str());
-        return value;
-    } else {
-        return 0;
-    }
-}
 ControllerPage::ControllerPage() : WEB::WebCommunication()
 {
 }

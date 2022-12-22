@@ -155,6 +155,7 @@ void loop()
     (void)M5.update();
     ////////////////////////////////////////////////////////
     if (M5.Btn.wasPressed()) {
+        ctr.set_mode();
     }
     ////////////////////////////////////////////////////////
     (void)delay(SETTING_LOOP_TIME_SLEEP_DETECT);

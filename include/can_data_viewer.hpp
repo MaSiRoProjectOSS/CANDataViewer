@@ -32,12 +32,20 @@ public:
     bool begin(std::string ssid = "", std::string pass = "", bool ap_mode = true);
 
 public:
-    bool set_mode(CAN_CTRL_STATE mode);
+    bool set_mode(CAN_CTRL_STATE mode = CAN_CTRL_STATE::MODE_UNKNOW);
     bool clear_resume(void);
     bool clear_loop_shot(void);
     bool add_one_shot(CanData data);
     bool add_loop_shot(CanData data, int interval);
     bool add_resume(CanData data);
+
+#if DEBUG_MODE
+public:
+    UBaseType_t get_stack_high_water_mark_can();
+    UBaseType_t get_stack_high_water_mark_server();
+    UBaseType_t get_stack_size_can();
+    UBaseType_t get_stack_size_server();
+#endif
 };
 
 #endif

@@ -57,9 +57,17 @@ public:
     bool setup_callback(void);
     bool sendable(CAN_CTRL_STATE state, CanData *data);
 
+#if DEBUG_MODE
+public:
+    UBaseType_t get_stack_high_water_mark();
+    UBaseType_t get_stack_size();
+#endif
+
 private:
     byte interrupt;
     SettingDefaultFunction callback_setting_default;
+    TaskHandle_t task_handle;
+    UBaseType_t task_assigned_size;
 };
 } // namespace CAN
 } // namespace MaSiRoProject

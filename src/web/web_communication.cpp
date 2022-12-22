@@ -58,7 +58,7 @@ void thread_wifi(void *args)
     ctrl_web->setup();
     while (false == flag_thread_wifi_fin) {
         try {
-            delay(THREAD_SEEK_INTERVAL_WIFI);
+            vTaskDelay(THREAD_SEEK_INTERVAL_WIFI);
             reconnection();
             if (false == ctrl_web->begin()) {
                 sprintf(buffer, "<%s> - NOT setup()", THREAD_NAME_WIFI);
@@ -84,7 +84,7 @@ void thread_wifi(void *args)
                         } else if (true != ctrl_web->is_connected()) {
                             break;
                         }
-                        delay(THREAD_INTERVAL_WIFI);
+                        vTaskDelay(THREAD_INTERVAL_WIFI);
                     }
                     ctrl_server->close();
                 }
@@ -136,12 +136,96 @@ void WebCommunication::handle_not_found()
 {
     this->get_server()->send(404, "text/plain", "404 Not Found!");
 }
+void WebCommunication::handle_network_css()
+{
+    this->get_server()->sendHeader("Location", String("http://") + this->get_ip().toString(), true);
+    // TODO:
+    std::string css = "";
+    this->get_server()->send(200, "text/css", css.c_str());
+}
+void WebCommunication::handle_network_js()
+{
+    this->get_server()->sendHeader("Location", String("http://") + this->get_ip().toString(), true);
+    // TODO:
+    std::string js = "if(!JS_Network)var JS_Network={};";
+
+    this->get_server()->send(200, "text/javascript", js.c_str());
+}
+void WebCommunication::handle_network_html()
+{
+    this->get_server()->sendHeader("Location", String("http://") + this->get_ip().toString(), true);
+    std::string body = "";
+
+    std::string html = "<!DOCTYPE html><html lang=\"jp\"><head>"
+                       "<meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">";
+
+    html.append("<link href='/style.css' rel='stylesheet' type='text/css' media='all'>");
+
+    html.append("<script type='text/javascript' src='/network.js'></script>");
+    html.append("<script type='text/javascript' src='/network.js'></script>");
+
+    html.append("<title>" SETTING_SYSTEM_NAME "</title>"
+                "</head><body>");
+    ///////////////////////////
+    html.append("<h1>" SETTING_SYSTEM_NAME "</h1>");
+    html.append(body);
+    ///////////////////////////
+    html.append("</body></html>");
+
+    this->get_server()->send(200, "text/html", html.c_str());
+}
+void WebCommunication::set_network()
+{
+#if DEBUG_MODE
+    this->happened_message(false, "ControllerPage : set_network()");
+#endif
+    bool result  = false;
+    String ssid  = "";
+    String pass  = "";
+    bool mode_ap = false;
+
+    std::string json = "{";
+    if (this->get_server()->args() > 0) {
+        if (this->get_server()->hasArg("ap")) {
+            int value = this->to_int(this->get_server()->arg("ap"));
+            if (value == 1) {
+                mode_ap = true;
+            }
+            if (this->get_server()->hasArg("id")) {
+                ssid = this->to_int(this->get_server()->arg("id"));
+                if (this->get_server()->hasArg("pa")) {
+                    pass   = this->get_server()->arg("pa");
+                    result = true;
+                }
+            }
+        }
+    }
+    if (true == result) {
+        json.append("\"result\":\"OK\"");
+    } else {
+        json.append("\"result\":\"NG\"");
+    }
+    json.append(",\"status\":{\"num\": 200, \"messages\": \"\"}");
+    json.append("}");
+
+    this->get_server()->sendHeader("Location", String("http://") + this->get_ip().toString(), true);
+    this->get_server()->send(200, "application/json", json.c_str());
+
+    if (true == result) {
+        this->request_reconnect(ssid.c_str(), pass.c_str(), mode_ap);
+    }
+}
 
 bool WebCommunication::setup()
 {
     bool result = true;
     try {
         this->get_server()->onNotFound(std::bind(&WebCommunication::handle_not_found, this));
+        this->get_server()->on("/set/network", std::bind(&WebCommunication::set_network, this));
+        this->get_server()->on("/network.css", std::bind(&WebCommunication::handle_network_css, this));
+        this->get_server()->on("/network.js", std::bind(&WebCommunication::handle_network_js, this));
+        this->get_server()->on("/network", std::bind(&WebCommunication::handle_network_html, this));
+
         result = this->setup_server(this->get_server());
 #if DEBUG_MODE
         this->happened_message(false, "WebCommunication : setup()");
@@ -156,12 +240,13 @@ bool WebCommunication::begin()
     bool result = true;
     if (false == flag_thread_wifi_initialized) {
         flag_thread_wifi_initialized = true;
+        this->task_assigned_size     = (4096 * 2);
         xTaskCreatePinnedToCore(thread_wifi, //
                                 THREAD_NAME_WIFI,
-                                sizeof(WebServer) + sizeof(WebCommunicationImpl) + 4096,
+                                this->task_assigned_size,
                                 NULL,
                                 5,
-                                NULL,
+                                &this->task_handle,
                                 THREAD_CORE_WIFI);
     }
     return result;
@@ -182,6 +267,56 @@ void WebCommunication::request_reconnect(std::string ssid, std::string pass, boo
     request_pass                   = pass;
     request_ap_mode                = ap_mode;
 }
+/////////////////////////////////
+// protected function
+/////////////////////////////////
+String WebCommunication::ip_to_string(IPAddress ip)
+{
+    String res = "";
+    for (int i = 0; i < 3; i++) {
+        res += String((ip >> (8 * i)) & 0xFF) + ".";
+    }
+    res += String(((ip >> 8 * 3)) & 0xFF);
+    return res;
+}
+byte WebCommunication::to_byte(String data)
+{
+    if (true != data.isEmpty()) {
+        int value = std::stoi(data.c_str());
+        return (byte)(value);
+    } else {
+        return 0;
+    }
+}
+unsigned long WebCommunication::to_ulong(String data)
+{
+    if (true != data.isEmpty()) {
+        unsigned long value = std::stoul(data.c_str());
+        return value;
+    } else {
+        return 0;
+    }
+}
+int WebCommunication::to_int(String data)
+{
+    if (true != data.isEmpty()) {
+        int value = std::stoi(data.c_str());
+        return value;
+    } else {
+        return 0;
+    }
+}
+
+#if DEBUG_MODE
+UBaseType_t WebCommunication::get_stack_size()
+{
+    return this->task_assigned_size;
+}
+UBaseType_t WebCommunication::get_stack_high_water_mark()
+{
+    return uxTaskGetStackHighWaterMark(this->task_handle);
+}
+#endif
 /////////////////////////////////
 // Constructor
 /////////////////////////////////

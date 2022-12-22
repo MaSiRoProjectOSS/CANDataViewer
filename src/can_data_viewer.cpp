@@ -147,6 +147,25 @@ bool CanDataViewer::clear_loop_shot(void)
     return ctrl_can.clear_loop_shot();
 }
 
+#if DEBUG_MODE
+UBaseType_t CanDataViewer::get_stack_high_water_mark_can()
+{
+    return ctrl_can.get_stack_high_water_mark();
+}
+UBaseType_t CanDataViewer::get_stack_high_water_mark_server()
+{
+    return ctrl_page.get_stack_high_water_mark();
+}
+UBaseType_t CanDataViewer::get_stack_size_can()
+{
+    return ctrl_can.get_stack_size();
+}
+UBaseType_t CanDataViewer::get_stack_size_server()
+{
+    return ctrl_page.get_stack_size();
+}
+#endif
+
 CanDataViewer::CanDataViewer()
 {
 }

@@ -31,18 +31,34 @@ public:
     bool set_wifi_info(std::string ssid, std::string pass, bool ap_mode);
 
 protected:
+    IPAddress get_ip();
     WebServer *get_server();
     virtual bool setup_server(WebServer *server);
     virtual void handle_not_found();
-    IPAddress get_ip();
+    void handle_network_css();
+    void handle_network_js();
+    void handle_network_html();
 
 protected:
     void request_reconnect(std::string ssid, std::string pass, bool ap_mode);
     void happened_message(bool is_error, const char *message);
+    void set_network();
+    String ip_to_string(IPAddress ip);
+    byte to_byte(String data);
+    int to_int(String data);
+    unsigned long to_ulong(String data);
+
+#if DEBUG_MODE
+public:
+    UBaseType_t get_stack_high_water_mark();
+    UBaseType_t get_stack_size();
+#endif
 
 private:
     bool initialized = false;
     MessageFunction callback_message;
+    TaskHandle_t task_handle;
+    UBaseType_t task_assigned_size;
 };
 } // namespace WEB
 } // namespace MaSiRoProject

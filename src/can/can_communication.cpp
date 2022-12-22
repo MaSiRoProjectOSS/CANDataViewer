@@ -95,7 +95,7 @@ void thread_can(void *args)
                         }
                     }
                     can->loop();
-                    delay(CAN_THREAD_INTERVAL);
+                    vTaskDelay(CAN_THREAD_INTERVAL);
                 }
                 can->request_suspend();
             }
@@ -271,16 +271,29 @@ bool CanCommunication::begin()
             pinMode(interrupt, INPUT);
             attachInterrupt(interrupt, thread_can_on_interrupt, FALLING);
         }
+        this->task_assigned_size = 4096;
         xTaskCreatePinnedToCore(thread_can, //
                                 THREAD_NAME_CAN,
-                                sizeof(CanCommunicationImpl) + 4096,
+                                this->task_assigned_size,
                                 NULL,
                                 3,
-                                NULL,
+                                &this->task_handle,
                                 THREAD_CORE_CAN);
     }
     return result;
 }
+
+#if DEBUG_MODE
+UBaseType_t CanCommunication::get_stack_size()
+{
+    return this->task_assigned_size;
+}
+UBaseType_t CanCommunication::get_stack_high_water_mark()
+{
+    return uxTaskGetStackHighWaterMark(this->task_handle);
+}
+#endif
+
 ////////////////////////////////////////////////////////////////////////////////////////////
 CanCommunication::CanCommunication() : interrupt(CAN_COMMUNICATION_PIN_INTERRUPT)
 {

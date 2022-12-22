@@ -47,11 +47,8 @@
         "includeDir": "include",
         "srcDir": "src",
         "flags": [
-            "-DOUTPUT_MESSAGE_FOR_SERIAL=1",
-            "-DLIB_ESP32CAN=0",
-            "-DSTORAGE_SPI_FS=1",
-            "-DSTORAGE_SPI_FS_INITIALIZE=0",
-            "-DSTORAGE_SPI_FS_FORMAT=1"
+            "-DNO_OUTPUT_MESSAGE_FOR_SERIAL=1",
+            "-DNO_LIB_CAN_DRIVER=0"
         ]
     }
 }
