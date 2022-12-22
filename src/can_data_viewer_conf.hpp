@@ -27,7 +27,7 @@
 #endif
 
 #ifndef STORAGE_SPI_FS
-#define STORAGE_SPI_FS 0
+#define STORAGE_SPI_FS 1
 #endif
 #ifndef STORAGE_SPI_FS_INITIALIZE
 #define STORAGE_SPI_FS_INITIALIZE 0

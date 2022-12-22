@@ -11,8 +11,6 @@
 #ifndef MASIRO_PROJECT_TOY_BOX_CAN_DRIVER_ESP32CAN_CONFIG_HPP
 #define MASIRO_PROJECT_TOY_BOX_CAN_DRIVER_ESP32CAN_CONFIG_HPP
 
-#include "can_data_viewer_info.hpp"
-
 #include <Arduino.h>
 #include <ESP32CAN.h>
 

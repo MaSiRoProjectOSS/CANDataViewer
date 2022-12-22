@@ -11,57 +11,47 @@
 #ifndef MASIRO_PROJECT_TOY_BOX_CAN_DRIVER_ESP32CAN_HPP
 #define MASIRO_PROJECT_TOY_BOX_CAN_DRIVER_ESP32CAN_HPP
 
+#include "../driver_can_abstract.hpp"
 #include "driver_esp32can_config.hpp"
 
 namespace MaSiRoProject
 {
 namespace CAN
 {
-class DriverEsp32can {
+class DriverEsp32can : public DriverCanAbstract {
+public:
     /////////////////////////////////
     // setup function
     /////////////////////////////////
-public:
-    bool setup_can(CAN_speed_t speed);
-    bool begin();
-    bool output_error();
-    CanDeviceInfo get_device_info();
-
+    bool begin() override;
     /////////////////////////////////
     // communication function
     /////////////////////////////////
-public:
-    bool interrupt();
-    bool send(CanData data);
-
+    bool send(CanData data) override;
+    bool interrupt() override;
     /////////////////////////////////
-    // set callback
+    // information function
     /////////////////////////////////
-public:
-    bool set_callback_message(MessageFunction callback);
-    bool set_callback_get_received(GetReceivedFunction callback);
+    bool output_error() override;
 
+public:
     /////////////////////////////////
     // Constructor
     /////////////////////////////////
-public:
     DriverEsp32can();
     ~DriverEsp32can();
 
+public:
     /////////////////////////////////
     // private function
     /////////////////////////////////
 private:
-    void happened_message(bool is_error, const char *message);
-    void happened_received(CanData data);
+    bool setup_can(CAN_speed_t speed);
     bool setup_filter();
 
 private:
-    MessageFunction callback_message;
-    GetReceivedFunction callback_get_received;
     CAN_speed_t can_speed   = CAN_COMMUNICATION_ESP32CAN_SPEED;
     const int rx_queue_size = CAN_COMMUNICATION_ESP32CAN_QUEUE_SIZE;
-    CanDeviceInfo device_info;
 };
 } // namespace CAN
 } // namespace MaSiRoProject

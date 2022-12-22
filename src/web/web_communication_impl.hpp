@@ -40,15 +40,16 @@ public:
     IPAddress get_ip();
     const char *get_ssid();
     bool save_information(std::string ssid, std::string pass, bool ap_mode, bool reconnecting, bool is_save);
+    bool set_callback_message(MessageFunction callback);
 
 private:
-    bool set_callback_message(MessageFunction callback);
     MessageFunction callback_message;
     void happened_message(bool is_error, const char *message);
     bool reconnect();
     bool load_information();
 
 private:
+    bool _load_information();
     bool _open_fs = false;
     bool _mode_ap = SETTING_WIFI_MODE_AP;
 

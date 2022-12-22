@@ -158,7 +158,7 @@ bool WebCommunication::begin()
         flag_thread_wifi_initialized = true;
         xTaskCreatePinnedToCore(thread_wifi, //
                                 THREAD_NAME_WIFI,
-                                sizeof(WebCommunicationImpl) + 4096,
+                                sizeof(WebServer) + sizeof(WebCommunicationImpl) + 4096,
                                 NULL,
                                 5,
                                 NULL,

@@ -17,7 +17,114 @@ namespace CAN
 /////////////////////////////////
 // setup function
 /////////////////////////////////
+bool DriverMcp2515::begin()
+{
+    bool result = false;
+    //////////////////////////////////
+    SPI.end();
+    SPI.begin(CAN_COMMUNICATION_SPI_PIN_CLK, CAN_COMMUNICATION_SPI_PIN_MISO, CAN_COMMUNICATION_SPI_PIN_MOSI, CAN_COMMUNICATION_SPI_PIN_CS);
+    if (CAN_OK == this->mcp2515->begin(this->can_mode, this->can_speed, this->can_clock)) {
+        this->mcp2515->setMode(MCP_NORMAL);
+        this->setup_filter();
+        this->interrupt();
+        result = true;
+    }
+    //////////////////////////////////
+    return result;
+}
 
+/////////////////////////////////
+// communication function
+/////////////////////////////////
+bool DriverMcp2515::send(CanData data)
+{
+    bool result = true;
+    byte status = this->mcp2515->sendMsgBuf(data.Id, data.Length, data.Data);
+    if (CAN_OK != status) {
+        result = false;
+    }
+#if DEBUG_MODE
+    char buffer[255];
+    sprintf(buffer, "DriverMcp2515 : send state[%d]", status);
+    happened_message(true, buffer);
+#endif
+    return result;
+}
+
+bool DriverMcp2515::interrupt()
+{
+    bool result = false;
+    char buffer[255];
+    try {
+        while (CAN_MSGAVAIL == this->mcp2515->checkReceive()) {
+            CanData data;
+            if (CAN_OK == this->mcp2515->readMsgBuf(&data.Id, &data.Length, data.Data)) {
+                result = true;
+                happened_received(data);
+            } else {
+                sprintf(buffer, "Receive failed");
+                happened_message(true, buffer);
+            }
+        }
+#if DEBUG_MODE
+        if (false == result) {
+            sprintf(buffer, "NO MESSAGE");
+            happened_message(false, buffer);
+        }
+#endif
+    } catch (...) {
+        sprintf(buffer, "Receive panic");
+        happened_message(true, buffer);
+    }
+    return result;
+}
+
+/////////////////////////////////
+// information function
+/////////////////////////////////
+bool DriverMcp2515::output_error()
+{
+    bool result = false;
+    //////////////////////////////////
+    char buffer[255];
+    byte error_checkError   = this->mcp2515->checkError();
+    byte error_getError     = this->mcp2515->getError();
+    byte error_errorCountTX = this->mcp2515->errorCountTX();
+    byte error_errorCountRX = this->mcp2515->errorCountRX();
+    byte check_receive      = this->mcp2515->checkReceive();
+    if (0 != (error_checkError)) {
+        //////////////////////////////////
+        sprintf(buffer,
+                "CanCommunication : "
+                "ERROR[%d] tx[%d] / rx[%d]" // (2)(6)(7)
+                "%s",                       // --
+                //
+                (error_checkError == CAN_OK) ? 0 : error_getError, // (2)
+                error_errorCountTX,                                // (6)
+                error_errorCountRX,                                // (7)
+                (check_receive == CAN_NOMSG) ? "" : " : AVAIL"     // --
+        );
+        happened_message(true, buffer);
+        result = true;
+    }
+    //////////////////////////////////
+    return result;
+}
+
+/////////////////////////////////
+// Constructor
+/////////////////////////////////
+DriverMcp2515::DriverMcp2515() : DriverCanAbstract(), mcp2515(new MCP_CAN(CAN_COMMUNICATION_SPI_PIN_CS))
+{
+    this->setup_can(this->can_mode, this->can_speed, this->can_clock);
+}
+DriverMcp2515::~DriverMcp2515()
+{
+}
+
+/////////////////////////////////
+// private function
+/////////////////////////////////
 bool DriverMcp2515::setup_can(byte mode, byte speed, byte clock)
 {
     bool result = true;
@@ -96,177 +203,34 @@ bool DriverMcp2515::setup_can(byte mode, byte speed, byte clock)
 
     return result;
 }
-bool DriverMcp2515::begin()
-{
-    bool result = false;
-    //////////////////////////////////
-    SPI.end();
-    SPI.begin(CAN_COMMUNICATION_SPI_PIN_CLK, CAN_COMMUNICATION_SPI_PIN_MISO, CAN_COMMUNICATION_SPI_PIN_MOSI, CAN_COMMUNICATION_SPI_PIN_CS);
-    if (CAN_OK == this->can->begin(this->can_mode, this->can_speed, this->can_clock)) {
-        this->can->setMode(MCP_NORMAL);
-        this->setup_filter();
-        this->interrupt();
-        result = true;
-    }
-    //////////////////////////////////
-    return result;
-}
-bool DriverMcp2515::output_error()
-{
-    bool result = false;
-    //////////////////////////////////
-    char buffer[255];
-    byte error_checkError   = this->can->checkError();
-    byte error_getError     = this->can->getError();
-    byte error_errorCountTX = this->can->errorCountTX();
-    byte error_errorCountRX = this->can->errorCountRX();
-    byte check_receive      = this->can->checkReceive();
-    if (0 != (error_checkError)) {
-        //////////////////////////////////
-        sprintf(buffer,
-                "CanCommunication : "
-                "ERROR[%d] tx[%d] / rx[%d]" // (2)(6)(7)
-                "%s",                       // --
-                //
-                (error_checkError == CAN_OK) ? 0 : error_getError, // (2)
-                error_errorCountTX,                                // (6)
-                error_errorCountRX,                                // (7)
-                (check_receive == CAN_NOMSG) ? "" : " : AVAIL"     // --
-        );
-        happened_message(true, buffer);
-        result = true;
-    }
-    //////////////////////////////////
-    return result;
-}
-CanDeviceInfo DriverMcp2515::get_device_info()
-{
-    return this->device_info;
-}
 
-/////////////////////////////////
-// communication function
-/////////////////////////////////
-bool DriverMcp2515::interrupt()
-{
-    bool result = false;
-    char buffer[255];
-    try {
-        while (CAN_MSGAVAIL == this->can->checkReceive()) {
-            CanData data;
-            if (CAN_OK == this->can->readMsgBuf(&data.Id, &data.Length, data.Data)) {
-                result = true;
-                happened_received(data);
-            } else {
-                sprintf(buffer, "Receive failed");
-                happened_message(true, buffer);
-            }
-        }
-#if DEBUG_MODE
-        if (false == result) {
-            sprintf(buffer, "NO MESSAGE");
-            happened_message(false, buffer);
-        }
-#endif
-    } catch (...) {
-        sprintf(buffer, "Receive panic");
-        happened_message(true, buffer);
-    }
-    return result;
-}
-bool DriverMcp2515::send(CanData data)
-{
-    bool result = true;
-    byte status = this->can->sendMsgBuf(data.Id, data.Length, data.Data);
-    if (CAN_OK != status) {
-        result = false;
-    }
-    return result;
-}
-
-/////////////////////////////////
-// set callback
-/////////////////////////////////
-bool DriverMcp2515::set_callback_message(MessageFunction callback)
-{
-    bool result = false;
-    try {
-        this->callback_message = callback;
-        result                 = true;
-    } catch (...) {
-    }
-    return result;
-}
-bool DriverMcp2515::set_callback_get_received(GetReceivedFunction callback)
-{
-    bool result = false;
-    try {
-        this->callback_get_received = callback;
-        result                      = true;
-    } catch (...) {
-    }
-    return result;
-}
-
-/////////////////////////////////
-// Constructor
-/////////////////////////////////
-DriverMcp2515::DriverMcp2515() : can(new MCP_CAN(CAN_COMMUNICATION_SPI_PIN_CS))
-{
-    this->setup_can(this->can_mode, this->can_speed, this->can_clock);
-}
-DriverMcp2515::~DriverMcp2515()
-{
-}
-
-/////////////////////////////////
-// private function
-/////////////////////////////////
-void DriverMcp2515::happened_message(bool is_error, const char *message)
-{
-    if (nullptr != this->callback_message) {
-        this->callback_message(is_error, message, true);
-    }
-}
-void DriverMcp2515::happened_received(CanData data)
-{
-    if (nullptr != this->callback_get_received) {
-        CanData dest;
-        dest.Id     = data.Id;
-        dest.Length = data.Length;
-        for (int i = 0; i < data.Length; i++) {
-            dest.Data[i] = data.Data[i];
-        }
-        this->callback_get_received(dest);
-    }
-}
 bool DriverMcp2515::setup_filter()
 {
     bool result = true;
 #if 0
-    this->can->init_Mask(0, 0x52);
-    this->can->init_Mask(1, 0x50);
-    this->can->init_Filt(0, 0x50);
-    this->can->init_Filt(1, 0x51);
+    this->mcp2515->init_Mask(0, 0x52);
+    this->mcp2515->init_Mask(1, 0x50);
+    this->mcp2515->init_Filt(0, 0x50);
+    this->mcp2515->init_Filt(1, 0x51);
 #endif
 #if 0
 #define CAN_ID_PID 0x7DF
     /*
         set mask, set both the mask to 0x3ff
     */
-    this->can->init_Mask(0, 0, 0x7FC);
-    this->can->init_Mask(1, 0, 0x7FC);
+    this->mcp2515->init_Mask(0, 0, 0x7FC);
+    this->mcp2515->init_Mask(1, 0, 0x7FC);
 
     /*
         set filter, we can receive id from 0x04 ~ 0x09
     */
-    this->can->init_Filt(0, 0, 0x7E8);
-    this->can->init_Filt(1, 0, 0x7E8);
+    this->mcp2515->init_Filt(0, 0, 0x7E8);
+    this->mcp2515->init_Filt(1, 0, 0x7E8);
 
-    this->can->init_Filt(2, 0, 0x7E8);
-    this->can->init_Filt(3, 0, 0x7E8);
-    this->can->init_Filt(4, 0, 0x7E8);
-    this->can->init_Filt(5, 0, 0x7E8);
+    this->mcp2515->init_Filt(2, 0, 0x7E8);
+    this->mcp2515->init_Filt(3, 0, 0x7E8);
+    this->mcp2515->init_Filt(4, 0, 0x7E8);
+    this->mcp2515->init_Filt(5, 0, 0x7E8);
 #endif
     return result;
 }

@@ -72,7 +72,8 @@ bool WebCommunicationImpl::setup()
 }
 bool WebCommunicationImpl::save_information(std::string ssid, std::string pass, bool ap_mode, bool reconnecting, bool is_save)
 {
-    bool result = false;
+    bool result      = false;
+    bool force_write = false;
     if (true == reconnecting) {
         this->disconnect();
         if (true == this->connect(ssid, pass, ap_mode)) {
@@ -94,9 +95,11 @@ bool WebCommunicationImpl::save_information(std::string ssid, std::string pass, 
 #endif
                 if (SPIFFS.begin()) {
                     if (true == SPIFFS.exists(SETTING_WIFI_INFOMATION)) {
-                        this->load_information();
+                        this->_load_information();
+                    } else {
+                        force_write = true;
                     }
-                    if ((this->_ssid != ssid) || (this->_pass != pass) || (this->_mode_ap != ap_mode)) {
+                    if ((true == force_write) || (this->_ssid != ssid) || (this->_pass != pass) || (this->_mode_ap != ap_mode)) {
                         File dataFile = SPIFFS.open(SETTING_WIFI_INFOMATION, FILE_WRITE);
                         dataFile.println((true == ap_mode) ? "A" : "S");
                         dataFile.println(ssid.c_str());
@@ -123,6 +126,53 @@ bool WebCommunicationImpl::save_information(std::string ssid, std::string pass, 
     }
     return result;
 }
+bool WebCommunicationImpl::_load_information()
+{
+    bool result        = false;
+    int totalBytes     = 0;
+    int type           = 0;
+    bool previous_type = 0;
+    std::string words;
+    File dataFile = SPIFFS.open(SETTING_WIFI_INFOMATION, FILE_READ);
+    if (!dataFile) {
+        result = false;
+    } else {
+        result     = true;
+        totalBytes = dataFile.size();
+        words.clear();
+        while (dataFile.available()) {
+            String word = dataFile.readStringUntil('\r');
+            String nr   = dataFile.readStringUntil('\n');
+            type++;
+            if (3 < type) {
+                break;
+            }
+            if (previous_type != type) {
+                switch (type) {
+                    case 1:
+                        if (true == word.equals("S")) {
+                            this->_mode_ap = false;
+                        } else {
+                            this->_mode_ap = true;
+                        }
+                        break;
+                    case 2:
+                        this->_ssid = word.c_str();
+                        break;
+                    case 3:
+                        this->_pass = word.c_str();
+                        break;
+
+                    default:
+                        break;
+                }
+                previous_type = type;
+            }
+        }
+        dataFile.close();
+    }
+    return result;
+}
 bool WebCommunicationImpl::load_information()
 {
     bool result = false;
@@ -133,53 +183,8 @@ bool WebCommunicationImpl::load_information()
 #endif
         static int BUF_SIZE   = 255;
         char buffer[BUF_SIZE] = { 0 };
-        int totalBytes        = 0;
-        int ne                = 0;
-        int type              = 0;
-        bool previous_type    = 0;
-        std::string words;
         if (SPIFFS.begin()) {
-            ne            = 1;
-            File dataFile = SPIFFS.open(SETTING_WIFI_INFOMATION, FILE_READ);
-            if (!dataFile) {
-                ne     = 2;
-                result = false;
-            } else {
-                ne         = 3;
-                result     = true;
-                totalBytes = dataFile.size();
-                words.clear();
-                while (dataFile.available()) {
-                    String word = dataFile.readStringUntil('\r');
-                    String nr   = dataFile.readStringUntil('\n');
-                    type++;
-                    if (3 < type) {
-                        break;
-                    }
-                    if (previous_type != type) {
-                        switch (type) {
-                            case 1:
-                                if (true == word.equals("S")) {
-                                    this->_mode_ap = false;
-                                } else {
-                                    this->_mode_ap = true;
-                                }
-                                break;
-                            case 2:
-                                this->_ssid = word.c_str();
-                                break;
-                            case 3:
-                                this->_pass = word.c_str();
-                                break;
-
-                            default:
-                                break;
-                        }
-                        previous_type = type;
-                    }
-                }
-                dataFile.close();
-            }
+            result = this->_load_information();
             SPIFFS.end();
         }
 #if DEBUG_MODE
@@ -331,11 +336,11 @@ WebCommunicationImpl::WebCommunicationImpl() : _open_fs(false)
 {
     if (true == SETTING_WIFI_MODE_AP) {
         this->_mode_ap = true;
-        this->_ssid    = SETTING_WIFI_PASS_AP;
+        this->_ssid    = SETTING_WIFI_SSID_AP;
         this->_pass    = SETTING_WIFI_PASS_AP;
     } else {
         this->_mode_ap = false;
-        this->_ssid    = SETTING_WIFI_PASS_STA;
+        this->_ssid    = SETTING_WIFI_SSID_STA;
         this->_pass    = SETTING_WIFI_PASS_STA;
     }
 }
