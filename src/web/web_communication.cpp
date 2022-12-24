@@ -38,6 +38,17 @@ bool request_ap_mode;
 // function
 /////////////////////////////////////////
 
+inline bool request_connection(void)
+{
+    bool result = false;
+    if (0 != flag_thread_request_connection) {
+        if (flag_thread_request_connection <= millis()) {
+            result = true;
+        }
+    }
+    return result;
+}
+
 /**
  * @brief Registration of connection change information
  *
@@ -46,15 +57,15 @@ bool request_ap_mode;
  */
 inline bool reconnection(void)
 {
-    bool result = true;
-    if (0 != flag_thread_request_connection) {
-        if (flag_thread_request_connection <= millis()) {
-            flag_thread_request_connection = 0;
-            result                         = ctrl_web->save_information(request_ssid, request_pass, request_ap_mode, true, true);
-            request_ssid                   = "";
-            request_pass                   = "";
-        }
+    bool result = false;
+    if (true == request_connection()) {
+        flag_thread_request_connection = 0;
+        (void)ctrl_web->request_connection_info(request_ssid, request_pass, request_ap_mode);
+        request_ssid = "";
+        request_pass = "";
+        result       = true;
     }
+
     return result;
 }
 /**
@@ -78,7 +89,7 @@ void thread_wifi(void *args)
     while (false == flag_thread_wifi_fin) {
         try {
             vTaskDelay(THREAD_SEEK_INTERVAL_WIFI);
-            reconnection();
+            (void)reconnection();
             if (false == ctrl_web->begin()) {
                 sprintf(buffer, "<%s> - NOT setup()", THREAD_NAME_WIFI);
                 if (nullptr != callback_mess) {
@@ -96,11 +107,22 @@ void thread_wifi(void *args)
                 if (nullptr != ctrl_server) {
                     ctrl_server->begin();
                     while (false == flag_thread_wifi_fin) {
-                        ctrl_web->loop();
                         ctrl_server->handleClient();
-                        if (false == reconnection()) {
+                        if (true == request_connection()) {
+#if DEBUG_MODE
+                            sprintf(buffer, "<%s> - Change connection()", THREAD_NAME_WIFI);
+                            if (nullptr != callback_mess) {
+                                callback_mess(false, buffer, true);
+                            }
+#endif
                             break;
                         } else if (true != ctrl_web->is_connected()) {
+#if DEBUG_MODE
+                            sprintf(buffer, "<%s> - Lost connection()", THREAD_NAME_WIFI);
+                            if (nullptr != callback_mess) {
+                                callback_mess(false, buffer, true);
+                            }
+#endif
                             break;
                         }
                         vTaskDelay(THREAD_INTERVAL_WIFI);
@@ -205,7 +227,7 @@ void WebCommunication::handle_network_css()
 void WebCommunication::handle_network_js()
 {
     std::string js
-            = "if(!JS_Network)var JS_Network={timeoutID:null,network_list:Array(),timerInterval:3e3,on_change:function(){null!=JS_Network.timeoutID&&(clearTimeout(JS_Network.timeoutID),JS_Network.timeoutID=null)},reception_message:function(data){null!=data&&'OK'==data.result&&(document.getElementById('article_setting').classList.add('div_hide'),document.getElementById('article_message').classList.remove('div_hide'))},set_network:function(){let mode=!0===document.getElementById('mode_ap').checked?1:0;JS_AJAX.post('/set/network?id='+document.getElementById('network_ssid').value+'&pass='+document.getElementById('network_pass').value+'&ap='+mode).then(ok=>JS_Network.reception_message(ok),error=>console.error(error.status.messages))},select_mode:function(id){JS_Network.on_change();var elem_list=document.getElementById('network_list'),elem_scan=document.getElementById('network_scan');!0===document.getElementById('mode_ap').checked?(elem_list.disabled=!0,elem_scan.classList.add('b_disabled')):(elem_list.disabled=!1,elem_scan.classList.remove('b_disabled'))},select_list:function(id){JS_Network.on_change();for(var set_name='',i=0;i<JS_Network.network_list.length;i++)if(id==JS_Network.network_list[i].index){set_name=JS_Network.network_list[i].name;break}document.getElementById('network_ssid').value=set_name},make_option:function(index,name,power){let opt=document.createElement('option');return opt.value=index,opt.innerHTML=(0<power?'  ['+JS_Network.padding(power,3,'&ensp;')+'%]  ':'')+name,opt},set_list:function(data){if(null!=data&&'OK'==data.result){var elm=document.getElementById('network_list');JS_Network.network_list=[],elm.innerHTML='';for(var i=0;i<data.status.data.length;i++){var item=data.status.data[i];let opt;JS_Network.network_list.push({index:i,name:item.name,power:item.power}),document.createElement('option').value=i,elm.appendChild(JS_Network.make_option(i,item.name,item.power))}text='non-public ...';var opt_public=JS_Network.make_option(JS_Network.network_list.length,JS_Network.padding(text,7+text.length,'&ensp;'),-1);opt_public.style.color='darkgrey',elm.appendChild(opt_public)}},padding:function(value,len,pad){for(var buf=''+value,i=buf.length;i<len;i++)buf=pad+buf;return buf},scan:function(){JS_AJAX.get('/get/net_list').then(ok=>JS_Network.set_list(ok),error=>console.error(error.status.messages))},retry_begin:function(data,time_ms){JS_Network.timeoutID=setTimeout(JS_Network.begin,time_ms)},set_info:function(data){var result=!1;if(null!=data&&'OK'==data.result){var mode='mode_sta';1==data.status.data.ap_mode&&(mode='mode_ap'),document.getElementById(mode).checked=!0,document.getElementById('network_ssid').value=data.status.data.name,JS_Network.select_mode(),JS_Network.scan(),result=!0}!1===result&&JS_Network.retry_begin(data,JS_Network.timerInterval)},begin:function(){JS_Network.on_change(),JS_AJAX.get('/get/network').then(ok=>JS_Network.set_info(ok),error=>JS_Network.retry_begin(error,JS_Network.timerInterval))}};window.onload=function(){JS_Network.begin()};";
+            = "if(!JS_Network)var JS_Network={default_name_ap:'',default_name_sta:'',timeoutID:null,network_list:Array(),timerInterval:3e3,on_change:function(){null!=JS_Network.timeoutID&&(clearTimeout(JS_Network.timeoutID),JS_Network.timeoutID=null)},reception_message:function(data){null!=data&&'OK'==data.result&&(document.getElementById('article_setting').classList.add('div_hide'),document.getElementById('article_message').classList.remove('div_hide'))},set_network:function(){let mode=!0===document.getElementById('mode_ap').checked?1:0;JS_AJAX.post('/set/network?id='+document.getElementById('network_ssid').value+'&pa='+document.getElementById('network_pass').value+'&ap='+mode).then(ok=>JS_Network.reception_message(ok),error=>console.error(error.status.messages))},select_mode:function(sta){JS_Network.on_change();var elem_list=document.getElementById('network_list'),elem_scan=document.getElementById('network_scan'),elem_ssid=document.getElementById('network_ssid');0===sta?(elem_list.disabled=!0,elem_scan.classList.add('b_disabled'),elem_ssid.value=JS_Network.default_name_ap):(elem_list.disabled=!1,elem_scan.classList.remove('b_disabled'),elem_ssid.value=JS_Network.default_name_sta)},select_list:function(id){JS_Network.on_change();for(var set_name='',i=0;i<JS_Network.network_list.length;i++)if(id==JS_Network.network_list[i].index){set_name=JS_Network.network_list[i].name;break}document.getElementById('network_ssid').value=set_name,JS_Network.default_name_sta=set_name},make_option:function(index,name,power){let opt=document.createElement('option');return opt.value=index,opt.innerHTML=(0<power?'  ['+JS_Network.padding(power,3,'&ensp;')+'%]  ':'')+name,opt},set_list:function(data){if(null!=data&&'OK'==data.result){var elm=document.getElementById('network_list');JS_Network.network_list=[],elm.innerHTML='';for(var i=0;i<data.status.data.length;i++){var item=data.status.data[i];let opt;JS_Network.network_list.push({index:i,name:item.name,power:item.power}),document.createElement('option').value=i,elm.appendChild(JS_Network.make_option(i,item.name,item.power))}text='non-public ...';var opt_public=JS_Network.make_option(JS_Network.network_list.length,JS_Network.padding(text,7+text.length,'&ensp;'),-1);opt_public.style.color='darkgrey',elm.appendChild(opt_public)}},padding:function(value,len,pad){for(var buf=''+value,i=buf.length;i<len;i++)buf=pad+buf;return buf},scan:function(){JS_AJAX.get('/get/net_list').then(ok=>JS_Network.set_list(ok),error=>console.error(error.status.messages))},retry_begin:function(data,time_ms){JS_Network.timeoutID=setTimeout(JS_Network.begin,time_ms)},set_info:function(data){var result=!1;if(null!=data&&'OK'==data.result){var mode='mode_sta';1==data.status.data.ap_mode&&(mode='mode_ap'),document.getElementById(mode).checked=!0,JS_Network.default_name_ap=data.status.data.default,JS_Network.default_name_sta=data.status.data.name,document.getElementById('network_ssid').value=data.status.data.name,JS_Network.select_mode(),JS_Network.scan(),result=!0}!1===result&&JS_Network.retry_begin(data,JS_Network.timerInterval)},begin:function(){JS_Network.on_change(),JS_AJAX.get('/get/network').then(ok=>JS_Network.set_info(ok),error=>JS_Network.retry_begin(error,JS_Network.timerInterval))}};window.onload=function(){JS_Network.begin()};";
 
     this->get_server()->sendHeader("Location", String("http://") + this->get_ip().toString(), true);
     this->get_server()->sendHeader("Cache-Control", "no-cache, no-store, must-revalidate");
@@ -268,20 +290,24 @@ void WebCommunication::set_network()
     bool mode_ap = false;
 
     std::string json = "{";
-    if (this->get_server()->args() > 0) {
-        if (this->get_server()->hasArg("ap")) {
-            int value = this->to_int(this->get_server()->arg("ap"));
-            if (value == 1) {
-                mode_ap = true;
-            }
-            if (this->get_server()->hasArg("id")) {
-                ssid = this->to_int(this->get_server()->arg("id"));
-                if (this->get_server()->hasArg("pa")) {
-                    pass   = this->get_server()->arg("pa");
-                    result = true;
+    try {
+        if (this->get_server()->args() > 0) {
+            if (this->get_server()->hasArg("ap")) {
+                int value = this->to_int(this->get_server()->arg("ap"));
+                if (value == 1) {
+                    mode_ap = true;
+                }
+                if (this->get_server()->hasArg("id")) {
+                    ssid = this->get_server()->arg("id");
+                    if (this->get_server()->hasArg("pa")) {
+                        pass   = this->get_server()->arg("pa");
+                        result = true;
+                    }
                 }
             }
         }
+    } catch (...) {
+        result = false;
     }
     if (true == result) {
         json.append("\"result\":\"OK\"");
@@ -299,21 +325,22 @@ void WebCommunication::set_network()
     this->get_server()->send(200, "application/json", json.c_str());
 
     if (true == result) {
-        this->request_reconnect(ssid.c_str(), pass.c_str(), mode_ap);
+        this->request_reconnect(ssid.c_str(), pass.c_str(), mode_ap, false);
     }
 }
 void WebCommunication::get_network()
 {
     bool result      = false;
     bool ap_mode     = ctrl_web->is_ap_mode();
-    std::string ssid = ctrl_web->get_ssid();
     std::string json = "{";
     json.append("\"result\":\"OK\"");
     json.append(",\"status\":{\"num\": 200, \"messages\": \"\"");
 
     json.append(", \"data\":{");
-    json.append("\"name\": \"");
-    json.append(ssid);
+    json.append("\"default\": \"");
+    json.append(ctrl_web->get_ssid_ap_default());
+    json.append("\", \"name\": \"");
+    json.append(ctrl_web->get_ssid());
     json.append("\", \"ap_mode\":");
     json.append((true == ap_mode) ? "1" : "0");
     json.append("}");
@@ -478,10 +505,6 @@ bool WebCommunication::begin()
     return result;
 }
 
-bool WebCommunication::set_wifi_info(std::string ssid, std::string pass, bool ap_mode)
-{
-    return ctrl_web->save_information(ssid, pass, ap_mode, true, true);
-}
 void WebCommunication::set_message(std::string message)
 {
     this->_message = message;
@@ -494,9 +517,9 @@ std::vector<NetworkList> get_wifi_list()
     copy(list.begin(), list.end(), back_inserter(result_data));
     return result_data;
 }
-void WebCommunication::request_reconnect(std::string ssid, std::string pass, bool ap_mode)
+void WebCommunication::request_reconnect(std::string ssid, std::string pass, bool ap_mode, bool force)
 {
-    flag_thread_request_connection = millis() + THREAD_RECONNECTION_INTERVAL_WIFI;
+    flag_thread_request_connection = millis() + ((true == force) ? -1 : THREAD_RECONNECTION_INTERVAL_WIFI);
     request_ssid                   = ssid;
     request_pass                   = pass;
     request_ap_mode                = ap_mode;

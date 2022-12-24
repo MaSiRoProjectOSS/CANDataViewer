@@ -28,7 +28,7 @@ public:
     bool set_callback_changed_mode(ChangedModeFunction callback);
     bool set_callback_received(GetReceivedFunction callback);
     bool set_callback_setting_default(SettingDefaultFunction callback);
-    bool set_wifi_info(std::string ssid, std::string pass, bool ap_mode);
+    void set_wifi_info(std::string ssid, std::string pass, bool ap_mode);
     bool begin(std::string ssid = "", std::string pass = "", bool ap_mode = true);
 
 public:

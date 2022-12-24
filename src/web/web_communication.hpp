@@ -28,9 +28,9 @@ public:
     bool setup();
     bool begin();
     bool set_callback_message(MessageFunction callback);
-    bool set_wifi_info(std::string ssid, std::string pass, bool ap_mode);
     void set_message(std::string message);
     std::vector<NetworkList> get_wifi_list();
+    void request_reconnect(std::string ssid, std::string pass, bool ap_mode, bool force);
 
 protected:
     IPAddress get_ip();
@@ -47,7 +47,6 @@ protected:
     void get_net_list();
 
 protected:
-    void request_reconnect(std::string ssid, std::string pass, bool ap_mode);
     void happened_message(bool is_error, const char *message);
     String ip_to_string(IPAddress ip);
     byte to_byte(String data);

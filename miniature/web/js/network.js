@@ -1,5 +1,7 @@
 if (!JS_Network) {
     var JS_Network = {
+        default_name_ap: "",
+        default_name_sta: "",
         timeoutID: null,
         network_list: Array(),
         timerInterval: 3000,
@@ -21,24 +23,27 @@ if (!JS_Network) {
             let mode = (true === document.getElementById("mode_ap").checked) ? 1 : 0;
             JS_AJAX.post("/set/network?id=" +
                 document.getElementById("network_ssid").value
-                + "&pass=" +
+                + "&pa=" +
                 document.getElementById("network_pass").value
                 + "&ap=" + mode).then(
                     ok => JS_Network.reception_message(ok)
                     , error => console.error(error.status.messages)
                 );
         },
-        select_mode: function (id) {
+        select_mode: function (sta) {
             JS_Network.on_change();
             var elem_list = document.getElementById("network_list");
             var elem_scan = document.getElementById("network_scan");
+            var elem_ssid = document.getElementById("network_ssid");
 
-            if (true === document.getElementById("mode_ap").checked) {
+            if (0 === sta) {
                 elem_list.disabled = true;
                 elem_scan.classList.add("b_disabled");
+                elem_ssid.value = JS_Network.default_name_ap;
             } else {
                 elem_list.disabled = false;
                 elem_scan.classList.remove("b_disabled");
+                elem_ssid.value = JS_Network.default_name_sta;
             }
         },
         select_list: function (id) {
@@ -51,6 +56,7 @@ if (!JS_Network) {
                 }
             }
             document.getElementById("network_ssid").value = set_name;
+            JS_Network.default_name_sta = set_name;
         },
         make_option: function (index, name, power) {
             let opt = document.createElement("option");
@@ -103,6 +109,8 @@ if (!JS_Network) {
                         mode = "mode_ap";
                     }
                     document.getElementById(mode).checked = true;
+                    JS_Network.default_name_ap = data.status.data.default;
+                    JS_Network.default_name_sta = data.status.data.name;
                     document.getElementById("network_ssid").value = data.status.data.name;
                     JS_Network.select_mode();
                     JS_Network.scan();

@@ -34,28 +34,36 @@ public:
     bool connect(std::string ssid, std::string pass, bool ap_mode);
     bool is_connected(bool force = false);
     bool disconnect();
-    bool loop();
 
 public:
     bool is_ap_mode();
     IPAddress get_ip();
     const char *get_ssid();
-    bool save_information(std::string ssid, std::string pass, bool ap_mode, bool reconnecting, bool is_save);
+    const char *get_ssid_ap_default();
+    void request_connection_info(std::string ssid, std::string pass, bool ap_mode);
+
     bool set_callback_message(MessageFunction callback);
 
     std::vector<NetworkList> get_wifi_list();
 
-private:
-    MessageFunction callback_message;
-    void happened_message(bool is_error, const char *message);
-    bool reconnect();
-    bool load_information();
-    int get_rssi_as_quality(int rssi);
+    bool check_connection();
 
 private:
-    bool _load_information();
-    bool _open_fs = false;
-    bool _mode_ap = SETTING_WIFI_MODE_AP;
+    void happened_message(bool is_error, const char *message);
+    bool _save_information(std::string ssid, std::string pass, bool ap_mode);
+    MessageFunction callback_message;
+    bool load_information();
+    int _get_rssi_as_quality(int rssi);
+    bool _load_information_for_spiffs();
+
+private:
+    bool _running = false;
+
+    bool _open_fs         = false;
+    bool _mode_ap         = SETTING_WIFI_MODE_AP;
+    bool _mode_ap_current = SETTING_WIFI_MODE_AP;
+
+    std::string _ssid_ap = SETTING_WIFI_SSID_AP;
 
     /**
      * @brief AP SSID
