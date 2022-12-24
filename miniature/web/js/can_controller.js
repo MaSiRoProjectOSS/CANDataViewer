@@ -66,16 +66,20 @@ if (!JS_CCtrl) {
             );
         },
         make: function (data) {
-            JS_CCtrl.can_data = data;
-            JS_Table.add_table(data.resume, 'send_one_shot', 'send_one_shot_size', 0);
-            JS_Table.add_table(data.send, 'send_loop', 'send_loop_size', 1);
-            JS_Table.add_table(data.received, 'received_table', 'received_size', 2);
-            let txt_mode = document.getElementById("can_mode");
-            if (txt_mode.innerHTML != data.status.mode) { txt_mode.innerHTML = data.status.mode; }
-            let txt_time = document.getElementById("current_time");
-            if (0 != data.time) {
-                txt_time.innerHTML = (Number(data.time) / 1000).toFixed(3);
-            } else { txt_time.innerHTML = "--"; }
+            if (null != data) {
+                if ("OK" == data.result) {
+                    JS_CCtrl.can_data = data;
+                    JS_Table.add_table(data.resume, 'send_one_shot', 'send_one_shot_size', 0);
+                    JS_Table.add_table(data.send, 'send_loop', 'send_loop_size', 1);
+                    JS_Table.add_table(data.received, 'received_table', 'received_size', 2);
+                    let txt_mode = document.getElementById("can_mode");
+                    if (txt_mode.innerHTML != data.status.mode) { txt_mode.innerHTML = data.status.mode; }
+                    let txt_time = document.getElementById("current_time");
+                    if (0 != data.time) {
+                        txt_time.innerHTML = (Number(data.time) / 1000).toFixed(3);
+                    } else { txt_time.innerHTML = "--"; }
+                }
+            }
         },
         interval: function () {
             JS_AJAX.get('/get/can_data').then(

@@ -16,6 +16,58 @@
 MaSiRoProject::WEB::ControllerPage ctrl_page;
 MaSiRoProject::CAN::CanCommunication ctrl_can;
 
+////////////////////////////////////////////////
+// setup function
+////////////////////////////////////////////////
+
+bool CanDataViewer::set_callback_message(MessageFunction callback)
+{
+    bool result = true;
+    ctrl_page.set_callback_message(callback);
+    ctrl_can.set_callback_message(callback);
+    return result;
+}
+bool CanDataViewer::set_callback_changed_mode(ChangedModeFunction callback)
+{
+    bool result = true;
+    ctrl_can.set_callback_changed_mode(callback);
+    return result;
+}
+
+bool CanDataViewer::set_callback_received(GetReceivedFunction callback)
+{
+    bool result = true;
+    ctrl_can.set_callback_received(callback);
+    return result;
+}
+
+bool CanDataViewer::set_callback_setting_default(SettingDefaultFunction callback)
+{
+    bool result = true;
+    ctrl_can.set_callback_setting_default(callback);
+    return result;
+}
+void CanDataViewer::set_wifi_info(std::string ssid, std::string pass, bool ap_mode)
+{
+    ctrl_page.request_reconnect(ssid, pass, ap_mode, false);
+}
+void CanDataViewer::set_config_address_ap(IPAddress ip, IPAddress gateway, IPAddress subnet)
+{
+    ctrl_page.set_config_address_ap(ip, gateway, subnet);
+}
+void CanDataViewer::set_config_address_sta(IPAddress ip, IPAddress gateway, IPAddress subnet)
+{
+    ctrl_page.set_config_address_sta(ip, gateway, subnet);
+}
+////////////////////////////////////////////////
+// control function
+////////////////////////////////////////////////
+
+bool CanDataViewer::set_mode(CAN_CTRL_STATE mode)
+{
+    return ctrl_can.change_mode(mode);
+}
+
 std::vector<CanData> can_data_request_send(void)
 {
     return ctrl_can.get_send_loop();
@@ -86,41 +138,6 @@ bool can_data_delete(int id)
     ctrl_can.request_running();
     return result;
 }
-bool CanDataViewer::set_mode(CAN_CTRL_STATE mode)
-{
-    return ctrl_can.change_mode(mode);
-}
-bool CanDataViewer::set_callback_message(MessageFunction callback)
-{
-    bool result = true;
-    ctrl_page.set_callback_message(callback);
-    ctrl_can.set_callback_message(callback);
-    return result;
-}
-bool CanDataViewer::set_callback_changed_mode(ChangedModeFunction callback)
-{
-    bool result = true;
-    ctrl_can.set_callback_changed_mode(callback);
-    return result;
-}
-
-bool CanDataViewer::set_callback_received(GetReceivedFunction callback)
-{
-    bool result = true;
-    ctrl_can.set_callback_received(callback);
-    return result;
-}
-
-bool CanDataViewer::set_callback_setting_default(SettingDefaultFunction callback)
-{
-    bool result = true;
-    ctrl_can.set_callback_setting_default(callback);
-    return result;
-}
-void CanDataViewer::set_wifi_info(std::string ssid, std::string pass, bool ap_mode)
-{
-    ctrl_page.request_reconnect(ssid, pass, ap_mode, false);
-}
 bool CanDataViewer::clear_resume(void)
 {
     return ctrl_can.clear_resume();
@@ -146,6 +163,9 @@ bool CanDataViewer::clear_loop_shot(void)
     return ctrl_can.clear_loop_shot();
 }
 
+////////////////////////////////////////////////
+// debug function
+////////////////////////////////////////////////
 #if DEBUG_MODE
 UBaseType_t CanDataViewer::get_stack_high_water_mark_can()
 {
@@ -164,6 +184,10 @@ UBaseType_t CanDataViewer::get_stack_size_server()
     return ctrl_page.get_stack_size();
 }
 #endif
+
+////////////////////////////////////////////////
+// standard function
+////////////////////////////////////////////////
 
 CanDataViewer::CanDataViewer()
 {

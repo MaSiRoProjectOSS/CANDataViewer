@@ -37,3 +37,9 @@ input {
 .td_type {
     width: 6em;
 }
+
+.article_header {
+    text-align: right;
+    font-size: 1.2rem;
+    line-height: 2.4rem;
+}

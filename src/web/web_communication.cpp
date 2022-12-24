@@ -176,7 +176,8 @@ bool WebCommunication::setup()
 void WebCommunication::handle_favicon_ico()
 {
     std::string image_data =
-            //"data:image/x-icon;base64,"
+            //"data:image/x-icon;"
+            "base64,"
             "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";
 
     this->get_server()->sendHeader("Location", String("http://") + this->get_ip().toString(), true);
@@ -249,14 +250,16 @@ void WebCommunication::handle_network_html()
     html.append("</head><body>");
     ///////////////////////////
     html.append("<h1>Network Mode</h1>");
+    html.append("<article><div class='article_header'><a href='/' target='_self'>TOP</a></div></article>");
     html.append("<article id='article_message' class='div_hide'><p>");
     html.append(this->_message);
     html.append("</p></article>");
     html.append("<article id='article_setting'>");
     html.append("<div id='network_mode_selector'>");
-    html.append("<input type='radio' id='mode_ap' name='network_mode' value='AP mode' onclick='JS_Network.select_mode(0);'><label for='mode_ap'>Access Point mode</label><br />");
     html.append(
-            "<input type='radio' id='mode_sta' name='network_mode' value='STA mode' onclick='JS_Network.select_mode(1);'><label for='mode_sta'>&ensp;&ensp;Station mode&ensp;&ensp;&ensp;</label>");
+            "<input type='radio' id='mode_ap' name='network_mode' value='AP mode' onclick='JS_Network.select_mode(0);'><label for='mode_ap'>&ensp;Access Point mode</label><br />");
+    html.append(
+            "<input type='radio' id='mode_sta' name='network_mode' value='STA mode' onclick='JS_Network.select_mode(1);'><label for='mode_sta'>&ensp;&ensp;&ensp;Station mode&ensp;&ensp;&ensp;</label>");
     html.append("</div>");
 
     html.append("<div id='network_area'>");
@@ -523,6 +526,14 @@ void WebCommunication::request_reconnect(std::string ssid, std::string pass, boo
     request_ssid                   = ssid;
     request_pass                   = pass;
     request_ap_mode                = ap_mode;
+}
+void WebCommunication::set_config_address_ap(IPAddress ip, IPAddress gateway, IPAddress subnet)
+{
+    ctrl_web->set_config_address_ap(ip, gateway, subnet);
+}
+void WebCommunication::set_config_address_sta(IPAddress ip, IPAddress gateway, IPAddress subnet)
+{
+    ctrl_web->set_config_address_sta(ip, gateway, subnet);
 }
 #pragma endregion
 

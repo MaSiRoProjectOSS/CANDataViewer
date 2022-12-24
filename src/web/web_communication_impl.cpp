@@ -256,6 +256,20 @@ std::vector<NetworkList> WebCommunicationImpl::get_wifi_list()
     }
     return list;
 }
+void WebCommunicationImpl::set_config_address_ap(IPAddress ip, IPAddress gateway, IPAddress subnet)
+{
+    this->_config_ap.flag_set = true;
+    this->_config_ap.local_ip = ip;
+    this->_config_ap.gateway  = gateway;
+    this->_config_ap.subnet   = subnet;
+}
+void WebCommunicationImpl::set_config_address_sta(IPAddress ip, IPAddress gateway, IPAddress subnet)
+{
+    this->_config_sta.flag_set = true;
+    this->_config_sta.local_ip = ip;
+    this->_config_sta.gateway  = gateway;
+    this->_config_sta.subnet   = subnet;
+}
 
 bool WebCommunicationImpl::is_connected(bool force)
 {
@@ -348,14 +362,24 @@ bool WebCommunicationImpl::begin()
 bool WebCommunicationImpl::connect(std::string ssid, std::string pass, bool ap_mode)
 {
     char buffer[255];
-    bool result = false;
+    bool result = true;
     ///////////////////////////
     (void)this->disconnect();
     if (true == ap_mode) {
-        result = WiFi.softAP(ssid.c_str(), pass.c_str());
+        if (true == this->_config_ap.flag_set) {
+            result = WiFi.softAPConfig(this->_config_ap.local_ip, this->_config_ap.gateway, this->_config_ap.subnet);
+        }
+        if (true == result) {
+            result = WiFi.softAP(ssid.c_str(), pass.c_str());
+        }
     } else {
-        WiFi.begin(ssid.c_str(), pass.c_str());
-        result = check_connection();
+        if (true == this->_config_sta.flag_set) {
+            result = WiFi.config(this->_config_sta.local_ip, this->_config_sta.gateway, this->_config_sta.subnet);
+        }
+        if (true == result) {
+            WiFi.begin(ssid.c_str(), pass.c_str());
+            result = check_connection();
+        }
     }
     if (true == result) {
         this->_running = true;

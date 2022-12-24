@@ -75,6 +75,18 @@ private:
      *
      */
     std::string _pass = SETTING_WIFI_PASS_AP;
+    class config_address {
+    public:
+        IPAddress local_ip = INADDR_NONE;
+        IPAddress gateway  = INADDR_NONE;
+        IPAddress subnet   = INADDR_NONE;
+        bool flag_set      = false;
+    };
+    config_address _config_ap;
+    config_address _config_sta;
+
+    void set_config_address_ap(IPAddress ip = INADDR_NONE, IPAddress gateway = INADDR_NONE, IPAddress subnet = INADDR_NONE);
+    void set_config_address_sta(IPAddress ip = INADDR_NONE, IPAddress gateway = INADDR_NONE, IPAddress subnet = INADDR_NONE);
 };
 
 } // namespace WEB

@@ -4,24 +4,27 @@
 <head>
     <meta charset='UTF-8'>
     <meta name='viewport' content='width=device-width, initial-scale=1.0'>
-    <link href='/style.css' rel='stylesheet' type='text/css' media='all'>
-    <link href='/network.css' rel='stylesheet' type='text/css' media='all'>
-    <script type='text/javascript' src='/network.js'></script>
-    <script type='text/javascript' src='/ajax.js'></script>
+    <link href='../css/style.css' rel='stylesheet' type='text/css' media='all'>
+    <link href='../css/network.css' rel='stylesheet' type='text/css' media='all'>
+    <script type='text/javascript' src='../js/network.js'></script>
+    <script type='text/javascript' src='../js/test/ajax.js'></script>
     <title>Network mode - ' SETTING_SYSTEM_NAME '</title>
 </head>
 
 <body>
     <h1>Network Mode</h1>
+    <article>
+        <div class="article_header"><a href='/' target='_self'>TOP</a></div>
+    </article>
     <article id='article_message' class='div_hide'>
         <p>The system was reconfigured.<br />Please change the network connection.</p>
     </article>
     <article id='article_setting'>
         <div id='network_mode_selector'>
             <input type='radio' id='mode_ap' name='network_mode' value='AP mode' onclick='JS_Network.select_mode(0);'>
-            <label for='mode_ap'>Access Point mode</label><br />
+            <label for='mode_ap'>&ensp;Access Point mode</label><br />
             <input type='radio' id='mode_sta' name='network_mode' value='STA mode' onclick='JS_Network.select_mode(1);'>
-            <label for='mode_sta'>Station mode</label>
+            <label for='mode_sta'>&ensp;&ensp;&ensp;Station mode&ensp;&ensp;&ensp;</label>
         </div>
         <div id='network_area'>
             <label> LIST : <br /><select id='network_list' name='network_list' class='network_article' onchange='JS_Network.select_list(value);'>
