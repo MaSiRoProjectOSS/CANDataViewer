@@ -121,7 +121,6 @@ bool CanDataViewer::set_wifi_info(std::string ssid, std::string pass, bool ap_mo
 {
     return ctrl_page.set_wifi_info(ssid, pass, ap_mode);
 }
-
 bool CanDataViewer::clear_resume(void)
 {
     return ctrl_can.clear_resume();

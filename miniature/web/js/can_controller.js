@@ -11,7 +11,7 @@ if (!JS_CCtrl) {
                 + '&d0=' + data0 + '&d1=' + data1 + '&d2=' + data2 + '&d3=' + data3
                 + '&d4=' + data4 + '&d5=' + data5 + '&d6=' + data6 + '&d7=' + data7).then(
                     ok => JS_CCtrl.none(ok)
-                    , error => console.log(error.status.messages)
+                    , error => console.error(error.status.messages)
                 );
         },
         send: function () {
@@ -44,19 +44,19 @@ if (!JS_CCtrl) {
         clear: function (table_type) {
             JS_AJAX.get('/set/clear').then(
                 ok => JS_CCtrl.none(ok)
-                , error => console.log(error.status.messages)
+                , error => console.error(error.status.messages)
             );
         },
         default: function (table_type) {
             JS_AJAX.get('/set/default').then(
                 ok => JS_CCtrl.none(ok)
-                , error => console.log(error.status.messages)
+                , error => console.error(error.status.messages)
             );
         },
         delete_row: function (table_type, id) {
             JS_AJAX.get('/set/delete?id=' + id).then(
                 ok => JS_CCtrl.none(ok)
-                , error => console.log(error.status.messages)
+                , error => console.error(error.status.messages)
             );
         },
         change_mode: function () {
@@ -80,7 +80,7 @@ if (!JS_CCtrl) {
         interval: function () {
             JS_AJAX.get('/get/can_data').then(
                 ok => JS_CCtrl.make(ok)
-                , error => console.log(error.status.messages)
+                , error => console.error(error.status.messages)
             );
         }
     }

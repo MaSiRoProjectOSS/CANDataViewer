@@ -15,6 +15,7 @@
 #include "can_data_viewer_info.hpp"
 
 #include <WiFi.h>
+#include <vector>
 
 namespace MaSiRoProject
 {
@@ -42,11 +43,14 @@ public:
     bool save_information(std::string ssid, std::string pass, bool ap_mode, bool reconnecting, bool is_save);
     bool set_callback_message(MessageFunction callback);
 
+    std::vector<NetworkList> get_wifi_list();
+
 private:
     MessageFunction callback_message;
     void happened_message(bool is_error, const char *message);
     bool reconnect();
     bool load_information();
+    int get_rssi_as_quality(int rssi);
 
 private:
     bool _load_information();

@@ -39,7 +39,7 @@ if (!JS_AJAX) {
                         result: 'NG', status: { num: 404, messages: 'Not found' }
                     });
                 }
-                request.timeout = 3000;
+                request.timeout = 10000;
                 request.open(method, url, true);
                 request.send(null);
             })

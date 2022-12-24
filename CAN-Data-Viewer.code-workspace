@@ -78,9 +78,9 @@
 			"**/.pio": true,
 			"**/Doxyfile": true
 		},
-		"es6-css-minify.cssMapSource": "/miniature/web/min",
-		"es6-css-minify.jsMinPath": "/miniature/web/min",
-		"es6-css-minify.cssMinPath": "/miniature/web/min",
-		"es6-css-minify.jsMapSource": "/miniature/web/min"
+		"es6-css-minify.cssMapSource": "/miniature/web/min/css",
+		"es6-css-minify.cssMinPath": "/miniature/web/min/css",
+		"es6-css-minify.jsMinPath": "/miniature/web/min/js",
+		"es6-css-minify.jsMapSource": "/miniature/web/min/js"
 	}
 }

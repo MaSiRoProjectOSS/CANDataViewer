@@ -29,6 +29,8 @@ public:
     bool begin();
     bool set_callback_message(MessageFunction callback);
     bool set_wifi_info(std::string ssid, std::string pass, bool ap_mode);
+    void set_message(std::string message);
+    std::vector<NetworkList> get_wifi_list();
 
 protected:
     IPAddress get_ip();
@@ -38,11 +40,15 @@ protected:
     void handle_network_css();
     void handle_network_js();
     void handle_network_html();
+    void handle_favicon_ico();
+    void handle_js_ajax();
+    void set_network();
+    void get_network();
+    void get_net_list();
 
 protected:
     void request_reconnect(std::string ssid, std::string pass, bool ap_mode);
     void happened_message(bool is_error, const char *message);
-    void set_network();
     String ip_to_string(IPAddress ip);
     byte to_byte(String data);
     int to_int(String data);
@@ -59,7 +65,11 @@ private:
     MessageFunction callback_message;
     TaskHandle_t task_handle;
     UBaseType_t task_assigned_size;
+    std::string _message = "The system was reconfigured."
+                           "<br />"
+                           "Please change the network connection.";
 };
+
 } // namespace WEB
 } // namespace MaSiRoProject
 #endif

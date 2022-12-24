@@ -217,6 +217,49 @@ const char *WebCommunicationImpl::get_ssid()
     return this->_ssid.c_str();
 }
 
+int WebCommunicationImpl::get_rssi_as_quality(int rssi)
+{
+    int quality = 0;
+
+    if (rssi <= -100) {
+        quality = 0;
+    } else if (rssi >= -50) {
+        quality = 100;
+    } else {
+        quality = 2 * (rssi + 100);
+    }
+    return quality;
+}
+
+std::vector<NetworkList> WebCommunicationImpl::get_wifi_list()
+{
+    std::vector<NetworkList> list;
+    int num = WiFi.scanNetworks();
+#if DEBUG_MODE
+    this->happened_message(false, "Scan done");
+#endif
+    if (num == 0) {
+#if DEBUG_MODE
+        this->happened_message(false, "No networks found");
+#endif
+    } else {
+        for (int i = 0; i < num; i++) {
+            NetworkList item;
+            String name = WiFi.SSID(i);
+
+            if (0 != name.length()) {
+                item.name       = name;
+                item.encryption = WiFi.encryptionType(i);
+                item.rssi       = WiFi.RSSI(i);
+                item.rssi       = this->get_rssi_as_quality(item.rssi);
+                list.push_back(item);
+            }
+        }
+        std::sort(list.begin(), list.end(), NetworkList::compar_rssi);
+    }
+    return list;
+}
+
 bool WebCommunicationImpl::is_connected(bool force)
 {
     static unsigned long next_time = 0;
