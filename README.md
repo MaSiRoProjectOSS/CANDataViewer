@@ -31,9 +31,9 @@ The following features are provided so that the target unit can be operated in a
 title "MODE STATE"
 
 state Active {
-  READY : bool send_for_ready(CAN::CanData *data)
-  RUNNING : bool send_for_running(CAN::CanData *data)
-  STOPPING : bool send_for_stopping(CAN::CanData *data)
+  READY : bool send_for_ready(CanData *data)
+  RUNNING : bool send_for_running(CanData *data)
+  STOPPING : bool send_for_stopping(CanData *data)
   INACTIVE : --
   ABORT : --
   PAUSE : --
