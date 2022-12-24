@@ -12,34 +12,55 @@
 #define MASIRO_PROJECT_CAN_DATA_VIEWER_HPP
 
 #include "can_data_viewer_info.hpp"
-//////////////////////////////////////
-#include "can/can_communication.hpp"
-#include "web/controller_page.hpp"
 
+#include <WebServer.h>
 #if STORAGE_SPI_FS
 #include <SPIFFS.h>
 #endif
 
 class CanDataViewer {
+    ////////////////////////////////////////////////
+    // standard function
+    ////////////////////////////////////////////////
 public:
     CanDataViewer();
     ~CanDataViewer();
+    bool begin(std::string ssid = "", std::string pass = "", bool ap_mode = true);
 
+    ////////////////////////////////////////////////
+    // setup function
+    ////////////////////////////////////////////////
 public:
     bool set_callback_message(MessageFunction callback);
     bool set_callback_changed_mode(ChangedModeFunction callback);
     bool set_callback_received(GetReceivedFunction callback);
     bool set_callback_setting_default(SettingDefaultFunction callback);
-    bool set_wifi_info(std::string ssid, std::string pass, bool ap_mode);
-    bool begin(std::string ssid = "", std::string pass = "", bool ap_mode = true);
 
+    void set_wifi_info(std::string ssid, std::string pass, bool ap_mode);
+    void set_config_address_ap(IPAddress ip = INADDR_NONE, IPAddress gateway = INADDR_NONE, IPAddress subnet = INADDR_NONE);
+    void set_config_address_sta(IPAddress ip = INADDR_NONE, IPAddress gateway = INADDR_NONE, IPAddress subnet = INADDR_NONE);
+
+    ////////////////////////////////////////////////
+    // control function
+    ////////////////////////////////////////////////
 public:
-    bool set_mode(CAN_CTRL_STATE mode);
-    bool add_one_shot(CanData data);
+    bool set_mode(CAN_CTRL_STATE mode = CAN_CTRL_STATE::MODE_UNKNOW);
     bool clear_resume(void);
-    bool set_resume(CanData data);
-    bool add_loop_shot(CanData data, int interval);
     bool clear_loop_shot(void);
+    bool add_one_shot(CanData data);
+    bool add_loop_shot(CanData data, int interval);
+    bool add_resume(CanData data);
+
+    ////////////////////////////////////////////////
+    // debug function
+    ////////////////////////////////////////////////
+#if DEBUG_MODE
+public:
+    UBaseType_t get_stack_high_water_mark_can();
+    UBaseType_t get_stack_high_water_mark_server();
+    UBaseType_t get_stack_size_can();
+    UBaseType_t get_stack_size_server();
+#endif
 };
 
 #endif

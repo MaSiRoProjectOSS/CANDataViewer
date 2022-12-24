@@ -12,12 +12,7 @@
 #define MASIRO_PROJECT_TOY_BOX_CAN_COMMUNICATION_IMPL_HPP
 
 #include "can_data_viewer_info.hpp"
-
-#if LIB_ESP32CAN
-#include "driver/driver_esp32can.hpp"
-#else
-#include "driver/driver_mcp2515.hpp"
-#endif
+#include "driver/driver_can_abstract.hpp"
 
 #include <SPI.h>
 #include <vector>
@@ -61,12 +56,6 @@ private:
     SendEventFunction callback_sendable;
 
     /////////////////////////////////
-    // Receive
-    /////////////////////////////////
-public:
-    bool interrupt();
-
-    /////////////////////////////////
     // Request
     /////////////////////////////////
 public:
@@ -79,6 +68,12 @@ public:
 
 private:
     void request_sleep();
+
+    /////////////////////////////////
+    // Receive
+    /////////////////////////////////
+public:
+    bool interrupt();
 
     /////////////////////////////////
     // Send
@@ -106,7 +101,7 @@ private:
     std::vector<CanData> send_loop_list;
     std::vector<CanData> received_list;
     std::vector<CanData> send_resume;
-    bool set_resume(CanData data);
+    bool add_resume(CanData data);
 
     /////////////////////////////////
     // Happened
@@ -115,17 +110,14 @@ private:
     void happened_changed_mode(CAN_CTRL_STATE mode);
     void happened_message(bool is_error, const char *message);
     void happened_received(CanData data);
-    CanDeviceInfo device_info;
 
     /////////////////////////////////
     // member
     /////////////////////////////////
 private:
-#if LIB_ESP32CAN
-    DriverEsp32can *can;
-#else
-    DriverMcp2515 *can;
-#endif
+    DriverCanAbstract *can;
+    CanDeviceInfo device_info;
+
     CAN_CTRL_STATE mode_current;
     CAN_CTRL_STATE mode_request;
     bool flag_request_pause = false;

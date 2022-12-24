@@ -11,66 +11,49 @@
 #ifndef MASIRO_PROJECT_TOY_BOX_CAN_DRIVER_MCP2515_HPP
 #define MASIRO_PROJECT_TOY_BOX_CAN_DRIVER_MCP2515_HPP
 
-#include "can/can_config.h"
-#if !LIB_ESP32CAN
-#include "can_data_viewer_info.hpp"
-
-#include <Arduino.h>
-#include <mcp_can.h>
+#include "../driver_can_abstract.hpp"
+#include "driver_mcp2515_config.hpp"
 
 namespace MaSiRoProject
 {
 namespace CAN
 {
-class DriverMcp2515 {
+class DriverMcp2515 : public DriverCanAbstract {
+public:
     /////////////////////////////////
     // setup function
     /////////////////////////////////
-public:
-    bool setup_can(byte mode, byte speed, byte clock);
-    bool begin();
-    bool output_error();
-    CanDeviceInfo get_device_info();
-
+    bool begin() override;
     /////////////////////////////////
     // communication function
     /////////////////////////////////
-public:
-    bool interrupt();
-    bool send(CanData data);
-
+    bool send(CanData data) override;
+    bool interrupt() override;
     /////////////////////////////////
-    // set callback
+    // information function
     /////////////////////////////////
-public:
-    bool set_callback_message(MessageFunction callback);
-    bool set_callback_get_received(GetReceivedFunction callback);
+    bool output_error() override;
 
+public:
     /////////////////////////////////
     // Constructor
     /////////////////////////////////
-public:
     DriverMcp2515();
     ~DriverMcp2515();
 
+private:
     /////////////////////////////////
     // private function
     /////////////////////////////////
-private:
-    void happened_message(bool is_error, const char *message);
-    void happened_received(CanData data);
+    bool setup_can(byte mode, byte speed, byte clock);
     bool setup_filter();
 
 private:
-    MessageFunction callback_message;
-    GetReceivedFunction callback_get_received;
-    MCP_CAN *can;
+    MCP_CAN *mcp2515;
     byte can_mode  = CAN_COMMUNICATION_MCP2515_MODE;
     byte can_speed = CAN_COMMUNICATION_MCP2515_SPEED;
     byte can_clock = CAN_COMMUNICATION_MCP2515_CLOCK;
-    CanDeviceInfo device_info;
 };
 } // namespace CAN
 } // namespace MaSiRoProject
-#endif
 #endif

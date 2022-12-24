@@ -66,19 +66,14 @@ private:
     void set_delete();
 
 private:
-    String handle_page(const char *body);
-    std::string page();
+    std::string page_html(const std::string body);
+    std::string page_body();
     void handle_root();
     void handle_css();
-    void handle_js_ajax();
     void handle_js_can_controller();
     void handle_js_table_view();
-    String ip_to_string(IPAddress ip);
-    std::string get_can_data_text(RequestCanDataFunction callback);
 
-    byte to_byte(String data);
-    int to_int(String data);
-    unsigned long to_ulong(String data);
+    std::string get_can_data_text(RequestCanDataFunction callback);
 };
 } // namespace WEB
 } // namespace MaSiRoProject

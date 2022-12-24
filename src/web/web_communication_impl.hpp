@@ -11,10 +11,11 @@
 #ifndef MASIRO_PROJECT_TOY_BOX_WEB_COMMUNICATION_IMPL_HPP
 #define MASIRO_PROJECT_TOY_BOX_WEB_COMMUNICATION_IMPL_HPP
 
+#include "../can_data_viewer_conf.hpp"
 #include "can_data_viewer_info.hpp"
-#include "web_communication.hpp"
 
 #include <WiFi.h>
+#include <vector>
 
 namespace MaSiRoProject
 {
@@ -30,35 +31,62 @@ public:
 public:
     virtual bool setup() final;
     bool begin();
-    bool end();
-    bool loop();
+    bool connect(std::string ssid, std::string pass, bool ap_mode);
+    bool is_connected(bool force = false);
+    bool disconnect();
+
+public:
+    bool is_ap_mode();
     IPAddress get_ip();
     const char *get_ssid();
-    bool save_information(std::string ssid, std::string pass, bool ap_mode, bool reconnecting);
+    const char *get_ssid_ap_default();
+    void request_connection_info(std::string ssid, std::string pass, bool ap_mode);
 
-private:
     bool set_callback_message(MessageFunction callback);
-    MessageFunction callback_message;
-    void happened_message(bool is_error, const char *message);
-    bool reconnect();
-    bool load_information();
+
+    std::vector<NetworkList> get_wifi_list();
+
+    bool check_connection();
 
 private:
-#if STORAGE_SPI_FS
-    bool open_fs = false;
-#endif
-    bool _mode_ap = SETTING_WIFI_MODE_AP;
+    void happened_message(bool is_error, const char *message);
+    bool _save_information(std::string ssid, std::string pass, bool ap_mode);
+    MessageFunction callback_message;
+    bool load_information();
+    int _get_rssi_as_quality(int rssi);
+    bool _load_information_for_spiffs();
+
+private:
+    bool _running = false;
+
+    bool _open_fs         = false;
+    bool _mode_ap         = SETTING_WIFI_MODE_AP;
+    bool _mode_ap_current = SETTING_WIFI_MODE_AP;
+
+    std::string _ssid_ap = SETTING_WIFI_SSID_AP;
 
     /**
      * @brief AP SSID
      *
      */
-    std::string _ssid = SETTING_WIFI_SSID;
+    std::string _ssid = SETTING_WIFI_SSID_AP;
     /**
      * @brief AP password
      *
      */
-    std::string _pass = SETTING_WIFI_PASS;
+    std::string _pass = SETTING_WIFI_PASS_AP;
+    class config_address {
+    public:
+        IPAddress local_ip = INADDR_NONE;
+        IPAddress gateway  = INADDR_NONE;
+        IPAddress subnet   = INADDR_NONE;
+        bool flag_set      = false;
+    };
+    config_address _config_ap;
+    config_address _config_sta;
+
+    void set_config_address_ap(IPAddress ip = INADDR_NONE, IPAddress gateway = INADDR_NONE, IPAddress subnet = INADDR_NONE);
+    void set_config_address_sta(IPAddress ip = INADDR_NONE, IPAddress gateway = INADDR_NONE, IPAddress subnet = INADDR_NONE);
 };
 
 } // namespace WEB

@@ -13,6 +13,7 @@
 #define MASIRO_PROJECT_CAN_DATA_VIEWER_INFO_HPP
 
 #include <Arduino.h>
+#include <WiFi.h>
 
 #ifndef CAN_MESSAGE_SIZE
 #define CAN_MESSAGE_SIZE (8)
@@ -65,6 +66,25 @@ public:
      * @return false
      */
     static bool compar_Time(const CanData &left, const CanData &right) { return left.time > right.time; }
+};
+
+class NetworkList {
+public:
+    String name;                 //!< SSID
+    int rssi;                    //!< RSSI
+    int quality;                 //!< RSSI as Quality
+    wifi_auth_mode_t encryption; //!< Encryption Type
+
+public:
+    /**
+     * @brief Sort by RSSI
+     *
+     * @param left
+     * @param right
+     * @return true
+     * @return false
+     */
+    static bool compar_rssi(const NetworkList &left, const NetworkList &right) { return left.rssi > right.rssi; }
 };
 
 class CanDeviceInfo {

@@ -11,7 +11,7 @@ if (!JS_CCtrl) {
                 + '&d0=' + data0 + '&d1=' + data1 + '&d2=' + data2 + '&d3=' + data3
                 + '&d4=' + data4 + '&d5=' + data5 + '&d6=' + data6 + '&d7=' + data7).then(
                     ok => JS_CCtrl.none(ok)
-                    , error => console.log(error.status.messages)
+                    , error => console.error(error.status.messages)
                 );
         },
         send: function () {
@@ -44,19 +44,19 @@ if (!JS_CCtrl) {
         clear: function (table_type) {
             JS_AJAX.get('/set/clear').then(
                 ok => JS_CCtrl.none(ok)
-                , error => console.log(error.status.messages)
+                , error => console.error(error.status.messages)
             );
         },
         default: function (table_type) {
             JS_AJAX.get('/set/default').then(
                 ok => JS_CCtrl.none(ok)
-                , error => console.log(error.status.messages)
+                , error => console.error(error.status.messages)
             );
         },
         delete_row: function (table_type, id) {
             JS_AJAX.get('/set/delete?id=' + id).then(
                 ok => JS_CCtrl.none(ok)
-                , error => console.log(error.status.messages)
+                , error => console.error(error.status.messages)
             );
         },
         change_mode: function () {
@@ -66,21 +66,25 @@ if (!JS_CCtrl) {
             );
         },
         make: function (data) {
-            JS_CCtrl.can_data = data;
-            JS_Table.add_table(data.resume, 'send_one_shot', 'send_one_shot_size', 0);
-            JS_Table.add_table(data.send, 'send_loop', 'send_loop_size', 1);
-            JS_Table.add_table(data.received, 'received_table', 'received_size', 2);
-            let txt_mode = document.getElementById("can_mode");
-            if (txt_mode.innerHTML != data.status.mode) { txt_mode.innerHTML = data.status.mode; }
-            let txt_time = document.getElementById("current_time");
-            if (0 != data.time) {
-                txt_time.innerHTML = (Number(data.time) / 1000).toFixed(3);
-            } else { txt_time.innerHTML = "--"; }
+            if (null != data) {
+                if ("OK" == data.result) {
+                    JS_CCtrl.can_data = data;
+                    JS_Table.add_table(data.resume, 'send_one_shot', 'send_one_shot_size', 0);
+                    JS_Table.add_table(data.send, 'send_loop', 'send_loop_size', 1);
+                    JS_Table.add_table(data.received, 'received_table', 'received_size', 2);
+                    let txt_mode = document.getElementById("can_mode");
+                    if (txt_mode.innerHTML != data.status.mode) { txt_mode.innerHTML = data.status.mode; }
+                    let txt_time = document.getElementById("current_time");
+                    if (0 != data.time) {
+                        txt_time.innerHTML = (Number(data.time) / 1000).toFixed(3);
+                    } else { txt_time.innerHTML = "--"; }
+                }
+            }
         },
         interval: function () {
             JS_AJAX.get('/get/can_data').then(
                 ok => JS_CCtrl.make(ok)
-                , error => console.log(error.status.messages)
+                , error => console.error(error.status.messages)
             );
         }
     }

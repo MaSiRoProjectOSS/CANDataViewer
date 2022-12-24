@@ -9,6 +9,7 @@
 		"doxdocgen.file.copyrightTag": [
 			"@copyright Copyright (c) {year} / MaSiRo Project."
 		],
+		"doxdocgen.file.versionTag": "@version 0.2",
 		"cSpell.words": [
 			"Photosensors",
 			"XIAO",
@@ -68,9 +69,18 @@
 			"typeinfo": "cpp",
 			"utility": "cpp"
 		},
-		"es6-css-minify.cssMapSource": "/miniature/web/min",
-		"es6-css-minify.jsMinPath": "/miniature/web/min",
-		"es6-css-minify.cssMinPath": "/miniature/web/min",
-		"es6-css-minify.jsMapSource": "/miniature/web/min"
+		"files.watcherExclude": {
+			"**/.git/objects/**": true,
+			"**/.git/subtree-cache/**": true,
+			"**/node_modules/*/**": true,
+			"**/.hg/store/**": true,
+			"**/doxygen_html": true,
+			"**/.pio": true,
+			"**/Doxyfile": true
+		},
+		"es6-css-minify.cssMapSource": "/miniature/web/min/css",
+		"es6-css-minify.cssMinPath": "/miniature/web/min/css",
+		"es6-css-minify.jsMinPath": "/miniature/web/min/js",
+		"es6-css-minify.jsMapSource": "/miniature/web/min/js"
 	}
 }

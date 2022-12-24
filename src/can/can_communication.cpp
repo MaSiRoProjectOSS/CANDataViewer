@@ -11,8 +11,8 @@
 #include "can_communication.hpp"
 
 #include "can_communication_impl.hpp"
-#include "can_config.h"
 #include "can_data_viewer_conf.hpp"
+#include "driver/can_config.h"
 
 namespace MaSiRoProject
 {
@@ -95,7 +95,7 @@ void thread_can(void *args)
                         }
                     }
                     can->loop();
-                    delay(CAN_THREAD_INTERVAL);
+                    vTaskDelay(CAN_THREAD_INTERVAL);
                 }
                 can->request_suspend();
             }
@@ -180,10 +180,10 @@ bool CanCommunication::setup_callback(void)
 {
     return true;
 }
-bool CanCommunication::set_resume(CanData data)
+bool CanCommunication::add_resume(CanData data)
 {
     data.time = 0;
-    return can->set_resume(data);
+    return can->add_resume(data);
 }
 bool CanCommunication::setup_default(void)
 {
@@ -271,16 +271,29 @@ bool CanCommunication::begin()
             pinMode(interrupt, INPUT);
             attachInterrupt(interrupt, thread_can_on_interrupt, FALLING);
         }
+        this->task_assigned_size = 4096;
         xTaskCreatePinnedToCore(thread_can, //
                                 THREAD_NAME_CAN,
-                                sizeof(CanCommunicationImpl) + 4096,
+                                this->task_assigned_size,
                                 NULL,
                                 3,
-                                NULL,
+                                &this->task_handle,
                                 THREAD_CORE_CAN);
     }
     return result;
 }
+
+#if DEBUG_MODE
+UBaseType_t CanCommunication::get_stack_size()
+{
+    return this->task_assigned_size;
+}
+UBaseType_t CanCommunication::get_stack_high_water_mark()
+{
+    return uxTaskGetStackHighWaterMark(this->task_handle);
+}
+#endif
+
 ////////////////////////////////////////////////////////////////////////////////////////////
 CanCommunication::CanCommunication() : interrupt(CAN_COMMUNICATION_PIN_INTERRUPT)
 {

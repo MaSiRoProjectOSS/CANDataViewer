@@ -40,8 +40,9 @@ public:
     std::vector<CanData> get_resume();
 
     bool add_one_shot(CanData data);
-
     bool add_loop_shot(CanData data, int interval);
+    bool add_resume(CanData data);
+
     bool delete_loop_shot(unsigned long Id);
     bool clear_loop_shot();
 
@@ -52,14 +53,21 @@ public:
     bool request_pause();
     bool request_running();
     bool change_mode(CAN_CTRL_STATE mode);
-    bool set_resume(CanData data);
     bool setup_default(void);
     bool setup_callback(void);
     bool sendable(CAN_CTRL_STATE state, CanData *data);
 
+#if DEBUG_MODE
+public:
+    UBaseType_t get_stack_high_water_mark();
+    UBaseType_t get_stack_size();
+#endif
+
 private:
     byte interrupt;
     SettingDefaultFunction callback_setting_default;
+    TaskHandle_t task_handle;
+    UBaseType_t task_assigned_size;
 };
 } // namespace CAN
 } // namespace MaSiRoProject
