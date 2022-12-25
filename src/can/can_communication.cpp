@@ -152,11 +152,6 @@ bool CanCommunication::request_running()
 }
 ////////////////////////////////////////////////////////////////////////////////////////////
 
-bool CanCommunication::sendable(CAN_CTRL_STATE state, CanData *data)
-{
-    return true;
-}
-
 CanDeviceInfo CanCommunication::get_device_info()
 {
     return can->get_device_info();
@@ -242,8 +237,18 @@ bool CanCommunication::set_callback_received(GetReceivedFunction callback)
 {
     bool result = false;
     try {
-        can->set_callback_received(callback);
-        result = true;
+        result = can->set_callback_received(callback);
+
+    } catch (...) {
+    }
+    return result;
+}
+
+bool CanCommunication::set_callback_sendable(SendEventFunction callback)
+{
+    bool result = false;
+    try {
+        result = can->set_callback_sendable(callback);
     } catch (...) {
     }
     return result;
@@ -298,7 +303,6 @@ UBaseType_t CanCommunication::get_stack_high_water_mark()
 CanCommunication::CanCommunication() : interrupt(CAN_COMMUNICATION_PIN_INTERRUPT)
 {
     can = new CanCommunicationImpl();
-    can->set_callback_sendable(std::bind(&CanCommunication::sendable, this, std::placeholders::_1, std::placeholders::_2));
 }
 
 CanCommunication::~CanCommunication()

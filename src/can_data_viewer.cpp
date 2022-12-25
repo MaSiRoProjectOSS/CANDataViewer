@@ -36,9 +36,11 @@ bool CanDataViewer::set_callback_changed_mode(ChangedModeFunction callback)
 
 bool CanDataViewer::set_callback_received(GetReceivedFunction callback)
 {
-    bool result = true;
-    ctrl_can.set_callback_received(callback);
-    return result;
+    return ctrl_can.set_callback_received(callback);
+}
+bool CanDataViewer::set_callback_sendable_interrupt(SendEventFunction callback)
+{
+    return ctrl_can.set_callback_sendable(callback);
 }
 
 bool CanDataViewer::set_callback_setting_default(SettingDefaultFunction callback)
@@ -51,11 +53,11 @@ void CanDataViewer::set_wifi_info(std::string ssid, std::string pass, bool ap_mo
 {
     ctrl_page.request_reconnect(ssid, pass, ap_mode, false);
 }
-void CanDataViewer::set_config_address_ap(IPAddress ip, IPAddress gateway, IPAddress subnet)
+void CanDataViewer::config_address_ap(IPAddress ip, IPAddress gateway, IPAddress subnet)
 {
     ctrl_page.set_config_address_ap(ip, gateway, subnet);
 }
-void CanDataViewer::set_config_address_sta(IPAddress ip, IPAddress gateway, IPAddress subnet)
+void CanDataViewer::config_address_sta(IPAddress ip, IPAddress gateway, IPAddress subnet)
 {
     ctrl_page.set_config_address_sta(ip, gateway, subnet);
 }
