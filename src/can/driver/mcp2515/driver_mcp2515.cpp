@@ -46,7 +46,7 @@ bool DriverMcp2515::send(CanData data)
 #if DEBUG_MODE
     char buffer[255];
     sprintf(buffer, "DriverMcp2515 : send state[%d]", status);
-    happened_message(true, buffer);
+    happened_message(OUTPUT_LOG_LEVEL::OUTPUT_LOG_LEVEL_DEBUG, buffer, __func__, __FILENAME__, __LINE__);
 #endif
     return result;
 }
@@ -54,7 +54,6 @@ bool DriverMcp2515::send(CanData data)
 bool DriverMcp2515::interrupt()
 {
     bool result = false;
-    char buffer[255];
     try {
         while (CAN_MSGAVAIL == this->mcp2515->checkReceive()) {
             CanData data;
@@ -62,19 +61,16 @@ bool DriverMcp2515::interrupt()
                 result = true;
                 happened_received(data);
             } else {
-                sprintf(buffer, "Receive failed");
-                happened_message(true, buffer);
+                happened_message(OUTPUT_LOG_LEVEL::OUTPUT_LOG_LEVEL_WARN, "Receive failed", __func__, __FILENAME__, __LINE__);
             }
         }
 #if DEBUG_MODE
         if (false == result) {
-            sprintf(buffer, "NO MESSAGE");
-            happened_message(false, buffer);
+            happened_message(OUTPUT_LOG_LEVEL::OUTPUT_LOG_LEVEL_TRACE, "NO MESSAGE", __func__, __FILENAME__, __LINE__);
         }
 #endif
     } catch (...) {
-        sprintf(buffer, "Receive panic");
-        happened_message(true, buffer);
+        happened_message(OUTPUT_LOG_LEVEL::OUTPUT_LOG_LEVEL_FATAL, "Receive panic", __func__, __FILENAME__, __LINE__);
     }
     return result;
 }
@@ -104,7 +100,7 @@ bool DriverMcp2515::output_error()
                 error_errorCountRX,                                // (7)
                 (check_receive == CAN_NOMSG) ? "" : " : AVAIL"     // --
         );
-        happened_message(true, buffer);
+        happened_message(OUTPUT_LOG_LEVEL::OUTPUT_LOG_LEVEL_WARN, buffer, __func__, __FILENAME__, __LINE__);
         result = true;
     }
     //////////////////////////////////

@@ -1,13 +1,41 @@
 ## System Diagram
 
-<link href='https://raw.githubusercontent.com/MaSiRo-Project-OSS/CAN-Data-Viewer/master/doc/style.css' rel='stylesheet' type='text/css' media='all'>
+<link href='https://raw.githubusercontent.com/MaSiRoProjectOSS/CANDataViewer/master/doc/style.css' rel='stylesheet' type='text/css' media='all'>
 
 
-## mode state
+## Overall view
+
+The system is shown below.
 
 ```plantuml
 @startuml
-title "mode state"
+rectangle system  as "board" {
+cloud WebServer
+rectangle board as "ATOM Lite" {
+  rectangle SPPIFS as "FLASH"
+}
+rectangle can_device_A
+
+
+}
+rectangle can_device_B
+actor browser
+
+browser -right- WebServer : WiFi\n(2.4GHz)
+WebServer -right- board
+board -down- can_device_A : "SPI\nor\nGrove"
+can_device_A .down. can_device_B : CAN
+
+@enduml
+```
+
+## Mode State
+
+The mode changes as follows.
+
+```plantuml
+@startuml
+title "Mode State"
 
 NOT_INITIALIZE : bool setup_default(void)
 FINISHED : --

@@ -36,6 +36,8 @@ public:
 
 protected:
     IPAddress get_ip();
+    const char *get_ssid();
+    bool is_ap_mode();
     WebServer *get_server();
     virtual bool setup_server(WebServer *server);
     virtual void handle_not_found();
@@ -49,7 +51,7 @@ protected:
     void get_net_list();
 
 protected:
-    void happened_message(bool is_error, const char *message);
+    void happened_message(OUTPUT_LOG_LEVEL level, const char *message, const char *function_name, const char *file_name, int line);
     String ip_to_string(IPAddress ip);
     byte to_byte(String data);
     int to_int(String data);

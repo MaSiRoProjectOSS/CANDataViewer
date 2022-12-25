@@ -101,14 +101,14 @@ private:
     std::vector<CanData> send_loop_list;
     std::vector<CanData> received_list;
     std::vector<CanData> send_resume;
-    bool add_resume(CanData data);
+    bool add_resume(CanData data, bool no_send);
 
     /////////////////////////////////
     // Happened
     /////////////////////////////////
 private:
     void happened_changed_mode(CAN_CTRL_STATE mode);
-    void happened_message(bool is_error, const char *message);
+    void happened_message(OUTPUT_LOG_LEVEL level, const char *message, const char *function_name, const char *file_name, int line);
     void happened_received(CanData data);
 
     /////////////////////////////////

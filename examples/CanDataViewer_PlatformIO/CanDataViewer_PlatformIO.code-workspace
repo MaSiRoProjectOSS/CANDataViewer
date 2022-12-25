@@ -1,0 +1,47 @@
+{
+	"folders": [
+		{
+			"name": "CANDataViewer",
+			"path": "."
+		}
+	],
+	"settings": {
+		"cSpell.words": [
+			"endregion",
+			"APIP",
+			"GPIO",
+			"MOSI",
+			"MISO",
+			"KBPS",
+			"IRAM",
+			"fillpix",
+			"CRGB",
+			"onclick",
+			"onchange",
+			"onunload"
+		],
+		"doxdocgen.generic.useGitUserName": true,
+		"doxdocgen.generic.useGitUserEmail": true,
+		"search.exclude": {
+			"**/node_modules": true,
+			"**/bower_components": true,
+			"**/*.code-search": true,
+			"**/.pio/build": true,
+			"**/.git/**": true,
+			"**/__*": true,
+			"**/Doxyfile": true,
+			"**/Doxygen": true
+		},
+		"files.watcherExclude": {
+			"**/.git/objects/**": true,
+			"**/.git/subtree-cache/**": true,
+			"**/node_modules/*/**": true,
+			"**/.hg/store/**": true,
+			"**/.pio": true,
+			"**/*.map": true,
+			"**/doxygen": true,
+			"**/Doxyfile": true,
+			"**/build": true
+		}
+	}
+}

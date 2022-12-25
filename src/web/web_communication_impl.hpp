@@ -49,7 +49,7 @@ public:
     bool check_connection();
 
 private:
-    void happened_message(bool is_error, const char *message);
+    void happened_message(OUTPUT_LOG_LEVEL level, const char *message, const char *function_name, const char *file_name, int line);
     bool _save_information(std::string ssid, std::string pass, bool ap_mode);
     MessageFunction callback_message;
     bool load_information();
@@ -63,18 +63,18 @@ private:
     bool _mode_ap         = SETTING_WIFI_MODE_AP;
     bool _mode_ap_current = SETTING_WIFI_MODE_AP;
 
-    std::string _ssid_ap = SETTING_WIFI_SSID_AP;
+    std::string _ssid_ap = SETTING_WIFI_SSID_DEFAULT_AP;
 
     /**
      * @brief AP SSID
      *
      */
-    std::string _ssid = SETTING_WIFI_SSID_AP;
+    std::string _ssid = SETTING_WIFI_SSID_DEFAULT_AP;
     /**
      * @brief AP password
      *
      */
-    std::string _pass = SETTING_WIFI_PASS_AP;
+    std::string _pass = SETTING_WIFI_PASS_DEFAULT_AP;
     class config_address {
     public:
         IPAddress local_ip = INADDR_NONE;

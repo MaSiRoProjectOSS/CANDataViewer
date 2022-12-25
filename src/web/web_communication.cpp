@@ -79,7 +79,7 @@ void thread_wifi(void *args)
 #if DEBUG_MODE
     sprintf(buffer, "<%s> - start", THREAD_NAME_WIFI);
     if (nullptr != callback_mess) {
-        callback_mess(false, buffer, true);
+        callback_mess(OUTPUT_LOG_LEVEL::OUTPUT_LOG_LEVEL_TRACE, buffer, __func__, __FILENAME__, __LINE__);
     }
 #endif
 #if SETTING_WIFI_MODE_AP_AUTO_TRANSITIONS
@@ -93,13 +93,13 @@ void thread_wifi(void *args)
             if (false == ctrl_web->begin()) {
                 sprintf(buffer, "<%s> - NOT setup()", THREAD_NAME_WIFI);
                 if (nullptr != callback_mess) {
-                    callback_mess(true, buffer, true);
+                    callback_mess(OUTPUT_LOG_LEVEL::OUTPUT_LOG_LEVEL_ERROR, buffer, __func__, __FILENAME__, __LINE__);
                 }
 #if SETTING_WIFI_MODE_AP_AUTO_TRANSITIONS
                 if (true != ctrl_web->is_ap_mode()) {
                     if (err_begin < millis()) {
                         err_begin = millis() + SETTING_WIFI_MODE_AP_AUTO_TRANSITIONS_TIMEOUT;
-                        ctrl_web->save_information(SETTING_WIFI_SSID_AP, SETTING_WIFI_PASS_AP, true, false, false);
+                        ctrl_web->save_information(SETTING_WIFI_SSID_DEFAULT_AP, SETTING_WIFI_PASS_DEFAULT_AP, true, false, false);
                     }
                 }
 #endif
@@ -112,7 +112,7 @@ void thread_wifi(void *args)
 #if DEBUG_MODE
                             sprintf(buffer, "<%s> - Change connection()", THREAD_NAME_WIFI);
                             if (nullptr != callback_mess) {
-                                callback_mess(false, buffer, true);
+                                callback_mess(OUTPUT_LOG_LEVEL::OUTPUT_LOG_LEVEL_TRACE, buffer, __func__, __FILENAME__, __LINE__);
                             }
 #endif
                             break;
@@ -120,7 +120,7 @@ void thread_wifi(void *args)
 #if DEBUG_MODE
                             sprintf(buffer, "<%s> - Lost connection()", THREAD_NAME_WIFI);
                             if (nullptr != callback_mess) {
-                                callback_mess(false, buffer, true);
+                                callback_mess(OUTPUT_LOG_LEVEL::OUTPUT_LOG_LEVEL_TRACE, buffer, __func__, __FILENAME__, __LINE__);
                             }
 #endif
                             break;
@@ -133,7 +133,7 @@ void thread_wifi(void *args)
         } catch (...) {
             sprintf(buffer, "<%s> - ERROR()", THREAD_NAME_WIFI);
             if (nullptr != callback_mess) {
-                callback_mess(true, buffer, true);
+                callback_mess(OUTPUT_LOG_LEVEL::OUTPUT_LOG_LEVEL_FATAL, buffer, __func__, __FILENAME__, __LINE__);
             }
         }
     }
@@ -165,10 +165,10 @@ bool WebCommunication::setup()
 
         result = this->setup_server(this->get_server());
 #if DEBUG_MODE
-        this->happened_message(false, "WebCommunication : setup()");
+        this->happened_message(OUTPUT_LOG_LEVEL::OUTPUT_LOG_LEVEL_TRACE, "WebCommunication : setup()", __func__, __FILENAME__, __LINE__);
 #endif
     } catch (...) {
-        this->happened_message(true, "WebCommunication : NOT setup()");
+        this->happened_message(OUTPUT_LOG_LEVEL::OUTPUT_LOG_LEVEL_FATAL, "WebCommunication : NOT setup()", __func__, __FILENAME__, __LINE__);
     }
     return result;
 }
@@ -285,7 +285,7 @@ void WebCommunication::handle_network_html()
 void WebCommunication::set_network()
 {
 #if DEBUG_MODE
-    this->happened_message(false, "ControllerPage : set_network()");
+    this->happened_message(OUTPUT_LOG_LEVEL::OUTPUT_LOG_LEVEL_TRACE, "ControllerPage : set_network()", __func__, __FILENAME__, __LINE__);
 #endif
     bool result  = false;
     String ssid  = "";
@@ -456,10 +456,10 @@ bool WebCommunication::set_callback_message(MessageFunction callback)
     return result;
 }
 
-void WebCommunication::happened_message(bool is_error, const char *message)
+void WebCommunication::happened_message(OUTPUT_LOG_LEVEL level, const char *message, const char *function_name, const char *file_name, int line)
 {
     if (nullptr != this->callback_message) {
-        this->callback_message(is_error, message, true);
+        this->callback_message(level, message, function_name, file_name, line);
     }
 }
 
@@ -475,6 +475,15 @@ IPAddress WebCommunication::get_ip()
 {
     return ctrl_web->get_ip();
 }
+const char *WebCommunication::get_ssid()
+{
+    return ctrl_web->get_ssid();
+}
+bool WebCommunication::is_ap_mode()
+{
+    return ctrl_web->is_ap_mode();
+}
+
 #if DEBUG_MODE
 UBaseType_t WebCommunication::get_stack_size()
 {

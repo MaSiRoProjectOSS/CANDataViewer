@@ -80,15 +80,15 @@ bool DriverEsp32can::interrupt()
                 happened_received(data);
             }
         }
-#if DEBUG_MODE && 0
+#if DEBUG_MODE
         if (false == result) {
             sprintf(buffer, "NO MESSAGE");
-            happened_message(false, buffer);
+            happened_message(OUTPUT_LOG_LEVEL::OUTPUT_LOG_LEVEL_TRACE, buffer, __func__, __FILENAME__, __LINE__);
         }
 #endif
     } catch (...) {
         sprintf(buffer, "Receive panic");
-        happened_message(true, buffer);
+        happened_message(OUTPUT_LOG_LEVEL::OUTPUT_LOG_LEVEL_FATAL, buffer, __func__, __FILENAME__, __LINE__);
     }
     return result;
 }

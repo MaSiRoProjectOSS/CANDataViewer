@@ -44,10 +44,10 @@ bool ControllerPage::setup_server(WebServer *server)
 
         result = true;
 #if DEBUG_MODE
-        this->happened_message(false, "ControllerPage : setup()");
+        this->happened_message(OUTPUT_LOG_LEVEL::OUTPUT_LOG_LEVEL_DEBUG, "ControllerPage : setup()", __func__, __FILENAME__, __LINE__);
 #endif
     } else {
-        this->happened_message(true, "ControllerPage : NOT setup()");
+        this->happened_message(OUTPUT_LOG_LEVEL::OUTPUT_LOG_LEVEL_ERROR, "ControllerPage : NOT setup()", __func__, __FILENAME__, __LINE__);
     }
     return result;
 }
@@ -148,7 +148,7 @@ std::string ControllerPage::page_body()
     html.append(
             "<tr><td class='td_view td_type'><span id='send_type'>Loop</span></td><td id='send_time' class='td_view'>0.500</td><td id='send_id' class='td_view'>0x64</td><td id='send_len' class='td_view'>8</td><td id='send_data_0' class='td_view'>0x00</td><td id='send_data_1' class='td_view'>0x00</td><td id='send_data_2' class='td_view'>0x00</td><td id='send_data_3' class='td_view'>0x00</td><td id='send_data_4' class='td_view'>0x00</td><td id='send_data_5' class='td_view'>0x00</td><td id='send_data_6' class='td_view'>0x00</td><td id='send_data_7' class='td_view'>0x00</td></tr>");
     html.append(
-            "<tr><td class='td_left'><input type='button' value='Send' onclick='JS_CCtrl.send();' /></td><td><p><input id='b_send_time_s' type='number' value='0' min='0' max='120' onchange='JS_Table.change();' /><span>.</span><input id='b_send_time_ms' type='number' value='500' min='0' max='1000' step='100' onchange='JS_Table.change();' /></p></td><td><input id='b_send_id' type='number' value='100' min='0' max='255' onchange='JS_Table.change();' /></td><td><input id='b_send_len' type='number' value='8' min='1' max='8' onchange='JS_Table.change();' /></td><td><input id='b_send_data_0' type='number' value='0' min='0' max='255' onchange='JS_Table.change();' /></td><td><input id='b_send_data_1' type='number' value='0' min='0' max='255' onchange='JS_Table.change();' /></td><td><input id='b_send_data_2' type='number' value='0' min='0' max='255' onchange='JS_Table.change();' /></td><td><input id='b_send_data_3' type='number' value='0' min='0' max='255' onchange='JS_Table.change();' /></td><td><input id='b_send_data_4' type='number' value='0' min='0' max='255' onchange='JS_Table.change();' /></td><td><input id='b_send_data_5' type='number' value='0' min='0' max='255' onchange='JS_Table.change();' /></td><td><input id='b_send_data_6' type='number' value='0' min='0' max='255' onchange='JS_Table.change();' /></td><td><input id='b_send_data_7' type='number' value='0' min='0' max='255' onchange='JS_Table.change();' /></td></tr>");
+            "<tr><td><input type='button' value='Send' onclick='JS_CCtrl.send();' /></td><td><p><input id='b_send_time_s' type='number' value='0' min='0' max='120' onchange='JS_Table.change();' /><span>.</span><input id='b_send_time_ms' type='number' value='500' min='0' max='1000' step='100' onchange='JS_Table.change();' /></p></td><td><input id='b_send_id' type='number' value='100' min='0' max='255' onchange='JS_Table.change();' /></td><td><input id='b_send_len' type='number' value='8' min='1' max='8' onchange='JS_Table.change();' /></td><td><input id='b_send_data_0' type='number' value='0' min='0' max='255' onchange='JS_Table.change();' /></td><td><input id='b_send_data_1' type='number' value='0' min='0' max='255' onchange='JS_Table.change();' /></td><td><input id='b_send_data_2' type='number' value='0' min='0' max='255' onchange='JS_Table.change();' /></td><td><input id='b_send_data_3' type='number' value='0' min='0' max='255' onchange='JS_Table.change();' /></td><td><input id='b_send_data_4' type='number' value='0' min='0' max='255' onchange='JS_Table.change();' /></td><td><input id='b_send_data_5' type='number' value='0' min='0' max='255' onchange='JS_Table.change();' /></td><td><input id='b_send_data_6' type='number' value='0' min='0' max='255' onchange='JS_Table.change();' /></td><td><input id='b_send_data_7' type='number' value='0' min='0' max='255' onchange='JS_Table.change();' /></td></tr>");
     html.append("</tbody></table></details></article>");
 
     html.append("<br />");
@@ -209,7 +209,7 @@ std::string ControllerPage::page_html(const std::string body)
 void ControllerPage::set_clear()
 {
 #if DEBUG_MODE
-    this->happened_message(false, "ControllerPage : set_clear()");
+    this->happened_message(OUTPUT_LOG_LEVEL::OUTPUT_LOG_LEVEL_TRACE, "ControllerPage : set_clear()", __func__, __FILENAME__, __LINE__);
 #endif
     bool result      = false;
     std::string json = "{";
@@ -233,7 +233,7 @@ void ControllerPage::set_clear()
 void ControllerPage::set_default()
 {
 #if DEBUG_MODE
-    this->happened_message(false, "ControllerPage : set_default()");
+    this->happened_message(OUTPUT_LOG_LEVEL::OUTPUT_LOG_LEVEL_TRACE, "ControllerPage : set_default()", __func__, __FILENAME__, __LINE__);
 #endif
     bool result      = false;
     std::string json = "{";
@@ -257,7 +257,7 @@ void ControllerPage::set_default()
 void ControllerPage::set_delete()
 {
 #if DEBUG_MODE
-    this->happened_message(false, "ControllerPage : set_delete()");
+    this->happened_message(OUTPUT_LOG_LEVEL::OUTPUT_LOG_LEVEL_TRACE, "ControllerPage : set_delete()", __func__, __FILENAME__, __LINE__);
 #endif
     bool result      = false;
     std::string json = "{";
@@ -288,7 +288,7 @@ void ControllerPage::set_delete()
 void ControllerPage::set_mode_on()
 {
 #if DEBUG_MODE
-    this->happened_message(false, "ControllerPage : set_mode_on()");
+    this->happened_message(OUTPUT_LOG_LEVEL::OUTPUT_LOG_LEVEL_TRACE, "ControllerPage : set_mode_on()", __func__, __FILENAME__, __LINE__);
 #endif
     if (nullptr != callback_can_mode) {
         this->callback_can_mode(CAN_CTRL_STATE::MODE_RUNNING);
@@ -307,7 +307,7 @@ void ControllerPage::set_mode_on()
 void ControllerPage::set_mode_off()
 {
 #if DEBUG_MODE
-    this->happened_message(false, "ControllerPage : set_mode_off()");
+    this->happened_message(OUTPUT_LOG_LEVEL::OUTPUT_LOG_LEVEL_TRACE, "ControllerPage : set_mode_off()", __func__, __FILENAME__, __LINE__);
 #endif
     if (nullptr != callback_can_mode) {
         this->callback_can_mode(CAN_CTRL_STATE::MODE_STOPPING);
@@ -325,7 +325,7 @@ void ControllerPage::set_mode_off()
 void ControllerPage::get_can_data()
 {
 #if DEBUG_MODE
-    this->happened_message(false, "ControllerPage : get_can_data()");
+    this->happened_message(OUTPUT_LOG_LEVEL::OUTPUT_LOG_LEVEL_TRACE, "ControllerPage : get_can_data()", __func__, __FILENAME__, __LINE__);
 #endif
     CanDeviceInfo device_info;
     if (nullptr != callback_device_info) {
@@ -358,7 +358,7 @@ void ControllerPage::get_can_data()
 void ControllerPage::set_change_mode()
 {
 #if DEBUG_MODE
-    this->happened_message(false, "ControllerPage : set_change_mode()");
+    this->happened_message(OUTPUT_LOG_LEVEL::OUTPUT_LOG_LEVEL_TRACE, "ControllerPage : set_change_mode()", __func__, __FILENAME__, __LINE__);
 #endif
     CAN_CTRL_STATE mode = CAN_CTRL_STATE::MODE_UNKNOW;
     if (this->get_server()->args() > 0) {
@@ -396,7 +396,7 @@ void ControllerPage::set_change_mode()
 void ControllerPage::set_can_data()
 {
 #if DEBUG_MODE
-    this->happened_message(false, "ControllerPage : set_can_data()");
+    this->happened_message(OUTPUT_LOG_LEVEL::OUTPUT_LOG_LEVEL_TRACE, "ControllerPage : set_can_data()", __func__, __FILENAME__, __LINE__);
 #endif
     bool result = false;
     ////////////////////////////////////////////////////////////////////////////////////
@@ -473,7 +473,7 @@ void ControllerPage::set_can_data()
                     data.Data[5],
                     data.Data[6],
                     data.Data[7]);
-            this->happened_message(false, buffer);
+            this->happened_message(OUTPUT_LOG_LEVEL::OUTPUT_LOG_LEVEL_TRACE, buffer, __func__, __FILENAME__, __LINE__);
 #endif
         }
     } catch (...) {

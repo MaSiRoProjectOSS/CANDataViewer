@@ -53,11 +53,11 @@ bool CanCommunicationImpl::begin()
     }
     if (true == result) {
 #if DEBUG_MODE
-        happened_message(false, "CanCommunication : Initialized Successfully!");
+        happened_message(OUTPUT_LOG_LEVEL::OUTPUT_LOG_LEVEL_TRACE, "CanCommunication : Initialized Successfully!", __func__, __FILENAME__, __LINE__);
 #endif
         initialized = true;
     } else {
-        happened_message(true, "CanCommunication : Initializing ...");
+        happened_message(OUTPUT_LOG_LEVEL::OUTPUT_LOG_LEVEL_WARN, "CanCommunication : Initializing ...", __func__, __FILENAME__, __LINE__);
     }
     this->happened_changed_mode(this->mode_current);
     return result;
@@ -74,7 +74,7 @@ bool CanCommunicationImpl::loop()
         }
         if (true == this->interrupt()) {
 #if DEBUG_MODE
-            happened_message(false, "CanCommunication : loop-receive");
+            happened_message(OUTPUT_LOG_LEVEL::OUTPUT_LOG_LEVEL_TRACE, "CanCommunication : loop-receive", __func__, __FILENAME__, __LINE__);
 #endif
         }
         switch (this->mode_current) {
@@ -351,7 +351,7 @@ bool CanCommunicationImpl::send(CanData data)
         result = this->can->send(data);
     }
     if (true == result) {
-        this->add_resume(data);
+        this->add_resume(data, false);
 #if OUTPUT_MESSAGE_FOR_SERIAL
         char buffer[255];
         sprintf(buffer,
@@ -369,7 +369,7 @@ bool CanCommunicationImpl::send(CanData data)
                 data.Data[6],
                 data.Data[7]);
 
-        happened_message(!result, buffer);
+        happened_message(OUTPUT_LOG_LEVEL::OUTPUT_LOG_LEVEL_MESSAGE, buffer, __func__, __FILENAME__, __LINE__);
 #endif
     }
 
@@ -423,16 +423,20 @@ bool CanCommunicationImpl::send_loop_shot()
     return result;
 }
 
-bool CanCommunicationImpl::add_resume(CanData data)
+bool CanCommunicationImpl::add_resume(CanData data, bool no_send)
 {
-    bool result           = true;
-    bool flag_duplication = false;
-    int index             = 0;
-    data.time             = millis();
+    bool result            = true;
+    bool flag_duplication  = false;
+    int index              = 0;
+    unsigned long set_time = 0;
+    if (false == no_send) {
+        set_time = millis();
+    }
+    data.time = set_time;
     for (CanData item : this->send_resume) {
         if (item.Id == data.Id) {
             flag_duplication = true;
-            item.time        = millis();
+            item.time        = set_time;
             break;
         }
         index++;
@@ -487,10 +491,10 @@ void CanCommunicationImpl::happened_changed_mode(CAN_CTRL_STATE mode)
         this->callback_changed_mode(mode, buffer);
     }
 }
-void CanCommunicationImpl::happened_message(bool is_error, const char *message)
+void CanCommunicationImpl::happened_message(OUTPUT_LOG_LEVEL level, const char *message, const char *function_name, const char *file_name, int line)
 {
     if (nullptr != this->callback_message) {
-        this->callback_message(is_error, message, true);
+        this->callback_message(level, message, function_name, file_name, line);
     }
 }
 void CanCommunicationImpl::happened_received(CanData data)
@@ -529,7 +533,7 @@ void CanCommunicationImpl::happened_received(CanData data)
                 data.Data[5],
                 data.Data[6],
                 data.Data[7]);
-        happened_message(false, buffer);
+        happened_message(OUTPUT_LOG_LEVEL::OUTPUT_LOG_LEVEL_MESSAGE, buffer, __func__, __FILENAME__, __LINE__);
     }
 #endif
 }
