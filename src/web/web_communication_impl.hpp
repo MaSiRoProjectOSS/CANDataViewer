@@ -49,7 +49,7 @@ public:
     bool check_connection();
 
 private:
-    void happened_message(bool is_error, const char *message);
+    void happened_message(OUTPUT_LOG_LEVEL level, const char *message, const char *function_name, const char *file_name, int line);
     bool _save_information(std::string ssid, std::string pass, bool ap_mode);
     MessageFunction callback_message;
     bool load_information();

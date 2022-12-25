@@ -108,7 +108,7 @@ private:
     /////////////////////////////////
 private:
     void happened_changed_mode(CAN_CTRL_STATE mode);
-    void happened_message(bool is_error, const char *message);
+    void happened_message(OUTPUT_LOG_LEVEL level, const char *message, const char *function_name, const char *file_name, int line);
     void happened_received(CanData data);
 
     /////////////////////////////////

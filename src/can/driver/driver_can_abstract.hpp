@@ -69,10 +69,10 @@ protected:
     /////////////////////////////////
     // inner function
     /////////////////////////////////
-    void happened_message(bool is_error, const char *message)
+    void happened_message(OUTPUT_LOG_LEVEL level, const char *message, const char *function_name, const char *file_name, int line)
     {
         if (nullptr != this->callback_message) {
-            this->callback_message(is_error, message, true);
+            this->callback_message(level, message, function_name, file_name, line);
         }
     }
 

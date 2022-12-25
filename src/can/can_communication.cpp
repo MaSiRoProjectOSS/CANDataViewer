@@ -56,7 +56,7 @@ void thread_can(void *args)
 #if DEBUG_MODE
     sprintf(buffer, "<%s> - start", THREAD_NAME_CAN);
     if (nullptr != callback_mess) {
-        callback_mess(false, buffer, true);
+        callback_mess(OUTPUT_LOG_LEVEL::OUTPUT_LOG_LEVEL_TRACE, buffer, __func__, __FILENAME__, __LINE__);
     }
 #endif
     while (false == flag_thread_can_fin) {
@@ -64,7 +64,7 @@ void thread_can(void *args)
             if (false == can->begin()) {
                 sprintf(buffer, "<%s> - NOT begin()", THREAD_NAME_CAN);
                 if (nullptr != callback_mess) {
-                    callback_mess(true, buffer, true);
+                    callback_mess(OUTPUT_LOG_LEVEL::OUTPUT_LOG_LEVEL_WARN, buffer, __func__, __FILENAME__, __LINE__);
                 }
             } else {
                 can->request_start();
@@ -102,7 +102,7 @@ void thread_can(void *args)
         } catch (...) {
             sprintf(buffer, "<%s> - ERROR()", THREAD_NAME_CAN);
             if (nullptr != callback_mess) {
-                callback_mess(true, buffer, true);
+                callback_mess(OUTPUT_LOG_LEVEL::OUTPUT_LOG_LEVEL_FATAL, buffer, __func__, __FILENAME__, __LINE__);
             }
         }
     }
