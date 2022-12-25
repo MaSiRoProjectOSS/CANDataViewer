@@ -49,7 +49,7 @@ protected:
     void get_net_list();
 
 protected:
-    void happened_message(bool is_error, const char *message);
+    void happened_message(OUTPUT_LOG_LEVEL level, const char *message, const char *function_name, const char *file_name, int line);
     String ip_to_string(IPAddress ip);
     byte to_byte(String data);
     int to_int(String data);

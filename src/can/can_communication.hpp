@@ -28,6 +28,7 @@ public:
     bool set_callback_message(MessageFunction callback);
     bool set_callback_changed_mode(ChangedModeFunction callback);
     bool set_callback_received(GetReceivedFunction callback);
+    bool set_callback_sendable(SendEventFunction callback);
     bool set_callback_setting_default(SettingDefaultFunction callback);
 
 public:
@@ -55,7 +56,6 @@ public:
     bool change_mode(CAN_CTRL_STATE mode);
     bool setup_default(void);
     bool setup_callback(void);
-    bool sendable(CAN_CTRL_STATE state, CanData *data);
 
 #if DEBUG_MODE
 public:
