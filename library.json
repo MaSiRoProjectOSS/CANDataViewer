@@ -1,5 +1,5 @@
 {
-    "name": "CAN_Data_Viewer",
+    "name": "CANDataViewer",
     "version": "0.2.0",
     "description": "View CAN data in a browser",
     "keywords": "M5Stack, ATOM Lite",
