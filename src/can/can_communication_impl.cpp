@@ -351,7 +351,7 @@ bool CanCommunicationImpl::send(CanData data)
         result = this->can->send(data);
     }
     if (true == result) {
-        this->add_resume(data);
+        this->add_resume(data, false);
 #if OUTPUT_MESSAGE_FOR_SERIAL
         char buffer[255];
         sprintf(buffer,
@@ -423,16 +423,20 @@ bool CanCommunicationImpl::send_loop_shot()
     return result;
 }
 
-bool CanCommunicationImpl::add_resume(CanData data)
+bool CanCommunicationImpl::add_resume(CanData data, bool no_send)
 {
-    bool result           = true;
-    bool flag_duplication = false;
-    int index             = 0;
-    data.time             = millis();
+    bool result            = true;
+    bool flag_duplication  = false;
+    int index              = 0;
+    unsigned long set_time = 0;
+    if (false == no_send) {
+        set_time = millis();
+    }
+    data.time = set_time;
     for (CanData item : this->send_resume) {
         if (item.Id == data.Id) {
             flag_duplication = true;
-            item.time        = millis();
+            item.time        = set_time;
             break;
         }
         index++;

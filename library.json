@@ -1,17 +1,17 @@
 {
-    "name": "CAN_Data_Viewer",
-    "version": "0.2",
+    "name": "CANDataViewer",
+    "version": "0.2.0",
     "description": "View CAN data in a browser",
     "keywords": "M5Stack, ATOM Lite",
-    "homepage": "https://github.com/MaSiRo-Project-OSS/CAN-Data-Viewer",
+    "homepage": "https://github.com/MaSiRoProjectOSS/CANDataViewer",
     "authors": {
         "name": "MaSiRo Project.",
         "email": "masiro.to.akari@gmail.com",
-        "url": "https://github.com/MaSiRo-Project-OSS/CAN-Data-Viewer"
+        "url": "https://github.com/MaSiRoProjectOSS/CANDataViewer"
     },
     "repository": {
         "type": "git",
-        "url": "https://github.com/MaSiRo-Project-OSS/CAN-Data-Viewer.git"
+        "url": "https://github.com/MaSiRoProjectOSS/CANDataViewer.git"
     },
     "license": "MIT",
     "frameworks": "arduino",
@@ -26,29 +26,37 @@
     ],
     "examples": [
         {
-            "name": "PlatformIO",
-            "base": "examples/PlatformIO",
+            "name": "CanDataViewer_PlatformIO",
+            "base": "examples/CanDataViewer_PlatformIO",
             "files": [
-                "platformio.ini",
-                "include/examples.h",
-                "src/main.c",
-                "README"
+                "src/main.cpp",
+                "platformio.ini"
             ]
         },
         {
-            "name": "Arduino",
-            "base": "examples/can_data_viewer",
+            "name": "CanDataViewer_basic",
+            "base": "examples/CanDataViewer_basic",
             "files": [
-                "can_data_viewer.ino"
+                "CanDataViewer_basic.ino"
+            ]
+        },
+        {
+            "name": "CanDataViewer_FullFunction",
+            "base": "examples/CanDataViewer_FullFunction",
+            "files": [
+                "CanDataViewer_FullFunction.ino"
+            ]
+        },
+        {
+            "name": "CanDataViewer_M5Atom",
+            "base": "examples/CanDataViewer_M5Atom",
+            "files": [
+                "CanDataViewer_M5Atom.ino"
             ]
         }
     ],
     "build": {
         "includeDir": "include",
-        "srcDir": "src",
-        "flags": [
-            "-DNO_OUTPUT_MESSAGE_FOR_SERIAL=1",
-            "-DNO_LIB_CAN_DRIVER=0"
-        ]
+        "srcDir": "src"
     }
 }

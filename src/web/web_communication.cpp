@@ -99,7 +99,7 @@ void thread_wifi(void *args)
                 if (true != ctrl_web->is_ap_mode()) {
                     if (err_begin < millis()) {
                         err_begin = millis() + SETTING_WIFI_MODE_AP_AUTO_TRANSITIONS_TIMEOUT;
-                        ctrl_web->save_information(SETTING_WIFI_SSID_AP, SETTING_WIFI_PASS_AP, true, false, false);
+                        ctrl_web->save_information(SETTING_WIFI_SSID_DEFAULT_AP, SETTING_WIFI_PASS_DEFAULT_AP, true, false, false);
                     }
                 }
 #endif
@@ -475,6 +475,15 @@ IPAddress WebCommunication::get_ip()
 {
     return ctrl_web->get_ip();
 }
+const char *WebCommunication::get_ssid()
+{
+    return ctrl_web->get_ssid();
+}
+bool WebCommunication::is_ap_mode()
+{
+    return ctrl_web->is_ap_mode();
+}
+
 #if DEBUG_MODE
 UBaseType_t WebCommunication::get_stack_size()
 {

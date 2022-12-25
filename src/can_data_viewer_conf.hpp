@@ -44,12 +44,12 @@
 #define SETTING_WIFI_PORT 80
 #endif
 
-#ifndef SETTING_WIFI_INFOMATION
+#ifndef SETTING_WIFI_SETTING_FILE
 /**
  * @brief Specify Wifi settings
  *
  */
-#define SETTING_WIFI_INFOMATION "/info_wifi.txt"
+#define SETTING_WIFI_SETTING_FILE "/info_wifi.txt"
 #endif
 
 #ifndef SETTING_WIFI_MODE_AP_AUTO_TRANSITIONS
@@ -76,35 +76,35 @@
 #define SETTING_WIFI_MODE_AP true
 #endif
 
-#ifndef SETTING_WIFI_SSID_AP
+#ifndef SETTING_WIFI_SSID_DEFAULT_AP
 /**
- * @brief Specify Wifi SSID
+ * @brief Specify Wifi SSID on AP
  *
  */
-#define SETTING_WIFI_SSID_AP "AP_CAN_DATA_VIEWER"
+#define SETTING_WIFI_SSID_DEFAULT_AP "AP_CAN_DATA_VIEWER"
 #endif
 
-#ifndef SETTING_WIFI_PASS_AP
+#ifndef SETTING_WIFI_PASS_DEFAULT_AP
 /**
- * @brief Specify Wifi SSID password
+ * @brief Specify Wifi SSID password on AP
  *
  */
-#define SETTING_WIFI_PASS_AP "password"
+#define SETTING_WIFI_PASS_DEFAULT_AP "password"
 #endif
-#ifndef SETTING_WIFI_SSID_STA
+#ifndef SETTING_WIFI_SSID_DEFAULT_STA
 /**
- * @brief Specify Wifi SSID
+ * @brief Specify Wifi SSID on STA
  *
  */
-#define SETTING_WIFI_SSID_STA "STA_CAN_DATA_VIEWER"
+#define SETTING_WIFI_SSID_DEFAULT_STA "STA_CAN_DATA_VIEWER"
 #endif
 
-#ifndef SETTING_WIFI_PASS_STA
+#ifndef SETTING_WIFI_PASS_DEFAULT_STA
 /**
- * @brief Specify Wifi SSID password
+ * @brief Specify Wifi SSID password on STA
  *
  */
-#define SETTING_WIFI_PASS_STA "password"
+#define SETTING_WIFI_PASS_DEFAULT_STA "password"
 #endif
 
 #endif

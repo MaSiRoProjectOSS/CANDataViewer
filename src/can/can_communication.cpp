@@ -178,7 +178,7 @@ bool CanCommunication::setup_callback(void)
 bool CanCommunication::add_resume(CanData data)
 {
     data.time = 0;
-    return can->add_resume(data);
+    return can->add_resume(data, true);
 }
 bool CanCommunication::setup_default(void)
 {
