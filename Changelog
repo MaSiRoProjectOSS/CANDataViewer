@@ -1,0 +1,14 @@
+# Changes Overview
+
+---
+
+## Ver.0.2
+
+* WIFI information was stored in SPIFFS.
+* Librarization that can be used with PlatformIO
+
+## Ver.0.1
+
+* Publish the system
+
+---

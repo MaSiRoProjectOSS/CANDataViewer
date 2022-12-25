@@ -36,6 +36,8 @@ public:
 
 protected:
     IPAddress get_ip();
+    const char *get_ssid();
+    bool is_ap_mode();
     WebServer *get_server();
     virtual bool setup_server(WebServer *server);
     virtual void handle_not_found();

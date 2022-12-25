@@ -195,7 +195,7 @@ void setup()
         can_data_viewer.config_address_sta();
     }
 
-    // Start Can-Data-Viewer
+    // Start CANDataViewer
     can_data_viewer.begin(SETTING_WIFI_SSID, SETTING_WIFI_PASS, SETTING_WIFI_MODE_AP);
 
     // Switch connection information programmatically

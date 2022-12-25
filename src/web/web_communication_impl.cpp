@@ -49,7 +49,7 @@ bool WebCommunicationImpl::setup()
     formatOnFail = true;
 #endif
     if (SPIFFS.begin(formatOnFail)) {
-        result = SPIFFS.exists(SETTING_WIFI_INFOMATION);
+        result = SPIFFS.exists(SETTING_WIFI_SETTING_FILE);
         SPIFFS.end();
     } else {
         this->happened_message(OUTPUT_LOG_LEVEL::OUTPUT_LOG_LEVEL_ERROR, "SPIFFS Failed to Begin. You need to Run SPIFFS.format(),", __func__, __FILENAME__, __LINE__);
@@ -80,13 +80,13 @@ bool WebCommunicationImpl::_save_information(std::string ssid, std::string pass,
         this->happened_message(OUTPUT_LOG_LEVEL::OUTPUT_LOG_LEVEL_TRACE, "SPIFFS save begin.", __func__, __FILENAME__, __LINE__);
 #endif
         if (SPIFFS.begin()) {
-            if (true == SPIFFS.exists(SETTING_WIFI_INFOMATION)) {
+            if (true == SPIFFS.exists(SETTING_WIFI_SETTING_FILE)) {
                 this->_load_information_for_spiffs();
             } else {
                 force_write = true;
             }
             if ((true == force_write) || (this->_ssid != ssid) || (this->_pass != pass) || (this->_mode_ap != ap_mode)) {
-                File dataFile = SPIFFS.open(SETTING_WIFI_INFOMATION, FILE_WRITE);
+                File dataFile = SPIFFS.open(SETTING_WIFI_SETTING_FILE, FILE_WRITE);
                 dataFile.println((true == ap_mode) ? "A" : "S");
                 dataFile.println(ssid.c_str());
                 dataFile.println(pass.c_str());
@@ -119,9 +119,9 @@ bool WebCommunicationImpl::_load_information_for_spiffs()
     int type           = 0;
     bool previous_type = 0;
     std::string words;
-    result = SPIFFS.exists(SETTING_WIFI_INFOMATION);
+    result = SPIFFS.exists(SETTING_WIFI_SETTING_FILE);
     if (true == result) {
-        File dataFile = SPIFFS.open(SETTING_WIFI_INFOMATION, FILE_READ);
+        File dataFile = SPIFFS.open(SETTING_WIFI_SETTING_FILE, FILE_READ);
         if (!dataFile) {
             result = false;
         } else {
@@ -450,11 +450,11 @@ bool WebCommunicationImpl::disconnect()
 
 WebCommunicationImpl::WebCommunicationImpl() : _open_fs(false), _running(false)
 {
-    this->_ssid_ap = SETTING_WIFI_SSID_AP;
+    this->_ssid_ap = SETTING_WIFI_SSID_DEFAULT_AP;
     if (true == SETTING_WIFI_MODE_AP) {
-        this->request_connection_info(SETTING_WIFI_SSID_AP, SETTING_WIFI_PASS_AP, true);
+        this->request_connection_info(SETTING_WIFI_SSID_DEFAULT_AP, SETTING_WIFI_PASS_DEFAULT_AP, true);
     } else {
-        this->request_connection_info(SETTING_WIFI_SSID_STA, SETTING_WIFI_PASS_STA, false);
+        this->request_connection_info(SETTING_WIFI_SSID_DEFAULT_STA, SETTING_WIFI_PASS_DEFAULT_STA, false);
     }
 }
 WebCommunicationImpl::~WebCommunicationImpl()
