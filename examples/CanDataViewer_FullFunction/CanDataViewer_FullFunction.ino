@@ -42,7 +42,7 @@ void output_message(OUTPUT_LOG_LEVEL level, const char *message, const char *fun
     unsigned long tm_s  = tm / 1000;
     unsigned long tm_ms = tm % 1000;
 
-    if (level <= OUTPUT_LOG_LEVEL::OUTPUT_LOG_LEVEL_WARN) {
+    if (level >= OUTPUT_LOG_LEVEL::OUTPUT_LOG_LEVEL_WARN) {
         sprintf(buffer, "[Error] [%7ld.%03ld][%s:%s:%d] : %s", tm_s, tm_ms, file_name, function_name, line, message);
     } else {
         sprintf(buffer, "[     ] [%7ld.%03ld][%s:%s:%d] : %s", tm_s, tm_ms, file_name, function_name, line, message);
@@ -195,7 +195,7 @@ void setup()
         can_data_viewer.config_address_sta();
     }
 
-    // Start Can-Data-Viewer
+    // Start CANDataViewer
     can_data_viewer.begin(SETTING_WIFI_SSID, SETTING_WIFI_PASS, SETTING_WIFI_MODE_AP);
 
     // Switch connection information programmatically

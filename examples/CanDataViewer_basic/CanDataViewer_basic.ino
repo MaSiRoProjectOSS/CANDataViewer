@@ -8,6 +8,8 @@
  * @copyright Copyright (c) 2022 / MaSiRo Project.
  *
  */
+#include <Arduino.h>
+#include <M5Atom.h>
 #include <can_data_viewer.hpp>
 
 #define SETTING_WIFI_MODE_AP false
