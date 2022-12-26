@@ -13,7 +13,6 @@
 
 #include "can_data_viewer_info.hpp"
 
-#include <SPI.h>
 #include <vector>
 
 namespace MaSiRoProject

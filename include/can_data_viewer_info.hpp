@@ -8,12 +8,12 @@
  * @copyright Copyright (c) 2022 / MaSiRo Project.
  *
  */
-
 #ifndef MASIRO_PROJECT_CAN_DATA_VIEWER_INFO_HPP
 #define MASIRO_PROJECT_CAN_DATA_VIEWER_INFO_HPP
 
 #include <Arduino.h>
-#include <WiFi.h>
+#include <SPIFFS.h>
+#include <WebServer.h>
 
 #ifndef CAN_MESSAGE_SIZE
 #define CAN_MESSAGE_SIZE (8)

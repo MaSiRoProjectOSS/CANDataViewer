@@ -12,9 +12,6 @@
 
 #include "../can_data_viewer_conf.hpp"
 
-#include <iostream>
-#include <string>
-
 namespace MaSiRoProject
 {
 
