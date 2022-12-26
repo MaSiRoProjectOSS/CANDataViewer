@@ -20,7 +20,7 @@
         "coryjfowler/mcp_can": "^1.5.0",
         "miwagner/ESP32CAN": "~0.0.1"
     },
-    "headers": "include/can_data_viewer.hpp",
+    "headers": "can_data_viewer.hpp",
     "examples": [
         {
             "name": "CanDataViewer_basic",
