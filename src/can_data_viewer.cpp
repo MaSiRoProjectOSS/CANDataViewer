@@ -13,8 +13,12 @@
 #include "can/can_communication.hpp"
 #include "web/controller_page.hpp"
 
+namespace MaSiRoProject
+{
 MaSiRoProject::WEB::ControllerPage ctrl_page;
 MaSiRoProject::CAN::CanCommunication ctrl_can;
+} // namespace MaSiRoProject
+using namespace MaSiRoProject;
 
 ////////////////////////////////////////////////
 // setup function

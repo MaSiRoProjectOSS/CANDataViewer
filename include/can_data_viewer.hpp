@@ -13,11 +13,6 @@
 
 #include "can_data_viewer_info.hpp"
 
-#include <WebServer.h>
-#if STORAGE_SPI_FS
-#include <SPIFFS.h>
-#endif
-
 class CanDataViewer {
     ////////////////////////////////////////////////
     // standard function
