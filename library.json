@@ -52,6 +52,12 @@
             ]
         }
     ],
+    "export": {
+        "exclude": [
+            "miniature/*",
+            "test/*"
+        ]
+    },
     "build": {
         "includeDir": "include",
         "srcDir": "src"
