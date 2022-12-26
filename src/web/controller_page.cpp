@@ -133,7 +133,7 @@ std::string ControllerPage::page_body()
     html.append("<span>&nbsp; / TIME : <b id='current_time'>--</b></span></p>");
     ///////////////////////////
     html.append("<div><p>"
-                "<span><input type='button' value='On/Off' onclick='JS_CCtrl.change_mode();' />&nbsp;&nbsp;&nbsp;State : <b id='can_mode'>--</b></span>"
+                "<span><input title='-' placeholder='0' type='button' value='On/Off' onclick='JS_CCtrl.change_mode();' />&nbsp;&nbsp;&nbsp;State : <b id='can_mode'>--</b></span>"
                 "</p></div></article><br />");
     ///////////////////////////
 
@@ -145,14 +145,14 @@ std::string ControllerPage::page_body()
     html.append(
             "<tr><td class='td_view td_type'><span id='send_type'>Loop</span></td><td id='send_time' class='td_view'>0.500</td><td id='send_id' class='td_view'>0x64</td><td id='send_len' class='td_view'>8</td><td id='send_data_0' class='td_view'>0x00</td><td id='send_data_1' class='td_view'>0x00</td><td id='send_data_2' class='td_view'>0x00</td><td id='send_data_3' class='td_view'>0x00</td><td id='send_data_4' class='td_view'>0x00</td><td id='send_data_5' class='td_view'>0x00</td><td id='send_data_6' class='td_view'>0x00</td><td id='send_data_7' class='td_view'>0x00</td></tr>");
     html.append(
-            "<tr><td><input type='button' value='Send' onclick='JS_CCtrl.send();' /></td><td><p><input id='b_send_time_s' type='number' value='0' min='0' max='120' onchange='JS_Table.change();' /><span>.</span><input id='b_send_time_ms' type='number' value='500' min='0' max='1000' step='100' onchange='JS_Table.change();' /></p></td><td><input id='b_send_id' type='number' value='100' min='0' max='255' onchange='JS_Table.change();' /></td><td><input id='b_send_len' type='number' value='8' min='1' max='8' onchange='JS_Table.change();' /></td><td><input id='b_send_data_0' type='number' value='0' min='0' max='255' onchange='JS_Table.change();' /></td><td><input id='b_send_data_1' type='number' value='0' min='0' max='255' onchange='JS_Table.change();' /></td><td><input id='b_send_data_2' type='number' value='0' min='0' max='255' onchange='JS_Table.change();' /></td><td><input id='b_send_data_3' type='number' value='0' min='0' max='255' onchange='JS_Table.change();' /></td><td><input id='b_send_data_4' type='number' value='0' min='0' max='255' onchange='JS_Table.change();' /></td><td><input id='b_send_data_5' type='number' value='0' min='0' max='255' onchange='JS_Table.change();' /></td><td><input id='b_send_data_6' type='number' value='0' min='0' max='255' onchange='JS_Table.change();' /></td><td><input id='b_send_data_7' type='number' value='0' min='0' max='255' onchange='JS_Table.change();' /></td></tr>");
+            "<tr><td><input title='-' placeholder='0' type='button' value='Send' onclick='JS_CCtrl.send();' /></td><td><p><input title='-' placeholder='0' id='b_send_time_s' type='number' value='0' min='0' max='120' onchange='JS_Table.change();' /><span>.</span><input title='-' placeholder='0' id='b_send_time_ms' type='number' value='500' min='0' max='1000' step='100' onchange='JS_Table.change();' /></p></td><td><input title='-' placeholder='0' id='b_send_id' type='number' value='100' min='0' max='255' onchange='JS_Table.change();' /></td><td><input title='-' placeholder='0' id='b_send_len' type='number' value='8' min='1' max='8' onchange='JS_Table.change();' /></td><td><input title='-' placeholder='0' id='b_send_data_0' type='number' value='0' min='0' max='255' onchange='JS_Table.change();' /></td><td><input title='-' placeholder='0' id='b_send_data_1' type='number' value='0' min='0' max='255' onchange='JS_Table.change();' /></td><td><input title='-' placeholder='0' id='b_send_data_2' type='number' value='0' min='0' max='255' onchange='JS_Table.change();' /></td><td><input title='-' placeholder='0' id='b_send_data_3' type='number' value='0' min='0' max='255' onchange='JS_Table.change();' /></td><td><input title='-' placeholder='0' id='b_send_data_4' type='number' value='0' min='0' max='255' onchange='JS_Table.change();' /></td><td><input title='-' placeholder='0' id='b_send_data_5' type='number' value='0' min='0' max='255' onchange='JS_Table.change();' /></td><td><input title='-' placeholder='0' id='b_send_data_6' type='number' value='0' min='0' max='255' onchange='JS_Table.change();' /></td><td><input title='-' placeholder='0' id='b_send_data_7' type='number' value='0' min='0' max='255' onchange='JS_Table.change();' /></td></tr>");
     html.append("</tbody></table></details></article>");
 
     html.append("<br />");
 
     html.append("<article><details open><summary>send (one shot)</summary><table>");
     html.append(
-            "<caption><span>send(one shot) : size[<b id='send_one_shot_size'>0</b>]</span><span>&nbsp;&nbsp;</span><input type='button' value='CLEAR' onclick='JS_CCtrl.clear(0);' /></caption>");
+            "<caption><span>send(one shot) : size[<b id='send_one_shot_size'>0</b>]</span><span>&nbsp;&nbsp;</span><input title='-' placeholder='0' type='button' value='CLEAR' onclick='JS_CCtrl.clear(0);' /></caption>");
     html.append("<tbody id='send_one_shot'>");
     html.append("<tr><th rowspan='2' colspan='2'></th><th rowspan='2'>TIME</th><th rowspan='2'>ID</th><th rowspan='2'>Len</th><th colspan='8'>Data</th><th rowspan='2'></th></tr>");
     html.append("<tr><th>[0]</th><th>[1]</th><th>[2]</th><th>[3]</th><th>[4]</th><th>[5]</th><th>[6]</th><th>[7]</th></tr>");
@@ -162,7 +162,7 @@ std::string ControllerPage::page_body()
 
     html.append("<article><details open><summary>send (loop)</summary><table>");
     html.append(
-            "<caption><span>send(loop) : size[<b id='send_loop_size'>0</b>]</span><span>&nbsp;&nbsp;</span><input type='button' value='DEFAULT' onclick='JS_CCtrl.default(1);' /><span>&nbsp;&nbsp;</span><input type='button' value='CLEAR' onclick='JS_CCtrl.clear(1);' /></caption>");
+            "<caption><span>send(loop) : size[<b id='send_loop_size'>0</b>]</span><span>&nbsp;&nbsp;</span><input title='-' placeholder='0' type='button' value='DEFAULT' onclick='JS_CCtrl.default(1);' /><span>&nbsp;&nbsp;</span><input title='-' placeholder='0' type='button' value='CLEAR' onclick='JS_CCtrl.clear(1);' /></caption>");
     html.append("<tbody id='send_loop'>");
     html.append(
             "<tr><th rowspan='2' colspan='2'></th><th rowspan='2'>TIME</th><th rowspan='2'>LOOP<br>INTERVAL</th><th rowspan='2'>ID</th><th rowspan='2'>Len</th><th colspan='8'>Data</th></tr>");
