@@ -1,8 +1,8 @@
 {
     "name": "CANDataViewer",
-    "version": "0.2.0",
+    "version": "0.2.1",
     "description": "View CAN data in a browser",
-    "keywords": "M5Stack, ATOM Lite",
+    "keywords": "M5Stack, ATOM Lite, CAN, WebServer",
     "homepage": "https://github.com/MaSiRoProjectOSS/CANDataViewer",
     "authors": {
         "name": "MaSiRo Project.",
@@ -20,24 +20,21 @@
         "coryjfowler/mcp_can": "^1.5.0",
         "miwagner/ESP32CAN": "~0.0.1"
     },
-    "headers": [
-        "can_data_viewer.hpp",
-        "can_data_viewer_info.hpp"
-    ],
+    "headers": "include/can_data_viewer.hpp",
     "examples": [
+        {
+            "name": "CanDataViewer_basic",
+            "base": "examples/CanDataViewer_basic",
+            "files": [
+                "CanDataViewer_basic.ino"
+            ]
+        },
         {
             "name": "CanDataViewer_PlatformIO",
             "base": "examples/CanDataViewer_PlatformIO",
             "files": [
                 "src/main.cpp",
                 "platformio.ini"
-            ]
-        },
-        {
-            "name": "CanDataViewer_basic",
-            "base": "examples/CanDataViewer_basic",
-            "files": [
-                "CanDataViewer_basic.ino"
             ]
         },
         {

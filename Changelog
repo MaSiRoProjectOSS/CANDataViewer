@@ -2,12 +2,17 @@
 
 ---
 
-## Ver.0.2
+## Ver.0.2.1
+
+* Fix download Favicon.ico
+* Refactoring
+
+## Ver.0.2.0
 
 * WIFI information was stored in SPIFFS.
-* Librarization that can be used with PlatformIO
+* Librarization available in PlatformIO
 
-## Ver.0.1
+## Ver.0.1.0
 
 * Publish the system
 
