@@ -23,7 +23,7 @@ using namespace MaSiRoProject;
 ////////////////////////////////////////////////
 // setup function
 ////////////////////////////////////////////////
-
+#pragma region setup_function
 bool CanDataViewer::set_callback_message(MessageFunction callback)
 {
     bool result = true;
@@ -57,18 +57,13 @@ void CanDataViewer::set_wifi_info(std::string ssid, std::string pass, bool ap_mo
 {
     ctrl_page.request_reconnect(ssid, pass, ap_mode, false);
 }
-void CanDataViewer::config_address_ap(IPAddress ip, IPAddress gateway, IPAddress subnet)
-{
-    ctrl_page.set_config_address_ap(ip, gateway, subnet);
-}
-void CanDataViewer::config_address_sta(IPAddress ip, IPAddress gateway, IPAddress subnet)
-{
-    ctrl_page.set_config_address_sta(ip, gateway, subnet);
-}
+
+#pragma endregion
+
 ////////////////////////////////////////////////
 // control function
 ////////////////////////////////////////////////
-
+#pragma region control_function
 bool CanDataViewer::set_mode(CAN_CTRL_STATE mode)
 {
     return ctrl_can.change_mode(mode);
@@ -168,10 +163,12 @@ bool CanDataViewer::clear_loop_shot(void)
 {
     return ctrl_can.clear_loop_shot();
 }
+#pragma endregion
 
 ////////////////////////////////////////////////
 // debug function
 ////////////////////////////////////////////////
+#pragma region debug_function
 #if DEBUG_MODE
 UBaseType_t CanDataViewer::get_stack_high_water_mark_can()
 {
@@ -190,10 +187,12 @@ UBaseType_t CanDataViewer::get_stack_size_server()
     return ctrl_page.get_stack_size();
 }
 #endif
+#pragma endregion
 
 ////////////////////////////////////////////////
 // standard function
 ////////////////////////////////////////////////
+#pragma region standard_function
 
 CanDataViewer::CanDataViewer()
 {
@@ -201,6 +200,14 @@ CanDataViewer::CanDataViewer()
 
 CanDataViewer::~CanDataViewer()
 {
+}
+void CanDataViewer::config_address_ap(IPAddress ip, IPAddress gateway, IPAddress subnet)
+{
+    ctrl_page.set_config_address_ap(ip, gateway, subnet);
+}
+void CanDataViewer::config_address_sta(IPAddress ip, IPAddress gateway, IPAddress subnet)
+{
+    ctrl_page.set_config_address_sta(ip, gateway, subnet);
 }
 bool CanDataViewer::begin(std::string ssid, std::string pass, bool ap_mode)
 {
@@ -232,3 +239,4 @@ bool CanDataViewer::begin(std::string ssid, std::string pass, bool ap_mode)
     }
     return result;
 }
+#pragma endregion
