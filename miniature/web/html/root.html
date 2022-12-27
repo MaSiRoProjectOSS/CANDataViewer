@@ -4,7 +4,7 @@
 <head>
     <meta charset='UTF-8'>
     <meta name='viewport' content='width=device-width, initial-scale=1.0'>
-    <link href='../css/style.css' rel='stylesheet' type='text/css' media='all'>
+    <link href='../css/cdv.css' rel='stylesheet' type='text/css' media='all'>
     <script type='text/javascript' src='../js/can_controller.js'></script>
     <script type='text/javascript' src='../js/table_view.js'></script>
     <script type='text/javascript' src='../js/test/ajax.js'></script>
@@ -23,7 +23,7 @@
             <span>&nbsp; / TIME : <b id="current_time">--</b></span>
         </p>
         <div>
-            <p><input type="button" value="On/Off" onclick="JS_CCtrl.change_mode();" />
+            <p><input title='-' placeholder='0' type="button" value="On/Off" onclick="JS_CCtrl.change_mode();" />
                 <span></span>&nbsp;&nbsp;&nbsp;State : <b id="can_mode">--</b></span>
             </p>
         </div>
@@ -68,24 +68,24 @@
                         <td id="send_data_7" class="td_view">0x00</td>
                     </tr>
                     <tr>
-                        <td><input type="button" value="Send" onclick="JS_CCtrl.send();" /></td>
+                        <td><input title='-' placeholder='0' type="button" value="Send" onclick="JS_CCtrl.send();" /></td>
                         <td>
                             <p>
-                                <input id="b_send_time_s" type="number" value="0" min="0" max="120" onchange="JS_Table.change();" />
+                                <input title='-' placeholder='0' id="b_send_time_s" type="number" value="0" min="0" max="120" onchange="JS_Table.change();" />
                                 <span>.</span>
-                                <input id="b_send_time_ms" type="number" value="500" min="0" max="1000" step="100" onchange="JS_Table.change();" />
+                                <input title='-' placeholder='0' id="b_send_time_ms" type="number" value="500" min="0" max="1000" step="100" onchange="JS_Table.change();" />
                             </p>
                         </td>
-                        <td><input id="b_send_id" type="number" value="100" min="0" max="255" onchange="JS_Table.change();" /></td>
-                        <td><input id="b_send_len" type="number" value="8" min="1" max="8" onchange="JS_Table.change();" /></td>
-                        <td><input id="b_send_data_0" type="number" value="0" min="0" max="255" onchange="JS_Table.change();" /></td>
-                        <td><input id="b_send_data_1" type="number" value="0" min="0" max="255" onchange="JS_Table.change();" /></td>
-                        <td><input id="b_send_data_2" type="number" value="0" min="0" max="255" onchange="JS_Table.change();" /></td>
-                        <td><input id="b_send_data_3" type="number" value="0" min="0" max="255" onchange="JS_Table.change();" /></td>
-                        <td><input id="b_send_data_4" type="number" value="0" min="0" max="255" onchange="JS_Table.change();" /></td>
-                        <td><input id="b_send_data_5" type="number" value="0" min="0" max="255" onchange="JS_Table.change();" /></td>
-                        <td><input id="b_send_data_6" type="number" value="0" min="0" max="255" onchange="JS_Table.change();" /></td>
-                        <td><input id="b_send_data_7" type="number" value="0" min="0" max="255" onchange="JS_Table.change();" /></td>
+                        <td><input title='-' placeholder='0' id="b_send_id" type="number" value="100" min="0" max="255" onchange="JS_Table.change();" /></td>
+                        <td><input title='-' placeholder='0' id="b_send_len" type="number" value="8" min="1" max="8" onchange="JS_Table.change();" /></td>
+                        <td><input title='-' placeholder='0' id="b_send_data_0" type="number" value="0" min="0" max="255" onchange="JS_Table.change();" /></td>
+                        <td><input title='-' placeholder='0' id="b_send_data_1" type="number" value="0" min="0" max="255" onchange="JS_Table.change();" /></td>
+                        <td><input title='-' placeholder='0' id="b_send_data_2" type="number" value="0" min="0" max="255" onchange="JS_Table.change();" /></td>
+                        <td><input title='-' placeholder='0' id="b_send_data_3" type="number" value="0" min="0" max="255" onchange="JS_Table.change();" /></td>
+                        <td><input title='-' placeholder='0' id="b_send_data_4" type="number" value="0" min="0" max="255" onchange="JS_Table.change();" /></td>
+                        <td><input title='-' placeholder='0' id="b_send_data_5" type="number" value="0" min="0" max="255" onchange="JS_Table.change();" /></td>
+                        <td><input title='-' placeholder='0' id="b_send_data_6" type="number" value="0" min="0" max="255" onchange="JS_Table.change();" /></td>
+                        <td><input title='-' placeholder='0' id="b_send_data_7" type="number" value="0" min="0" max="255" onchange="JS_Table.change();" /></td>
                     </tr>
                 </tbody>
             </table>
@@ -99,7 +99,7 @@
                 <caption>
                     <span>send(one shot) : size[<b id="send_one_shot_size">0</b>]</span>
                     <span>&nbsp;&nbsp;</span>
-                    <input type="button" value="CLEAR" onclick="JS_CCtrl.clear(0);" />
+                    <input title='-' placeholder='0' type="button" value="CLEAR" onclick="JS_CCtrl.clear(0);" />
                 </caption>
                 <tbody id="send_one_shot">
                     <tr>
@@ -132,9 +132,9 @@
                 <caption>
                     <span>send(loop) : size[<b id="send_loop_size">0</b>]</span>
                     <span>&nbsp;&nbsp;</span>
-                    <input type="button" value="DEFAULT" onclick="JS_CCtrl.default(1);" />
+                    <input title='-' placeholder='0' type="button" value="DEFAULT" onclick="JS_CCtrl.default(1);" />
                     <span>&nbsp;&nbsp;</span>
-                    <input type="button" value="CLEAR" onclick="JS_CCtrl.clear(1);" />
+                    <input title='-' placeholder='0' type="button" value="CLEAR" onclick="JS_CCtrl.clear(1);" />
                 </caption>
                 <tbody id="send_loop">
                     <tr>
