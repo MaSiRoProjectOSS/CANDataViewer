@@ -16,6 +16,7 @@ td {
     border: outset;
     text-align: center;
     padding: 5px;
+    width: 3em;
 }
 
 input {
