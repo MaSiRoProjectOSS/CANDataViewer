@@ -1,0 +1,20 @@
+# Changes Overview
+
+---
+
+## Ver.0.2.1
+
+* Fixed download method for Favicon.ico
+* Change default Pin assignment to standard
+* Binary size reduction
+
+## Ver.0.2.0
+
+* WIFI information was stored in SPIFFS.
+* Librarization available in PlatformIO
+
+## Ver.0.1.0
+
+* Publish the system
+
+---
