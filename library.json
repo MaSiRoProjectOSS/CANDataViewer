@@ -1,6 +1,6 @@
 {
     "name": "CANDataViewer",
-    "version": "0.2.1",
+    "version": "0.2.2",
     "description": "View CAN data in a browser",
     "keywords": "M5Stack, M5Atom, CAN, WebServer",
     "homepage": "https://github.com/MaSiRoProjectOSS/CANDataViewer",
