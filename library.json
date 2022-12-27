@@ -2,7 +2,7 @@
     "name": "CANDataViewer",
     "version": "0.2.1",
     "description": "View CAN data in a browser",
-    "keywords": "M5Stack, ATOM Lite, CAN, WebServer",
+    "keywords": "M5Stack, M5Atom, CAN, WebServer",
     "homepage": "https://github.com/MaSiRoProjectOSS/CANDataViewer",
     "authors": {
         "name": "MaSiRo Project.",
@@ -57,9 +57,5 @@
             "miniature/*",
             "test/*"
         ]
-    },
-    "build": {
-        "includeDir": "include",
-        "srcDir": "src"
     }
 }

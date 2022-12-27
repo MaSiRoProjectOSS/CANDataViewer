@@ -24,8 +24,8 @@ bool DriverEsp32can::begin()
     bool result = false;
     //////////////////////////////////
     CAN_cfg.speed     = this->can_speed;
-    CAN_cfg.tx_pin_id = (gpio_num_t)CAN_COMMUNICATION_GROVE_PIN_TX;
-    CAN_cfg.rx_pin_id = (gpio_num_t)CAN_COMMUNICATION_GROVE_PIN_RX;
+    CAN_cfg.tx_pin_id = (gpio_num_t)CAN_COMMUNICATION_GROVE_PIN_SDA;
+    CAN_cfg.rx_pin_id = (gpio_num_t)CAN_COMMUNICATION_GROVE_PIN_SCL;
     CAN_cfg.rx_queue  = xQueueCreate(rx_queue_size, sizeof(CAN_frame_t));
     ESP32Can.CANInit();
     //////////////////////////////////

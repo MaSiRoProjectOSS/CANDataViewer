@@ -10,9 +10,10 @@
  */
 #include "can_communication.hpp"
 
+#include "../can_data_viewer_conf.hpp"
 #include "can_communication_impl.hpp"
-#include "can_data_viewer_conf.hpp"
 #include "driver/can_config.h"
+
 
 namespace MaSiRoProject
 {
