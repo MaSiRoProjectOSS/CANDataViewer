@@ -8,7 +8,7 @@
  * @copyright Copyright (c) 2022 / MaSiRo Project.
  *
  */
-#include "can_data_viewer.hpp"
+#include "../can_data_viewer.hpp"
 
 #include "can/can_communication.hpp"
 #include "web/controller_page.hpp"
