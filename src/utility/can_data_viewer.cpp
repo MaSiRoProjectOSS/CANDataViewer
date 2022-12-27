@@ -194,7 +194,7 @@ UBaseType_t CanDataViewer::get_stack_size_server()
 ////////////////////////////////////////////////
 #pragma region standard_function
 
-CanDataViewer::CanDataViewer(int interrupt, int cs)
+CanDataViewer::CanDataViewer(const uint8_t interrupt, const uint8_t cs)
 {
     ctrl_page = new MaSiRoProject::WEB::ControllerPage();
     ctrl_can  = new MaSiRoProject::CAN::CanCommunication(interrupt, cs);

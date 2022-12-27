@@ -24,7 +24,7 @@ namespace CAN
 // Constructor
 /////////////////////////////////
 #pragma region Constructor
-CanCommunicationImpl::CanCommunicationImpl(int cs)
+CanCommunicationImpl::CanCommunicationImpl(const uint8_t cs)
         : mode_request(CAN_CTRL_STATE::MODE_NOT_INITIALIZE), mode_current(CAN_CTRL_STATE::MODE_NOT_INITIALIZE), initialized(false), flag_request_pause(false)
 {
 #if LIB_CAN_DRIVER == 1
@@ -57,7 +57,7 @@ bool CanCommunicationImpl::begin()
 #endif
         initialized = true;
     } else {
-        happened_message(OUTPUT_LOG_LEVEL::OUTPUT_LOG_LEVEL_WARN, "CanCommunication : Initializing ...", __func__, __FILENAME__, __LINE__);
+        happened_message(OUTPUT_LOG_LEVEL::OUTPUT_LOG_LEVEL_WARN, "CanCommunication : Failed initialization...", __func__, __FILENAME__, __LINE__);
     }
     this->happened_changed_mode(this->mode_current);
     return result;

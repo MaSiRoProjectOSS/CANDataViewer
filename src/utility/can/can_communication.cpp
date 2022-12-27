@@ -120,7 +120,7 @@ void thread_can(void *args)
 // Constructor
 /////////////////////////////////
 #pragma region Constructor
-CanCommunication::CanCommunication(int interrupt, int cs)
+CanCommunication::CanCommunication(const uint8_t interrupt, const uint8_t cs)
 {
     if (0 != interrupt) {
         this->interrupt = interrupt;

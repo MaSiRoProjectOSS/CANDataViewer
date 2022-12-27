@@ -22,7 +22,7 @@ public:
      * @brief Construct a new Can Data Viewer object
      *
      */
-    CanDataViewer(int interrupt = 0, int cs = 0);
+    CanDataViewer(const uint8_t interrupt = 0, const uint8_t cs = 0);
     /**
      * @brief Destroy the Can Data Viewer object
      *

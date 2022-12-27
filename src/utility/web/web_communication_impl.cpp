@@ -95,13 +95,13 @@ bool WebCommunicationImpl::_save_information(std::string ssid, std::string pass,
             }
             SPIFFS.end();
         }
-#if DEBUG_MODE
         if (true == result) {
-            this->happened_message(OUTPUT_LOG_LEVEL::OUTPUT_LOG_LEVEL_DEBUG, "Writing data to SPIFFS", __func__, __FILENAME__, __LINE__);
+            this->happened_message(OUTPUT_LOG_LEVEL::OUTPUT_LOG_LEVEL_INFO, "Writing data to SPIFFS", __func__, __FILENAME__, __LINE__);
         } else {
+#if DEBUG_MODE
             this->happened_message(OUTPUT_LOG_LEVEL::OUTPUT_LOG_LEVEL_TRACE, "Finished SPIFFS", __func__, __FILENAME__, __LINE__);
-        }
 #endif
+        }
     }
 #endif
     return result;

@@ -38,7 +38,7 @@ public:
     /////////////////////////////////
     // Constructor
     /////////////////////////////////
-    DriverMcp2515(int cs);
+    DriverMcp2515(const uint8_t cs);
     ~DriverMcp2515();
 
 private:
