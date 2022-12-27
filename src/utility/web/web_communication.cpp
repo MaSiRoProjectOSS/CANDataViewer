@@ -23,6 +23,7 @@ namespace WEB
 #define THREAD_NAME_WIFI                       "ThreadWiFi"
 #define THREAD_INTERVAL_WIFI                   (50)
 #define THREAD_SEEK_INTERVAL_WIFI              (1000)
+#define THREAD_RETRY_INTERVAL_WIFI             (5000)
 #define THREAD_RECONNECTION_INTERVAL_WIFI      (1000)
 #define WEB_PAGE_HEADER_EXPIRES                "86400"
 #define WEB_PAGE_HEADER_CACHE_CONTROL_LONGTIME "max-age=604800, must-revalidate"
@@ -108,6 +109,7 @@ void thread_wifi(void *args)
                     }
                 }
 #endif
+                vTaskDelay(THREAD_RETRY_INTERVAL_WIFI);
             } else {
                 if (nullptr != ctrl_server) {
                     ctrl_server->begin();
@@ -526,13 +528,13 @@ void WebCommunication::request_reconnect(std::string ssid, std::string pass, boo
     request_pass                   = pass;
     request_ap_mode                = ap_mode;
 }
-void WebCommunication::set_config_address_ap(IPAddress ip, IPAddress gateway, IPAddress subnet)
+void WebCommunication::set_config_address_ap(IPAddress ip, IPAddress subnet, IPAddress gateway)
 {
-    ctrl_web->set_config_address_ap(ip, gateway, subnet);
+    ctrl_web->set_config_address_ap(ip, subnet, gateway);
 }
-void WebCommunication::set_config_address_sta(IPAddress ip, IPAddress gateway, IPAddress subnet)
+void WebCommunication::set_config_address_sta(IPAddress ip, IPAddress subnet, IPAddress gateway)
 {
-    ctrl_web->set_config_address_sta(ip, gateway, subnet);
+    ctrl_web->set_config_address_sta(ip, subnet, gateway);
 }
 #pragma endregion
 

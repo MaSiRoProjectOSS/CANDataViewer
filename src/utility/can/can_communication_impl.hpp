@@ -27,7 +27,7 @@ class CanCommunicationImpl {
     // Constructor
     /////////////////////////////////
 public:
-    CanCommunicationImpl();
+    CanCommunicationImpl(int cs);
     ~CanCommunicationImpl();
 
     /////////////////////////////////

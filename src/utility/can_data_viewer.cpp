@@ -15,8 +15,8 @@
 
 namespace MaSiRoProject
 {
-MaSiRoProject::WEB::ControllerPage ctrl_page;
-MaSiRoProject::CAN::CanCommunication ctrl_can;
+MaSiRoProject::WEB::ControllerPage *ctrl_page;
+MaSiRoProject::CAN::CanCommunication *ctrl_can;
 } // namespace MaSiRoProject
 using namespace MaSiRoProject;
 
@@ -27,35 +27,35 @@ using namespace MaSiRoProject;
 bool CanDataViewer::set_callback_message(MessageFunction callback)
 {
     bool result = true;
-    ctrl_page.set_callback_message(callback);
-    ctrl_can.set_callback_message(callback);
+    ctrl_page->set_callback_message(callback);
+    ctrl_can->set_callback_message(callback);
     return result;
 }
 bool CanDataViewer::set_callback_changed_mode(ChangedModeFunction callback)
 {
     bool result = true;
-    ctrl_can.set_callback_changed_mode(callback);
+    ctrl_can->set_callback_changed_mode(callback);
     return result;
 }
 
 bool CanDataViewer::set_callback_received(GetReceivedFunction callback)
 {
-    return ctrl_can.set_callback_received(callback);
+    return ctrl_can->set_callback_received(callback);
 }
 bool CanDataViewer::set_callback_sendable_interrupt(SendEventFunction callback)
 {
-    return ctrl_can.set_callback_sendable(callback);
+    return ctrl_can->set_callback_sendable(callback);
 }
 
 bool CanDataViewer::set_callback_setting_default(SettingDefaultFunction callback)
 {
     bool result = true;
-    ctrl_can.set_callback_setting_default(callback);
+    ctrl_can->set_callback_setting_default(callback);
     return result;
 }
 void CanDataViewer::set_wifi_info(std::string ssid, std::string pass, bool ap_mode)
 {
-    ctrl_page.request_reconnect(ssid, pass, ap_mode, false);
+    ctrl_page->request_reconnect(ssid, pass, ap_mode, false);
 }
 
 #pragma endregion
@@ -66,102 +66,102 @@ void CanDataViewer::set_wifi_info(std::string ssid, std::string pass, bool ap_mo
 #pragma region control_function
 bool CanDataViewer::set_mode(CAN_CTRL_STATE mode)
 {
-    return ctrl_can.change_mode(mode);
+    return ctrl_can->change_mode(mode);
 }
 
 std::vector<CanData> can_data_request_send(void)
 {
-    return ctrl_can.get_send_loop();
+    return ctrl_can->get_send_loop();
 }
 std::vector<CanData> can_data_request_received(void)
 {
-    return ctrl_can.get_received();
+    return ctrl_can->get_received();
 }
 std::vector<CanData> can_data_request_resume(void)
 {
-    return ctrl_can.get_resume();
+    return ctrl_can->get_resume();
 }
 CanDeviceInfo get_can_device_info()
 {
-    return ctrl_can.get_device_info();
+    return ctrl_can->get_device_info();
 }
 
 bool can_data_one_shot(CanData data)
 {
-    return ctrl_can.add_one_shot(data);
+    return ctrl_can->add_one_shot(data);
 }
 bool can_data_loop(CanData data)
 {
-    return ctrl_can.add_loop_shot(data, data.loop_interval);
+    return ctrl_can->add_loop_shot(data, data.loop_interval);
 }
 bool can_set_mode(CAN_CTRL_STATE mode)
 {
-    ctrl_can.change_mode(mode);
+    ctrl_can->change_mode(mode);
     return true;
 }
 bool can_data_clear(int id)
 {
-    bool result = ctrl_can.request_pause();
+    bool result = ctrl_can->request_pause();
     if (true == result) {
-        result = ctrl_can.clear_loop_shot();
+        result = ctrl_can->clear_loop_shot();
     }
     if (true == result) {
-        result = ctrl_can.clear_resume();
+        result = ctrl_can->clear_resume();
     }
-    ctrl_can.request_running();
+    ctrl_can->request_running();
     return result;
 }
 bool can_data_default(int id)
 {
-    bool result = ctrl_can.request_pause();
+    bool result = ctrl_can->request_pause();
     if (true == result) {
-        result = ctrl_can.clear_resume();
+        result = ctrl_can->clear_resume();
     }
     if (true == result) {
-        result = ctrl_can.clear_loop_shot();
+        result = ctrl_can->clear_loop_shot();
     }
     if (true == result) {
-        result = ctrl_can.setup_default();
+        result = ctrl_can->setup_default();
     }
-    ctrl_can.request_running();
+    ctrl_can->request_running();
 
     return result;
 }
 bool can_data_delete(int id)
 {
-    bool result = ctrl_can.request_pause();
+    bool result = ctrl_can->request_pause();
     if (true == result) {
-        result = ctrl_can.delete_loop_shot(id);
+        result = ctrl_can->delete_loop_shot(id);
     }
     if (true == result) {
-        result = ctrl_can.delete_resume(id);
+        result = ctrl_can->delete_resume(id);
     }
-    ctrl_can.request_running();
+    ctrl_can->request_running();
     return result;
 }
 bool CanDataViewer::clear_resume(void)
 {
-    return ctrl_can.clear_resume();
+    return ctrl_can->clear_resume();
 }
 
 bool CanDataViewer::add_one_shot(CanData data)
 {
-    return ctrl_can.add_one_shot(data);
+    return ctrl_can->add_one_shot(data);
 }
 
 bool CanDataViewer::add_resume(CanData data)
 {
-    return ctrl_can.add_resume(data);
+    return ctrl_can->add_resume(data);
 }
 
 bool CanDataViewer::add_loop_shot(CanData data, int interval)
 {
-    return ctrl_can.add_loop_shot(data, interval);
+    return ctrl_can->add_loop_shot(data, interval);
 }
 
 bool CanDataViewer::clear_loop_shot(void)
 {
-    return ctrl_can.clear_loop_shot();
+    return ctrl_can->clear_loop_shot();
 }
 #pragma endregion
 
@@ -172,19 +172,19 @@ bool CanDataViewer::clear_loop_shot(void)
 #if DEBUG_MODE
 UBaseType_t CanDataViewer::get_stack_high_water_mark_can()
 {
-    return ctrl_can.get_stack_high_water_mark();
+    return ctrl_can->get_stack_high_water_mark();
 }
 UBaseType_t CanDataViewer::get_stack_high_water_mark_server()
 {
-    return ctrl_page.get_stack_high_water_mark();
+    return ctrl_page->get_stack_high_water_mark();
 }
 UBaseType_t CanDataViewer::get_stack_size_can()
 {
-    return ctrl_can.get_stack_size();
+    return ctrl_can->get_stack_size();
 }
 UBaseType_t CanDataViewer::get_stack_size_server()
 {
-    return ctrl_page.get_stack_size();
+    return ctrl_page->get_stack_size();
 }
 #endif
 #pragma endregion
@@ -194,45 +194,47 @@ UBaseType_t CanDataViewer::get_stack_size_server()
 ////////////////////////////////////////////////
 #pragma region standard_function
 
-CanDataViewer::CanDataViewer()
+CanDataViewer::CanDataViewer(int interrupt, int cs)
 {
+    ctrl_page = new MaSiRoProject::WEB::ControllerPage();
+    ctrl_can  = new MaSiRoProject::CAN::CanCommunication(interrupt, cs);
 }
 
 CanDataViewer::~CanDataViewer()
 {
 }
-void CanDataViewer::config_address_ap(IPAddress ip, IPAddress gateway, IPAddress subnet)
+void CanDataViewer::config_address_ap(IPAddress ip, IPAddress subnet, IPAddress gateway)
 {
-    ctrl_page.set_config_address_ap(ip, gateway, subnet);
+    ctrl_page->set_config_address_ap(ip, subnet, gateway);
 }
-void CanDataViewer::config_address_sta(IPAddress ip, IPAddress gateway, IPAddress subnet)
+void CanDataViewer::config_address_sta(IPAddress ip, IPAddress subnet, IPAddress gateway)
 {
-    ctrl_page.set_config_address_sta(ip, gateway, subnet);
+    ctrl_page->set_config_address_sta(ip, subnet, gateway);
 }
 bool CanDataViewer::begin(std::string ssid, std::string pass, bool ap_mode)
 {
     bool result = false;
     try {
         ////////////////////////////////////////////////////////
-        ctrl_page.setup_callback(&can_data_request_send,
-                                 &can_data_request_received,
-                                 &can_data_request_resume,
-                                 &get_can_device_info,
-                                 &can_set_mode,
-                                 &can_data_one_shot,
-                                 &can_data_loop,
-                                 &can_data_clear,
-                                 &can_data_default,
-                                 &can_data_delete);
-        ctrl_page.setup();
+        ctrl_page->setup_callback(&can_data_request_send,
+                                  &can_data_request_received,
+                                  &can_data_request_resume,
+                                  &get_can_device_info,
+                                  &can_set_mode,
+                                  &can_data_one_shot,
+                                  &can_data_loop,
+                                  &can_data_clear,
+                                  &can_data_default,
+                                  &can_data_delete);
+        ctrl_page->setup();
         if ("" != ssid) {
             if ("" != pass) {
-                ctrl_page.request_reconnect(ssid, pass, ap_mode, true);
+                ctrl_page->request_reconnect(ssid, pass, ap_mode, true);
             }
         }
-        ctrl_page.begin();
+        ctrl_page->begin();
         ////////////////////////////////////////////////////////
-        ctrl_can.begin();
+        ctrl_can->begin();
         result = true;
         ////////////////////////////////////////////////////////
     } catch (...) {

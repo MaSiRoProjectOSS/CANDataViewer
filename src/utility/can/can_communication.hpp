@@ -25,7 +25,7 @@ public:
     /////////////////////////////////
     // Constructor
     /////////////////////////////////
-    CanCommunication();
+    CanCommunication(int interrupt, int cs);
     ~CanCommunication();
 
     /////////////////////////////////

@@ -256,19 +256,27 @@ std::vector<NetworkList> WebCommunicationImpl::get_wifi_list()
     }
     return list;
 }
-void WebCommunicationImpl::set_config_address_ap(IPAddress ip, IPAddress gateway, IPAddress subnet)
+void WebCommunicationImpl::set_config_address_ap(IPAddress ip, IPAddress subnet, IPAddress gateway)
 {
-    this->_config_ap.flag_set = true;
-    this->_config_ap.local_ip = ip;
-    this->_config_ap.gateway  = gateway;
-    this->_config_ap.subnet   = subnet;
+    if (INADDR_NONE != ip) {
+        if (INADDR_NONE != subnet) {
+            this->_config_ap.flag_set = true;
+            this->_config_ap.local_ip = ip;
+            this->_config_ap.gateway  = gateway;
+            this->_config_ap.subnet   = subnet;
+        }
+    }
 }
-void WebCommunicationImpl::set_config_address_sta(IPAddress ip, IPAddress gateway, IPAddress subnet)
+void WebCommunicationImpl::set_config_address_sta(IPAddress ip, IPAddress subnet, IPAddress gateway)
 {
-    this->_config_sta.flag_set = true;
-    this->_config_sta.local_ip = ip;
-    this->_config_sta.gateway  = gateway;
-    this->_config_sta.subnet   = subnet;
+    if (INADDR_NONE != ip) {
+        if (INADDR_NONE != subnet) {
+            this->_config_sta.flag_set = true;
+            this->_config_sta.local_ip = ip;
+            this->_config_sta.gateway  = gateway;
+            this->_config_sta.subnet   = subnet;
+        }
+    }
 }
 
 bool WebCommunicationImpl::is_connected(bool force)

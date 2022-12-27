@@ -22,7 +22,7 @@ public:
      * @brief Construct a new Can Data Viewer object
      *
      */
-    CanDataViewer();
+    CanDataViewer(int interrupt = 0, int cs = 0);
     /**
      * @brief Destroy the Can Data Viewer object
      *
@@ -32,18 +32,18 @@ public:
      * @brief Configure access point
      *
      * @param ip        access point IP
-     * @param gateway   gateway IP
      * @param subnet    subnet mask
+     * @param gateway   gateway IP
      */
-    void config_address_ap(IPAddress ip = INADDR_NONE, IPAddress gateway = INADDR_NONE, IPAddress subnet = INADDR_NONE);
+    void config_address_ap(IPAddress ip = INADDR_NONE, IPAddress subnet = INADDR_NONE, IPAddress gateway = INADDR_NONE);
     /**
      * @brief Change IP configuration settings disabling the dhcp client
      *
      * @param ip        Static ip configuration
-     * @param gateway   Static gateway configuration
      * @param subnet    Static Subnet mask
+     * @param gateway   Static gateway configuration
      */
-    void config_address_sta(IPAddress ip = INADDR_NONE, IPAddress gateway = INADDR_NONE, IPAddress subnet = INADDR_NONE);
+    void config_address_sta(IPAddress ip = INADDR_NONE, IPAddress subnet = INADDR_NONE, IPAddress gateway = INADDR_NONE);
     /**
      * @brief
      *

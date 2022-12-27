@@ -24,11 +24,11 @@ namespace CAN
 // Constructor
 /////////////////////////////////
 #pragma region Constructor
-CanCommunicationImpl::CanCommunicationImpl()
+CanCommunicationImpl::CanCommunicationImpl(int cs)
         : mode_request(CAN_CTRL_STATE::MODE_NOT_INITIALIZE), mode_current(CAN_CTRL_STATE::MODE_NOT_INITIALIZE), initialized(false), flag_request_pause(false)
 {
 #if LIB_CAN_DRIVER == 1
-    this->can = new DriverMcp2515();
+    this->can = new DriverMcp2515(cs);
 #else
     this->can = new DriverEsp32can();
 #endif
