@@ -4,7 +4,7 @@
 
 ## Ver.0.2.1
 
-* Fix download Favicon.ico
+* Fixed download method for Favicon.ico
 * Change default Pin assignment to standard
 * Binary size reduction
 
