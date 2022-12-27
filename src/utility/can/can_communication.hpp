@@ -25,7 +25,7 @@ public:
     /////////////////////////////////
     // Constructor
     /////////////////////////////////
-    CanCommunication();
+    CanCommunication(const uint8_t interrupt, const uint8_t cs);
     ~CanCommunication();
 
     /////////////////////////////////
@@ -88,7 +88,7 @@ public:
     // Member
     /////////////////////////////////
 private:
-    byte interrupt;
+    uint8_t interrupt;
     SettingDefaultFunction callback_setting_default;
     TaskHandle_t task_handle;
     UBaseType_t task_assigned_size;

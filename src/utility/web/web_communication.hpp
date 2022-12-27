@@ -31,8 +31,8 @@ public:
     void set_message(std::string message);
     std::vector<NetworkList> get_wifi_list();
     void request_reconnect(std::string ssid, std::string pass, bool ap_mode, bool force);
-    void set_config_address_ap(IPAddress ip = INADDR_NONE, IPAddress gateway = INADDR_NONE, IPAddress subnet = INADDR_NONE);
-    void set_config_address_sta(IPAddress ip = INADDR_NONE, IPAddress gateway = INADDR_NONE, IPAddress subnet = INADDR_NONE);
+    void set_config_address_ap(IPAddress ip = INADDR_NONE, IPAddress subnet = INADDR_NONE, IPAddress gateway = INADDR_NONE);
+    void set_config_address_sta(IPAddress ip = INADDR_NONE, IPAddress subnet = INADDR_NONE, IPAddress gateway = INADDR_NONE);
 
 protected:
     IPAddress get_ip();

@@ -14,7 +14,6 @@
 #include "can_communication_impl.hpp"
 #include "driver/can_config.h"
 
-
 namespace MaSiRoProject
 {
 namespace CAN
@@ -24,6 +23,8 @@ namespace CAN
 #define THREAD_NAME_CAN "ThreadCAN"
 CanCommunicationImpl *can;
 ///////////////////////////////////////////////////////////////////
+#define THREAD_SEEK_INTERVAL_CAN  (1000)
+#define THREAD_RETRY_INTERVAL_CAN (5000)
 volatile bool flag_thread_can_fin          = false;
 volatile bool flag_thread_can_on_interrupt = false;
 volatile bool flag_thread_can_initialized  = false;
@@ -62,11 +63,13 @@ void thread_can(void *args)
 #endif
     while (false == flag_thread_can_fin) {
         try {
+            vTaskDelay(THREAD_SEEK_INTERVAL_CAN);
             if (false == can->begin()) {
                 sprintf(buffer, "<%s> - NOT begin()", THREAD_NAME_CAN);
                 if (nullptr != callback_mess) {
                     callback_mess(OUTPUT_LOG_LEVEL::OUTPUT_LOG_LEVEL_WARN, buffer, __func__, __FILENAME__, __LINE__);
                 }
+                vTaskDelay(THREAD_RETRY_INTERVAL_CAN);
             } else {
                 can->request_start();
                 while (false == flag_thread_can_fin) {
@@ -117,9 +120,14 @@ void thread_can(void *args)
 // Constructor
 /////////////////////////////////
 #pragma region Constructor
-CanCommunication::CanCommunication() : interrupt(CAN_COMMUNICATION_PIN_INTERRUPT)
+CanCommunication::CanCommunication(const uint8_t interrupt, const uint8_t cs)
 {
-    can = new CanCommunicationImpl();
+    if (0 != interrupt) {
+        this->interrupt = interrupt;
+    } else {
+        this->interrupt = CAN_COMMUNICATION_PIN_INTERRUPT;
+    }
+    can = new CanCommunicationImpl(cs);
 }
 
 CanCommunication::~CanCommunication()

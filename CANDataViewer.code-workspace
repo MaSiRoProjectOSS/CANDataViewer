@@ -21,7 +21,9 @@
 			"KBPS",
 			"IRAM",
 			"fillpix",
-			"CRGB"
+			"CRGB",
+			"PROGMEM",
+			"COMMU"
 		],
 		"doxdocgen.generic.useGitUserName": true,
 		"doxdocgen.generic.useGitUserEmail": true,

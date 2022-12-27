@@ -8,15 +8,30 @@
  * @copyright Copyright (c) 2022 / MaSiRo Project.
  *
  */
+
+//#define CONTROLLERS_M5STACK
+#define CONTROLLERS_ATOM_LITE
+
 #include <Arduino.h>
+#ifdef CONTROLLERS_M5STACK
+#include <M5Stack.h>
+#else
+// CONTROLLERS_ATOM_LITE
 #include <M5Atom.h>
+#endif
+
 #include <can_data_viewer.hpp>
 
 #define SETTING_WIFI_MODE_AP false
 #define SETTING_WIFI_SSID    "(wifi ssid)"
 #define SETTING_WIFI_PASS    "(wifi password)"
 
-CanDataViewer can_data_viewer;
+#ifdef CONTROLLERS_M5STACK
+CanDataViewer can_data_viewer(G15, G12);
+#else
+// CONTROLLERS_ATOM_LITE
+CanDataViewer can_data_viewer(G25, G19);
+#endif
 
 void setup()
 {

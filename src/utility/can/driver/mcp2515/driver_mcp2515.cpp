@@ -110,8 +110,13 @@ bool DriverMcp2515::output_error()
 /////////////////////////////////
 // Constructor
 /////////////////////////////////
-DriverMcp2515::DriverMcp2515() : DriverCanAbstract(), mcp2515(new MCP_CAN(CAN_COMMUNICATION_SPI_PIN_CS))
+DriverMcp2515::DriverMcp2515(const uint8_t cs) : DriverCanAbstract()
 {
+    uint8_t chip_select = CAN_COMMUNICATION_SPI_PIN_CS;
+    if (0 != cs) {
+        chip_select = cs;
+    }
+    mcp2515 = new MCP_CAN(chip_select);
     this->setup_can(this->can_mode, this->can_speed, this->can_clock);
 }
 DriverMcp2515::~DriverMcp2515()
