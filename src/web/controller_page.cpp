@@ -20,6 +20,9 @@ namespace MaSiRoProject
 
 namespace WEB
 {
+#define WEB_PAGE_HEADER_EXPIRES                "86400"
+#define WEB_PAGE_HEADER_CACHE_CONTROL_LONGTIME "max-age=604800, must-revalidate"
+#define WEB_PAGE_HEADER_CACHE_CONTROL_NO_CACHE "no-cache, no-store, must-revalidate"
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -27,7 +30,7 @@ bool ControllerPage::setup_server(WebServer *server)
 {
     bool result = true;
     if (nullptr != server) {
-        server->on("/style.css", std::bind(&ControllerPage::handle_css, this));
+        server->on("/cdv.css", std::bind(&ControllerPage::handle_css, this));
         server->on("/can_controller.js", std::bind(&ControllerPage::handle_js_can_controller, this));
         server->on("/table_view.js", std::bind(&ControllerPage::handle_js_table_view, this));
         server->on("/", std::bind(&ControllerPage::handle_root, this));
@@ -57,12 +60,12 @@ bool ControllerPage::setup_server(WebServer *server)
 void ControllerPage::handle_css()
 {
     std::string css
-            = "td{text-align:center}th{background-color:#d3d3d3}table{border-collapse:collapse;border:outset}td,th{border:outset;text-align:center;padding:5px}input{text-align:center}.td_left{text-align:left}.td_view{background-color:ivory}.td_disable{background-color:#a9a9a9}.td_type{width:6em}.article_header{text-align:right;font-size:1.2rem;line-height:2.4rem}";
+            = "td{text-align:center}th{background-color:#d3d3d3}table{border-collapse:collapse;border:outset}td,th{border:outset;text-align:center;padding:5px;width:3em}input{text-align:center}.td_left{text-align:left}.td_view{background-color:ivory}.td_disable{background-color:#a9a9a9}.td_type{width:6em}.article_header{text-align:right;font-size:1.2rem;line-height:2.4rem}";
 
     this->get_server()->sendHeader("Location", String("http://") + this->get_ip().toString(), true);
-    this->get_server()->sendHeader("Cache-Control", "no-cache, no-store, must-revalidate");
-    this->get_server()->sendHeader("Pragma", "no-cache");
-    this->get_server()->sendHeader("Expires", "-1");
+    this->get_server()->sendHeader("Cache-Control", WEB_PAGE_HEADER_CACHE_CONTROL_LONGTIME);
+    // this->get_server()->sendHeader("Pragma", "no-cache");
+    this->get_server()->sendHeader("Expires", WEB_PAGE_HEADER_EXPIRES);
     this->get_server()->sendHeader("Content-Length", String(css.length()));
     this->get_server()->send(200, "text/css", css.c_str());
 }
@@ -72,9 +75,9 @@ void ControllerPage::handle_js_can_controller()
             = "if(!JS_CCtrl)var JS_CCtrl={can_data:null,timerId:null,timerInterval:1e3,none:function(data){},send_can:function(id,len,loop,data0,data1,data2,data3,data4,data5,data6,data7){let num_loop=1e3*Number(loop);JS_AJAX.get('/set/can_data?id='+id+'&len='+len+(0==num_loop?'':'&loop='+num_loop)+'&d0='+data0+'&d1='+data1+'&d2='+data2+'&d3='+data3+'&d4='+data4+'&d5='+data5+'&d6='+data6+'&d7='+data7).then(ok=>JS_CCtrl.none(ok),error=>console.error(error.status.messages))},send:function(){JS_CCtrl.send_can(document.getElementById('b_send_id').value,document.getElementById('b_send_len').value,document.getElementById('send_time').innerText,document.getElementById('b_send_data_0').value,document.getElementById('b_send_data_1').value,document.getElementById('b_send_data_2').value,document.getElementById('b_send_data_3').value,document.getElementById('b_send_data_4').value,document.getElementById('b_send_data_5').value,document.getElementById('b_send_data_6').value,document.getElementById('b_send_data_7').value)},one_more:function(table_type,id){for(var i=0;i<JS_CCtrl.can_data.resume.length;i++)if(id==JS_CCtrl.can_data.resume[i].ID){JS_CCtrl.send_can(JS_CCtrl.can_data.resume[i].ID,JS_CCtrl.can_data.resume[i].LEN,JS_CCtrl.can_data.resume[i].INTERVAL,JS_CCtrl.can_data.resume[i].DATA[0],JS_CCtrl.can_data.resume[i].DATA[1],JS_CCtrl.can_data.resume[i].DATA[2],JS_CCtrl.can_data.resume[i].DATA[3],JS_CCtrl.can_data.resume[i].DATA[4],JS_CCtrl.can_data.resume[i].DATA[5],JS_CCtrl.can_data.resume[i].DATA[6],JS_CCtrl.can_data.resume[i].DATA[7]);break}},clear:function(table_type){JS_AJAX.get('/set/clear').then(ok=>JS_CCtrl.none(ok),error=>console.error(error.status.messages))},default:function(table_type){JS_AJAX.get('/set/default').then(ok=>JS_CCtrl.none(ok),error=>console.error(error.status.messages))},delete_row:function(table_type,id){JS_AJAX.get('/set/delete?id='+id).then(ok=>JS_CCtrl.none(ok),error=>console.error(error.status.messages))},change_mode:function(){JS_AJAX.get('/set/change_mode').then(ok=>JS_CCtrl.none(ok),error=>JS_CCtrl.none(error))},make:function(data){if(null!=data&&'OK'==data.result){JS_CCtrl.can_data=data,JS_Table.add_table(data.resume,'send_one_shot','send_one_shot_size',0),JS_Table.add_table(data.send,'send_loop','send_loop_size',1),JS_Table.add_table(data.received,'received_table','received_size',2);let txt_mode=document.getElementById('can_mode');txt_mode.innerHTML!=data.status.mode&&(txt_mode.innerHTML=data.status.mode);let txt_time=document.getElementById('current_time');0!=data.time?txt_time.innerHTML=(Number(data.time)/1e3).toFixed(3):txt_time.innerHTML='--'}},interval:function(){JS_AJAX.get('/get/can_data').then(ok=>JS_CCtrl.make(ok),error=>console.error(error.status.messages))}};window.onload=function(){JS_CCtrl.timerId=setInterval(JS_CCtrl.interval,JS_CCtrl.timerInterval)},window.onunload=function(){null!=JS_CCtrl.timerId&&clearInterval(JS_CCtrl.timerId)};";
 
     this->get_server()->sendHeader("Location", String("http://") + this->get_ip().toString(), true);
-    this->get_server()->sendHeader("Cache-Control", "no-cache, no-store, must-revalidate");
-    this->get_server()->sendHeader("Pragma", "no-cache");
-    this->get_server()->sendHeader("Expires", "-1");
+    this->get_server()->sendHeader("Cache-Control", WEB_PAGE_HEADER_CACHE_CONTROL_LONGTIME);
+    // this->get_server()->sendHeader("Pragma", "no-cache");
+    this->get_server()->sendHeader("Expires", WEB_PAGE_HEADER_EXPIRES);
     this->get_server()->sendHeader("Content-Length", String(js.length()));
     this->get_server()->send(200, "text/javascript", js.c_str());
 }
@@ -84,9 +87,9 @@ void ControllerPage::handle_js_table_view()
             = "if(!JS_Table)var JS_Table={del_head:function(elm){let tbody=document.getElementById(elm);for(;2<tbody.rows.length;)tbody.deleteRow(tbody.rows.length-1)},change:function(){0==document.getElementById('b_send_time_s').value&&0==document.getElementById('b_send_time_ms').value?(document.getElementById('send_type').innerHTML='One shot',document.getElementById('send_time').innerHTML='0.000'):(document.getElementById('send_type').innerHTML='Loop',1e3==document.getElementById('b_send_time_ms').value?document.getElementById('send_time').innerHTML=Number(document.getElementById('b_send_time_s').value)+1+'.000':document.getElementById('send_time').innerHTML=document.getElementById('b_send_time_s').value+'.'+document.getElementById('b_send_time_ms').value.toString().padStart(3,'0')),document.getElementById('send_id').innerHTML='0x'+Number(document.getElementById('b_send_id').value).toString(16),document.getElementById('send_len').innerHTML=document.getElementById('b_send_len').value,document.getElementById('send_data_0').innerHTML='0x'+Number(document.getElementById('b_send_data_0').value).toString(16),document.getElementById('send_data_1').innerHTML='0x'+Number(document.getElementById('b_send_data_1').value).toString(16),document.getElementById('send_data_2').innerHTML='0x'+Number(document.getElementById('b_send_data_2').value).toString(16),document.getElementById('send_data_3').innerHTML='0x'+Number(document.getElementById('b_send_data_3').value).toString(16),document.getElementById('send_data_4').innerHTML='0x'+Number(document.getElementById('b_send_data_4').value).toString(16),document.getElementById('send_data_5').innerHTML='0x'+Number(document.getElementById('b_send_data_5').value).toString(16),document.getElementById('send_data_6').innerHTML='0x'+Number(document.getElementById('b_send_data_6').value).toString(16),document.getElementById('send_data_7').innerHTML='0x'+Number(document.getElementById('b_send_data_7').value).toString(16)},copy_row:function(table_type,id){for(var i=0;i<JS_CCtrl.can_data.resume.length;i++)if(id==JS_CCtrl.can_data.resume[i].ID){document.getElementById('b_send_id').value=JS_CCtrl.can_data.resume[i].ID,document.getElementById('b_send_len').value=JS_CCtrl.can_data.resume[i].LEN,0==JS_CCtrl.can_data.resume[i].INTERVAL?(document.getElementById('b_send_time_s').value=0,document.getElementById('b_send_time_ms').value=0):(document.getElementById('b_send_time_ms').value=JS_CCtrl.can_data.resume[i].INTERVAL%1e3,document.getElementById('b_send_time_s').value=(JS_CCtrl.can_data.resume[i].INTERVAL-document.getElementById('b_send_time_ms').value)/1e3),document.getElementById('b_send_data_0').value=JS_CCtrl.can_data.resume[i].DATA[0],document.getElementById('b_send_data_1').value=JS_CCtrl.can_data.resume[i].DATA[1],document.getElementById('b_send_data_2').value=JS_CCtrl.can_data.resume[i].DATA[2],document.getElementById('b_send_data_3').value=JS_CCtrl.can_data.resume[i].DATA[3],document.getElementById('b_send_data_4').value=JS_CCtrl.can_data.resume[i].DATA[4],document.getElementById('b_send_data_5').value=JS_CCtrl.can_data.resume[i].DATA[5],document.getElementById('b_send_data_6').value=JS_CCtrl.can_data.resume[i].DATA[6],document.getElementById('b_send_data_7').value=JS_CCtrl.can_data.resume[i].DATA[7],JS_Table.change();break}},add_table:function(data,elm_ta,elm_size,table_type){if(null!=data){let len=data.length,l_size=0,t_size=document.getElementById(elm_size);JS_Table.del_head(elm_ta);let tbody=document.getElementById(elm_ta);for(i=0;i<len;i++){if(0==table_type&&0!=data[i].INTERVAL)continue;l_size++;let tr=document.createElement('tr');if(0==table_type||1==table_type){let td_del=document.createElement('th'),elm_input_del=document.createElement('input');elm_input_del.type='button',elm_input_del.value='delete',elm_input_del.setAttribute('onclick','JS_CCtrl.delete_row('+table_type+','+data[i].ID+');'),td_del.appendChild(elm_input_del),tr.appendChild(td_del);let td_copy=document.createElement('th'),elm_input_copy=document.createElement('input');elm_input_copy.type='button',elm_input_copy.value='copy',elm_input_copy.setAttribute('onclick','JS_Table.copy_row('+table_type+','+data[i].ID+');'),td_copy.appendChild(elm_input_copy),tr.appendChild(td_copy)}let td_time=document.createElement('th');if(td_time.innerHTML=(data[i].TIME/1e3).toFixed(3),tr.appendChild(td_time),1==table_type){let td_loop=document.createElement('td');td_loop.innerHTML=(data[i].INTERVAL/1e3).toFixed(3),tr.appendChild(td_loop)}let td_id=document.createElement('td');td_id.innerHTML='0x'+data[i].ID.toString(16),tr.appendChild(td_id);let td_len=document.createElement('td'),td_size=data[i].LEN;td_len.innerHTML=td_size,tr.appendChild(td_len);for(let j=0;j<td_size;j++){let td_data=document.createElement('td');td_data.innerHTML='0x'+data[i].DATA[j].toString(16),tr.appendChild(td_data)}if(8>td_size){let td_data=document.createElement('td');td_data.colSpan=8-td_size,tr.appendChild(td_data)}if(0==table_type){let td_one_more=document.createElement('th'),elm_input_one_more=document.createElement('input');elm_input_one_more.type='button',elm_input_one_more.value='one more',elm_input_one_more.setAttribute('onclick','JS_CCtrl.one_more('+table_type+','+data[i].ID+');'),td_one_more.appendChild(elm_input_one_more),tr.appendChild(td_one_more)}tbody.appendChild(tr)}t_size.innerHTML=l_size}}};";
 
     this->get_server()->sendHeader("Location", String("http://") + this->get_ip().toString(), true);
-    this->get_server()->sendHeader("Cache-Control", "no-cache, no-store, must-revalidate");
-    this->get_server()->sendHeader("Pragma", "no-cache");
-    this->get_server()->sendHeader("Expires", "-1");
+    this->get_server()->sendHeader("Cache-Control", WEB_PAGE_HEADER_CACHE_CONTROL_LONGTIME);
+    // this->get_server()->sendHeader("Pragma", "no-cache");
+    this->get_server()->sendHeader("Expires", WEB_PAGE_HEADER_EXPIRES);
     this->get_server()->sendHeader("Content-Length", String(js.length()));
     this->get_server()->send(200, "text/javascript", js.c_str());
 }
@@ -95,9 +98,9 @@ void ControllerPage::handle_root()
     std::string html = this->page_html(this->page_body().c_str());
 
     this->get_server()->sendHeader("Location", String("http://") + this->get_ip().toString(), true);
-    this->get_server()->sendHeader("Cache-Control", "no-cache, no-store, must-revalidate");
-    this->get_server()->sendHeader("Pragma", "no-cache");
-    this->get_server()->sendHeader("Expires", "-1");
+    this->get_server()->sendHeader("Cache-Control", WEB_PAGE_HEADER_CACHE_CONTROL_LONGTIME);
+    // this->get_server()->sendHeader("Pragma", "no-cache");
+    this->get_server()->sendHeader("Expires", WEB_PAGE_HEADER_EXPIRES);
     this->get_server()->sendHeader("Content-Length", String(html.length()));
     this->get_server()->send(200, "text/html", html.c_str());
 }
@@ -190,7 +193,7 @@ std::string ControllerPage::page_html(const std::string body)
     std::string html = "<!DOCTYPE html><html lang=\"en\"><head>"
                        "<meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">";
 
-    html.append("<link href='/style.css' rel='stylesheet' type='text/css' media='all'>");
+    html.append("<link href='/cdv.css' rel='stylesheet' type='text/css' media='all'>");
 
     html.append("<script type='text/javascript' src='/can_controller.js'></script>");
     html.append("<script type='text/javascript' src='/ajax.js'></script>");
@@ -223,9 +226,9 @@ void ControllerPage::set_clear()
     json.append("}");
 
     this->get_server()->sendHeader("Location", String("http://") + this->get_ip().toString(), true);
-    this->get_server()->sendHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+    this->get_server()->sendHeader("Cache-Control", WEB_PAGE_HEADER_CACHE_CONTROL_NO_CACHE);
     this->get_server()->sendHeader("Pragma", "no-cache");
-    this->get_server()->sendHeader("Expires", "-1");
+    this->get_server()->sendHeader("Expires", "0");
     this->get_server()->sendHeader("Content-Length", String(json.length()));
     this->get_server()->send(200, "application/json", json.c_str());
 }
@@ -247,9 +250,9 @@ void ControllerPage::set_default()
     json.append("}");
 
     this->get_server()->sendHeader("Location", String("http://") + this->get_ip().toString(), true);
-    this->get_server()->sendHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+    this->get_server()->sendHeader("Cache-Control", WEB_PAGE_HEADER_CACHE_CONTROL_NO_CACHE);
     this->get_server()->sendHeader("Pragma", "no-cache");
-    this->get_server()->sendHeader("Expires", "-1");
+    this->get_server()->sendHeader("Expires", "0");
     this->get_server()->sendHeader("Content-Length", String(json.length()));
     this->get_server()->send(200, "application/json", json.c_str());
 }
@@ -278,9 +281,9 @@ void ControllerPage::set_delete()
     json.append("}");
 
     this->get_server()->sendHeader("Location", String("http://") + this->get_ip().toString(), true);
-    this->get_server()->sendHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+    this->get_server()->sendHeader("Cache-Control", WEB_PAGE_HEADER_CACHE_CONTROL_NO_CACHE);
     this->get_server()->sendHeader("Pragma", "no-cache");
-    this->get_server()->sendHeader("Expires", "-1");
+    this->get_server()->sendHeader("Expires", "0");
     this->get_server()->sendHeader("Content-Length", String(json.length()));
     this->get_server()->send(200, "application/json", json.c_str());
 }
@@ -297,9 +300,9 @@ void ControllerPage::set_mode_on()
     std::string html = this->page_html(this->page_body().c_str());
 
     this->get_server()->sendHeader("Location", String("http://") + this->get_ip().toString(), true);
-    this->get_server()->sendHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+    this->get_server()->sendHeader("Cache-Control", WEB_PAGE_HEADER_CACHE_CONTROL_NO_CACHE);
     this->get_server()->sendHeader("Pragma", "no-cache");
-    this->get_server()->sendHeader("Expires", "-1");
+    this->get_server()->sendHeader("Expires", "0");
     this->get_server()->sendHeader("Content-Length", String(html.length()));
     this->get_server()->send(200, "text/html", html.c_str());
 }
@@ -315,9 +318,9 @@ void ControllerPage::set_mode_off()
     std::string html = this->page_html(this->page_body().c_str());
 
     this->get_server()->sendHeader("Location", String("http://") + this->get_ip().toString(), true);
-    this->get_server()->sendHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+    this->get_server()->sendHeader("Cache-Control", WEB_PAGE_HEADER_CACHE_CONTROL_NO_CACHE);
     this->get_server()->sendHeader("Pragma", "no-cache");
-    this->get_server()->sendHeader("Expires", "-1");
+    this->get_server()->sendHeader("Expires", "0");
     this->get_server()->sendHeader("Content-Length", String(html.length()));
     this->get_server()->send(200, "text/html", html.c_str());
 }
@@ -349,9 +352,9 @@ void ControllerPage::get_can_data()
     json.append("]}");
 
     this->get_server()->sendHeader("Location", String("http://") + this->get_ip().toString(), true);
-    this->get_server()->sendHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+    this->get_server()->sendHeader("Cache-Control", WEB_PAGE_HEADER_CACHE_CONTROL_NO_CACHE);
     this->get_server()->sendHeader("Pragma", "no-cache");
-    this->get_server()->sendHeader("Expires", "-1");
+    this->get_server()->sendHeader("Expires", "0");
     this->get_server()->sendHeader("Content-Length", String(json.length()));
     this->get_server()->send(200, "application/json", json.c_str());
 }
@@ -386,9 +389,9 @@ void ControllerPage::set_change_mode()
     json.append("}");
 
     this->get_server()->sendHeader("Location", String("http://") + this->get_ip().toString(), true);
-    this->get_server()->sendHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+    this->get_server()->sendHeader("Cache-Control", WEB_PAGE_HEADER_CACHE_CONTROL_NO_CACHE);
     this->get_server()->sendHeader("Pragma", "no-cache");
-    this->get_server()->sendHeader("Expires", "-1");
+    this->get_server()->sendHeader("Expires", "0");
     this->get_server()->sendHeader("Content-Length", String(json.length()));
     this->get_server()->send(200, "application/json", json.c_str());
 }
@@ -489,9 +492,9 @@ void ControllerPage::set_can_data()
     json.append("}");
 
     this->get_server()->sendHeader("Location", String("http://") + this->get_ip().toString(), true);
-    this->get_server()->sendHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+    this->get_server()->sendHeader("Cache-Control", WEB_PAGE_HEADER_CACHE_CONTROL_NO_CACHE);
     this->get_server()->sendHeader("Pragma", "no-cache");
-    this->get_server()->sendHeader("Expires", "-1");
+    this->get_server()->sendHeader("Expires", "0");
     this->get_server()->sendHeader("Content-Length", String(json.length()));
     this->get_server()->send(200, "application/json", json.c_str());
     ////////////////////////////////////////////////////////////////////////////////////
