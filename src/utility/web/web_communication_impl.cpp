@@ -72,9 +72,9 @@ bool WebCommunicationImpl::setup()
 }
 bool WebCommunicationImpl::_save_information(std::string ssid, std::string pass, bool ap_mode)
 {
-    bool result      = false;
-    bool force_write = false;
+    bool result = false;
 #if STORAGE_SPI_FS
+    bool force_write = false;
     if (true == this->_open_fs) {
 #if DEBUG_MODE
         this->happened_message(OUTPUT_LOG_LEVEL::OUTPUT_LOG_LEVEL_TRACE, "SPIFFS save begin.", __func__, __FILENAME__, __LINE__);
@@ -102,8 +102,8 @@ bool WebCommunicationImpl::_save_information(std::string ssid, std::string pass,
             this->happened_message(OUTPUT_LOG_LEVEL::OUTPUT_LOG_LEVEL_TRACE, "Finished SPIFFS", __func__, __FILENAME__, __LINE__);
         }
 #endif
-#endif
     }
+#endif
     return result;
 }
 void WebCommunicationImpl::request_connection_info(std::string ssid, std::string pass, bool ap_mode)
