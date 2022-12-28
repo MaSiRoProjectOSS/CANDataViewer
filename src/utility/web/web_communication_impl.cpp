@@ -72,9 +72,9 @@ bool WebCommunicationImpl::setup()
 }
 bool WebCommunicationImpl::_save_information(std::string ssid, std::string pass, bool ap_mode)
 {
-    bool result      = false;
-    bool force_write = false;
+    bool result = false;
 #if STORAGE_SPI_FS
+    bool force_write = false;
     if (true == this->_open_fs) {
 #if DEBUG_MODE
         this->happened_message(OUTPUT_LOG_LEVEL::OUTPUT_LOG_LEVEL_TRACE, "SPIFFS save begin.", __func__, __FILENAME__, __LINE__);
@@ -95,15 +95,15 @@ bool WebCommunicationImpl::_save_information(std::string ssid, std::string pass,
             }
             SPIFFS.end();
         }
-#if DEBUG_MODE
         if (true == result) {
-            this->happened_message(OUTPUT_LOG_LEVEL::OUTPUT_LOG_LEVEL_DEBUG, "Writing data to SPIFFS", __func__, __FILENAME__, __LINE__);
+            this->happened_message(OUTPUT_LOG_LEVEL::OUTPUT_LOG_LEVEL_INFO, "Writing data to SPIFFS", __func__, __FILENAME__, __LINE__);
         } else {
+#if DEBUG_MODE
             this->happened_message(OUTPUT_LOG_LEVEL::OUTPUT_LOG_LEVEL_TRACE, "Finished SPIFFS", __func__, __FILENAME__, __LINE__);
+#endif
         }
-#endif
-#endif
     }
+#endif
     return result;
 }
 void WebCommunicationImpl::request_connection_info(std::string ssid, std::string pass, bool ap_mode)
@@ -256,19 +256,27 @@ std::vector<NetworkList> WebCommunicationImpl::get_wifi_list()
     }
     return list;
 }
-void WebCommunicationImpl::set_config_address_ap(IPAddress ip, IPAddress gateway, IPAddress subnet)
+void WebCommunicationImpl::set_config_address_ap(IPAddress ip, IPAddress subnet, IPAddress gateway)
 {
-    this->_config_ap.flag_set = true;
-    this->_config_ap.local_ip = ip;
-    this->_config_ap.gateway  = gateway;
-    this->_config_ap.subnet   = subnet;
+    if (INADDR_NONE != ip) {
+        if (INADDR_NONE != subnet) {
+            this->_config_ap.flag_set = true;
+            this->_config_ap.local_ip = ip;
+            this->_config_ap.gateway  = gateway;
+            this->_config_ap.subnet   = subnet;
+        }
+    }
 }
-void WebCommunicationImpl::set_config_address_sta(IPAddress ip, IPAddress gateway, IPAddress subnet)
+void WebCommunicationImpl::set_config_address_sta(IPAddress ip, IPAddress subnet, IPAddress gateway)
 {
-    this->_config_sta.flag_set = true;
-    this->_config_sta.local_ip = ip;
-    this->_config_sta.gateway  = gateway;
-    this->_config_sta.subnet   = subnet;
+    if (INADDR_NONE != ip) {
+        if (INADDR_NONE != subnet) {
+            this->_config_sta.flag_set = true;
+            this->_config_sta.local_ip = ip;
+            this->_config_sta.gateway  = gateway;
+            this->_config_sta.subnet   = subnet;
+        }
+    }
 }
 
 bool WebCommunicationImpl::is_connected(bool force)

@@ -1,15 +1,23 @@
 /**
- * @file CanDataViewer_basic.ino
+ * @file CanDataViewer_FullFunction.ino
  * @author Akari (masiro.to.akari@gmail.com)
  * @brief
  * @version 0.2
- * @date 2022-12-25
+ * @date 2022-12-28
  *
  * @copyright Copyright (c) 2022 / MaSiRo Project.
  *
  */
+#define CONTROLLERS_M5STACK
+//#define CONTROLLERS_ATOM_LITE
+
 #include <Arduino.h>
+#ifdef CONTROLLERS_M5STACK
+#include <M5Stack.h>
+#else
+// CONTROLLERS_ATOM_LITE
 #include <M5Atom.h>
+#endif
 #include <can_data_viewer.hpp>
 
 #define SETTING_WIFI_MODE_AP false
@@ -18,17 +26,30 @@
 
 #define SETTING_LOOP_TIME_SLEEP_DETECT 100
 
+#if LIB_CAN_DRIVER == 0
+// ESP32CAN does not require Interrupt Pin and Chip select Pin
 CanDataViewer can_data_viewer;
+#else
+// MCP2515 should be Pin set.
+#ifdef CONTROLLERS_M5STACK
+CanDataViewer can_data_viewer(G15, G12);
+#else
+// CONTROLLERS_ATOM_LITE
+CanDataViewer can_data_viewer(G25, G19);
+#endif
+#endif
 
 void setup_m5()
 {
-    bool enable_serial  = true;
-    bool enable_i2c     = false;
-    bool enable_display = true;
-    M5.begin(enable_serial, enable_i2c, enable_display);
+    M5.begin();
+#ifdef CONTROLLERS_M5STACK
+    M5.Power.begin();
+#else
+    // CONTROLLERS_ATOM_LITE
     M5.dis.begin();
     delay(1000);
     M5.dis.fillpix(CRGB::White);
+#endif
     Serial.println("---------------------");
     Serial.printf("  App : %s\n", "CanDataViewer");
     Serial.printf("    Loop interval : %d ms\n", SETTING_LOOP_TIME_SLEEP_DETECT);
@@ -53,6 +74,9 @@ void output_message(OUTPUT_LOG_LEVEL level, const char *message, const char *fun
 void change_can_mode(CAN_CTRL_STATE mode, const char *text)
 {
     char buffer[255];
+#ifdef CONTROLLERS_M5STACK
+#else
+    // CONTROLLERS_ATOM_LITE
     switch (mode) {
         case CAN_CTRL_STATE::MODE_RUNNING:
             M5.dis.fillpix(CRGB::Green);
@@ -72,6 +96,7 @@ void change_can_mode(CAN_CTRL_STATE mode, const char *text)
             M5.dis.fillpix(CRGB::Red);
             break;
     }
+#endif
     sprintf(buffer, "CAN MODE [%s]", text);
     output_message(OUTPUT_LOG_LEVEL::OUTPUT_LOG_LEVEL_INFO, buffer, __func__, __FILENAME__, __LINE__);
 }
@@ -205,10 +230,17 @@ void setup()
 void loop()
 {
     (void)M5.update();
+#ifdef CONTROLLERS_M5STACK
+    if (M5.BtnA.wasPressed()) {
+        // Press the button to change the CAN output mode.
+        can_data_viewer.set_mode();
+    }
+#else
     if (M5.Btn.wasPressed()) {
         // Press the button to change the CAN output mode.
         can_data_viewer.set_mode();
     }
+#endif
 
 #if DEBUG_MODE
     static int SPAN               = (3 * 1000);
