@@ -8,7 +8,6 @@
  * @copyright Copyright (c) 2022 / MaSiRo Project.
  *
  */
-
 //#define CONTROLLERS_M5STACK
 #define CONTROLLERS_ATOM_LITE
 
