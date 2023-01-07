@@ -232,7 +232,7 @@ bool CanCommunicationImpl::data_sendable(CAN_CTRL_STATE state)
     if (nullptr != this->callback_sendable) {
         CanData data;
         result = this->callback_sendable(state, &data);
-        if (0 != data.Id) {
+        if (true == result) {
             data.loop_interval = 0;
             (void)this->send(data);
         }
@@ -517,7 +517,7 @@ void CanCommunicationImpl::happened_received(CanData data)
         this->callback_received(data);
     }
 #if OUTPUT_MESSAGE_FOR_SERIAL
-    if (0 != data.Id) {
+    if (0 < data.Length) {
         char buffer[255];
         sprintf(buffer,
                 "RECEIVE"

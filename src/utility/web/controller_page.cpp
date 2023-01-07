@@ -445,7 +445,8 @@ void ControllerPage::set_can_data()
             }
         }
 
-        if ((0 != data.Id) && (0 < data.Length)) {
+        if (0 < data.Length) {
+            this->callback_data_delete(data.Id);
             if (true == flag_loop) {
                 if (nullptr != this->callback_loop) {
                     result = this->callback_loop(data);
