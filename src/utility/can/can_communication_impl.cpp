@@ -66,6 +66,9 @@ bool CanCommunicationImpl::loop()
 {
     bool result = true;
     if (true == flag_request_pause) {
+#if DEBUG_MODE
+        // happened_message(OUTPUT_LOG_LEVEL::OUTPUT_LOG_LEVEL_TRACE, "CanCommunication : pause", __func__, __FILENAME__, __LINE__);
+#endif
     } else {
         bool flag_send = true;
         if (this->mode_current != this->mode_request) {
@@ -242,9 +245,11 @@ bool CanCommunicationImpl::data_sendable(CAN_CTRL_STATE state)
 
 bool CanCommunicationImpl::add_one_shot(CanData data)
 {
-    bool result        = true;
+    bool result = true;
+    this->request_pause();
     data.loop_interval = 0;
     this->send_one_shot_list.push_back(data);
+    this->request_resume();
     return result;
 }
 bool CanCommunicationImpl::add_loop_shot(CanData data, int interval)
@@ -253,7 +258,8 @@ bool CanCommunicationImpl::add_loop_shot(CanData data, int interval)
 
     bool flag_duplication = false;
     int index             = 0;
-    data.loop_interval    = interval;
+    this->request_pause();
+    data.loop_interval = interval;
     for (CanData item : this->send_loop_list) {
         if (item.Id == data.Id) {
             flag_duplication = true;
@@ -265,19 +271,23 @@ bool CanCommunicationImpl::add_loop_shot(CanData data, int interval)
         this->send_loop_list.erase(std::begin(this->send_loop_list) + index);
     }
     this->send_loop_list.push_back(data);
-
+    this->request_resume();
     return result;
 }
 bool CanCommunicationImpl::clear_loop_shot()
 {
     bool result = true;
+    this->request_pause();
     this->send_loop_list.clear();
+    this->request_resume();
     return result;
 }
 bool CanCommunicationImpl::clear_resume()
 {
     bool result = true;
+    this->request_pause();
     this->send_resume.clear();
+    this->request_resume();
     return result;
 }
 bool CanCommunicationImpl::delete_loop_shot(unsigned long Id)
@@ -285,6 +295,7 @@ bool CanCommunicationImpl::delete_loop_shot(unsigned long Id)
     bool result           = true;
     bool flag_duplication = false;
     int index             = 0;
+    this->request_pause();
     for (CanData item : this->send_loop_list) {
         if (item.Id == Id) {
             flag_duplication = true;
@@ -295,6 +306,7 @@ bool CanCommunicationImpl::delete_loop_shot(unsigned long Id)
     if (true == flag_duplication) {
         this->send_loop_list.erase(std::begin(this->send_loop_list) + index);
     }
+    this->request_resume();
     return result;
 }
 bool CanCommunicationImpl::delete_resume(unsigned long Id)
@@ -302,6 +314,7 @@ bool CanCommunicationImpl::delete_resume(unsigned long Id)
     bool result           = true;
     bool flag_duplication = false;
     int index             = 0;
+    this->request_pause();
     for (CanData item : this->send_resume) {
         if (item.Id == Id) {
             flag_duplication = true;
@@ -312,6 +325,7 @@ bool CanCommunicationImpl::delete_resume(unsigned long Id)
     if (true == flag_duplication) {
         this->send_resume.erase(std::begin(this->send_resume) + index);
     }
+    this->request_resume();
     return result;
 }
 std::vector<CanData> CanCommunicationImpl::get_loop_shot()
