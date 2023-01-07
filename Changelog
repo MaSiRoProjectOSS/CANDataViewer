@@ -2,6 +2,14 @@
 
 ---
 
+## Ver.0.2.3
+
+* Fixed bug
+  * Network setting
+  * Switching Loop or one-shot
+* Allow ID=0x00
+
+
 ## Ver.0.2.2
 
 * Support M5Stack COMMU Module
