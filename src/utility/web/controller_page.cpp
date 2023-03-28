@@ -96,7 +96,11 @@ std::string ControllerPage::page_body()
         device_info = this->callback_device_info();
     }
 
-    std::string html = "<article><div class='article_header'><a href='/network' target='_self'>Network Config</a></div></article>";
+    std::string html = "<article><div class='article_header'>";
+    html.append("<a href='/network' target='_self'>Network Config</a><br>");
+    html.append("<a href='/update' target='_self'>OTA</a></div>");
+    html.append("</article>");
+
     html.append("<article><p><span>CanType : <b>");
     switch (device_info.can_type) {
         case 0:
@@ -251,16 +255,16 @@ void ControllerPage::set_delete(AsyncWebServerRequest *request)
 void ControllerPage::set_mode_on(AsyncWebServerRequest *request)
 {
     log_v("ControllerPage : set_mode_on()");
-
+    bool result = false;
     if (nullptr != callback_can_mode) {
-        this->callback_can_mode(CAN_CTRL_STATE::MODE_RUNNING);
+        result = this->callback_can_mode(CAN_CTRL_STATE::MODE_RUNNING);
     }
 
-    std::string html = this->page_html(this->page_body().c_str());
+    std::string json = this->template_json_result(result);
 
-    AsyncWebServerResponse *response = request->beginResponse(200, "text/html; charset=utf-8", html.c_str());
+    AsyncWebServerResponse *response = request->beginResponse(200, "application/json; charset=utf-8", json.c_str());
     response->addHeader("Location", String("http://") + this->get_ip().toString());
-    response->addHeader("Cache-Control", WEB_HEADER_CACHE_CONTROL_SHORT_TIME);
+    response->addHeader("Cache-Control", WEB_HEADER_CACHE_CONTROL_NO_CACHE);
     response->addHeader("X-Content-Type-Options", "nosniff");
     request->send(response);
 }
@@ -268,15 +272,15 @@ void ControllerPage::set_mode_on(AsyncWebServerRequest *request)
 void ControllerPage::set_mode_off(AsyncWebServerRequest *request)
 {
     log_v("ControllerPage : set_mode_off()");
-
+    bool result = false;
     if (nullptr != callback_can_mode) {
-        this->callback_can_mode(CAN_CTRL_STATE::MODE_STOPPING);
+        result = this->callback_can_mode(CAN_CTRL_STATE::MODE_STOPPING);
     }
-    std::string html = this->page_html(this->page_body().c_str());
+    std::string json = this->template_json_result(result);
 
-    AsyncWebServerResponse *response = request->beginResponse(200, "text/html; charset=utf-8", html.c_str());
+    AsyncWebServerResponse *response = request->beginResponse(200, "application/json; charset=utf-8", json.c_str());
     response->addHeader("Location", String("http://") + this->get_ip().toString());
-    response->addHeader("Cache-Control", WEB_HEADER_CACHE_CONTROL_SHORT_TIME);
+    response->addHeader("Cache-Control", WEB_HEADER_CACHE_CONTROL_NO_CACHE);
     response->addHeader("X-Content-Type-Options", "nosniff");
     request->send(response);
 }
@@ -292,7 +296,7 @@ void ControllerPage::get_can_data(AsyncWebServerRequest *request)
     std::string json = "";
     char buffer[255];
     sprintf(buffer, //
-            "{\"mode\": \"%s\",",
+            "{\"time\": %lu, \"mode\": \"%s\",",
             millis(),
             device_info.mode_text);
     json.append(buffer);
