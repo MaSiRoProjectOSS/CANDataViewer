@@ -196,18 +196,10 @@ void setup()
     can_data_viewer.set_callback_received(&received);
     can_data_viewer.set_callback_sendable_interrupt(&sendable);
 
-    // Change IP configuration settings
-    if (true == SETTING_WIFI_MODE_AP) {
-        can_data_viewer.config_address_ap();
-    } else {
-        can_data_viewer.config_address_sta();
-    }
-
     // Start CANDataViewer
     can_data_viewer.begin(SETTING_WIFI_SSID, SETTING_WIFI_PASS, SETTING_WIFI_MODE_AP);
 
     // Switch connection information programmatically
-    can_data_viewer.set_wifi_info(SETTING_WIFI_SSID, SETTING_WIFI_PASS, SETTING_WIFI_MODE_AP);
 }
 
 void loop()

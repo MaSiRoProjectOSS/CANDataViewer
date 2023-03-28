@@ -46,11 +46,6 @@ bool CanDataViewer::set_callback_setting_default(SettingDefaultFunction callback
     ctrl_can->set_callback_setting_default(callback);
     return result;
 }
-void CanDataViewer::set_wifi_info(std::string ssid, std::string pass, bool ap_mode)
-{
-    ctrl_page->request_reconnect(ssid, pass, ap_mode, false);
-}
-
 #pragma endregion
 
 ////////////////////////////////////////////////
@@ -196,15 +191,7 @@ CanDataViewer::CanDataViewer(const uint8_t interrupt, const uint8_t cs)
 CanDataViewer::~CanDataViewer()
 {
 }
-void CanDataViewer::config_address_ap(IPAddress ip, IPAddress subnet, IPAddress gateway)
-{
-    ctrl_page->set_config_address_ap(ip, subnet, gateway);
-}
-void CanDataViewer::config_address_sta(IPAddress ip, IPAddress subnet, IPAddress gateway)
-{
-    ctrl_page->set_config_address_sta(ip, subnet, gateway);
-}
-bool CanDataViewer::begin(std::string ssid, std::string pass, bool ap_mode)
+bool CanDataViewer::begin()
 {
     bool result = false;
     try {
@@ -219,12 +206,6 @@ bool CanDataViewer::begin(std::string ssid, std::string pass, bool ap_mode)
                                   &can_data_clear,
                                   &can_data_default,
                                   &can_data_delete);
-        ctrl_page->setup();
-        if ("" != ssid) {
-            if ("" != pass) {
-                ctrl_page->request_reconnect(ssid, pass, ap_mode, true);
-            }
-        }
         ctrl_page->begin();
         ////////////////////////////////////////////////////////
         ctrl_can->begin();

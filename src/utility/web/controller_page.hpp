@@ -11,14 +11,15 @@
 #ifndef MASIRO_PROJECT_TOY_BOX_CONTROLLER_PAGE
 #define MASIRO_PROJECT_TOY_BOX_CONTROLLER_PAGE
 
-#include "web_communication.hpp"
+#include <can_data_viewer_info.hpp>
+#include <cushy_web_server.hpp>
 
 namespace MaSiRoProject
 {
 namespace WEB
 {
 
-class ControllerPage : public WEB::WebCommunication {
+class ControllerPage : public CushyWebServer {
 public:
     typedef std::function<std::vector<CanData>(void)> RequestCanDataFunction;
     typedef std::function<bool(CanData)> SetCanDataFunction;
@@ -43,7 +44,8 @@ public:
                         SetAnyFunction data_delete);
 
 protected:
-    bool setup_server(WebServer *server) override;
+    bool setup_server(AsyncWebServer *server) override;
+    void handle_favicon_ico(AsyncWebServerRequest *request) override;
 
 private:
     RequestCanDataFunction callback_data_request_send;
@@ -56,22 +58,24 @@ private:
     SetAnyFunction callback_data_clear;
     SetAnyFunction callback_data_default;
     SetAnyFunction callback_data_delete;
-    void set_mode_on();
-    void set_mode_off();
-    void set_can_data();
-    void get_can_data();
-    void set_change_mode();
-    void set_clear();
-    void set_default();
-    void set_delete();
+
+private:
+    void set_mode_on(AsyncWebServerRequest *request);
+    void set_mode_off(AsyncWebServerRequest *request);
+    void set_can_data(AsyncWebServerRequest *request);
+    void get_can_data(AsyncWebServerRequest *request);
+    void set_change_mode(AsyncWebServerRequest *request);
+    void set_clear(AsyncWebServerRequest *request);
+    void set_default(AsyncWebServerRequest *request);
+    void set_delete(AsyncWebServerRequest *request);
+    void handle_root(AsyncWebServerRequest *request);
+    void handle_css(AsyncWebServerRequest *request);
+    void handle_js_can_controller(AsyncWebServerRequest *request);
+    void handle_js_table_view(AsyncWebServerRequest *request);
 
 private:
     std::string page_html(const std::string body);
     std::string page_body();
-    void handle_root();
-    void handle_css();
-    void handle_js_can_controller();
-    void handle_js_table_view();
 
     std::string get_can_data_text(RequestCanDataFunction callback);
 };
