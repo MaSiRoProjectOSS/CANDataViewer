@@ -11,8 +11,7 @@
 #ifndef MASIRO_PROJECT_TOY_BOX_CAN_COMMUNICATION_HPP
 #define MASIRO_PROJECT_TOY_BOX_CAN_COMMUNICATION_HPP
 
-#include "../../can_data_viewer_info.hpp"
-
+#include <can_data_viewer_info.hpp>
 #include <vector>
 
 namespace MaSiRoProject

@@ -11,7 +11,7 @@
 #ifndef MASIRO_PROJECT_TOY_BOX_DRIVER_CAN_ABSTRACT_HPP
 #define MASIRO_PROJECT_TOY_BOX_DRIVER_CAN_ABSTRACT_HPP
 
-#include "../../../can_data_viewer_info.hpp"
+#include <can_data_viewer_info.hpp>
 
 namespace MaSiRoProject
 {

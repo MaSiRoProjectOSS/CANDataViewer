@@ -11,7 +11,8 @@
 #ifndef MASIRO_PROJECT_CAN_DATA_VIEWER_HPP
 #define MASIRO_PROJECT_CAN_DATA_VIEWER_HPP
 
-#include "can_data_viewer_info.hpp"
+#include <can_data_viewer_info.hpp>
+#include <cushy_web_server.hpp>
 
 class CanDataViewer {
     ////////////////////////////////////////////////
