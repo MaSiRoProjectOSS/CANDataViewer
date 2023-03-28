@@ -52,11 +52,10 @@ bool ControllerPage::setup_server(WebServer *server)
         server->on("/set/delete", std::bind(&ControllerPage::set_delete, this));
 
         result = true;
-#if DEBUG_MODE
-        this->happened_message(OUTPUT_LOG_LEVEL::OUTPUT_LOG_LEVEL_DEBUG, "ControllerPage : setup()", __func__, __FILENAME__, __LINE__);
-#endif
+        log_d("ControllerPage : setup()");
+
     } else {
-        this->happened_message(OUTPUT_LOG_LEVEL::OUTPUT_LOG_LEVEL_ERROR, "ControllerPage : NOT setup()", __func__, __FILENAME__, __LINE__);
+        log_e("ControllerPage : NOT setup()");
     }
     return result;
 }
@@ -208,9 +207,8 @@ std::string ControllerPage::page_html(const std::string body)
 /////////////////////////////////////////////////
 void ControllerPage::set_clear()
 {
-#if DEBUG_MODE
-    this->happened_message(OUTPUT_LOG_LEVEL::OUTPUT_LOG_LEVEL_TRACE, "ControllerPage : set_clear()", __func__, __FILENAME__, __LINE__);
-#endif
+    log_v("ControllerPage : set_clear()");
+
     bool result      = false;
     std::string json = "{";
     result           = this->callback_data_clear(0);
@@ -232,9 +230,8 @@ void ControllerPage::set_clear()
 
 void ControllerPage::set_default()
 {
-#if DEBUG_MODE
-    this->happened_message(OUTPUT_LOG_LEVEL::OUTPUT_LOG_LEVEL_TRACE, "ControllerPage : set_default()", __func__, __FILENAME__, __LINE__);
-#endif
+    log_v("ControllerPage : set_default()");
+
     bool result      = false;
     std::string json = "{";
     result           = this->callback_data_default(0);
@@ -256,9 +253,8 @@ void ControllerPage::set_default()
 
 void ControllerPage::set_delete()
 {
-#if DEBUG_MODE
-    this->happened_message(OUTPUT_LOG_LEVEL::OUTPUT_LOG_LEVEL_TRACE, "ControllerPage : set_delete()", __func__, __FILENAME__, __LINE__);
-#endif
+    log_v("ControllerPage : set_delete()");
+
     bool result      = false;
     std::string json = "{";
     if (this->get_server()->args() > 0) {
@@ -287,9 +283,8 @@ void ControllerPage::set_delete()
 
 void ControllerPage::set_mode_on()
 {
-#if DEBUG_MODE
-    this->happened_message(OUTPUT_LOG_LEVEL::OUTPUT_LOG_LEVEL_TRACE, "ControllerPage : set_mode_on()", __func__, __FILENAME__, __LINE__);
-#endif
+    log_v("ControllerPage : set_mode_on()");
+
     if (nullptr != callback_can_mode) {
         this->callback_can_mode(CAN_CTRL_STATE::MODE_RUNNING);
     }
@@ -306,9 +301,8 @@ void ControllerPage::set_mode_on()
 
 void ControllerPage::set_mode_off()
 {
-#if DEBUG_MODE
-    this->happened_message(OUTPUT_LOG_LEVEL::OUTPUT_LOG_LEVEL_TRACE, "ControllerPage : set_mode_off()", __func__, __FILENAME__, __LINE__);
-#endif
+    log_v("ControllerPage : set_mode_off()");
+
     if (nullptr != callback_can_mode) {
         this->callback_can_mode(CAN_CTRL_STATE::MODE_STOPPING);
     }
@@ -324,9 +318,8 @@ void ControllerPage::set_mode_off()
 
 void ControllerPage::get_can_data()
 {
-#if DEBUG_MODE
-    this->happened_message(OUTPUT_LOG_LEVEL::OUTPUT_LOG_LEVEL_TRACE, "ControllerPage : get_can_data()", __func__, __FILENAME__, __LINE__);
-#endif
+    log_v("ControllerPage : get_can_data()");
+
     CanDeviceInfo device_info;
     if (nullptr != callback_device_info) {
         device_info = this->callback_device_info();
@@ -357,9 +350,8 @@ void ControllerPage::get_can_data()
 }
 void ControllerPage::set_change_mode()
 {
-#if DEBUG_MODE
-    this->happened_message(OUTPUT_LOG_LEVEL::OUTPUT_LOG_LEVEL_TRACE, "ControllerPage : set_change_mode()", __func__, __FILENAME__, __LINE__);
-#endif
+    log_v("ControllerPage : set_change_mode()");
+
     CAN_CTRL_STATE mode = CAN_CTRL_STATE::MODE_UNKNOW;
     if (this->get_server()->args() > 0) {
         if (this->get_server()->hasArg("mode")) {
@@ -395,9 +387,8 @@ void ControllerPage::set_change_mode()
 
 void ControllerPage::set_can_data()
 {
-#if DEBUG_MODE
-    this->happened_message(OUTPUT_LOG_LEVEL::OUTPUT_LOG_LEVEL_TRACE, "ControllerPage : set_can_data()", __func__, __FILENAME__, __LINE__);
-#endif
+    log_v("ControllerPage : set_can_data()");
+
     bool result = false;
     ////////////////////////////////////////////////////////////////////////////////////
     bool flag_loop = false;
@@ -456,26 +447,21 @@ void ControllerPage::set_can_data()
                     result = this->callback_on_shot(data);
                 }
             }
-#if DEBUG_MODE
-            char buffer[255];
-            sprintf(buffer,
-                    "set_can_data / interval [%d]"
-                    " : id = 0x%02lX[%02d] /  %02d / "
-                    "0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X",
-                    this->get_server()->args(),
-                    data.Id,
-                    data.loop_interval,
-                    data.Length,
-                    data.Data[0],
-                    data.Data[1],
-                    data.Data[2],
-                    data.Data[3],
-                    data.Data[4],
-                    data.Data[5],
-                    data.Data[6],
-                    data.Data[7]);
-            this->happened_message(OUTPUT_LOG_LEVEL::OUTPUT_LOG_LEVEL_TRACE, buffer, __func__, __FILENAME__, __LINE__);
-#endif
+            log_v("set_can_data / interval [%d]"
+                  " : id = 0x%02lX[%02d] /  %02d / "
+                  "0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X",
+                  this->get_server()->args(),
+                  data.Id,
+                  data.loop_interval,
+                  data.Length,
+                  data.Data[0],
+                  data.Data[1],
+                  data.Data[2],
+                  data.Data[3],
+                  data.Data[4],
+                  data.Data[5],
+                  data.Data[6],
+                  data.Data[7]);
         }
     } catch (...) {
     }

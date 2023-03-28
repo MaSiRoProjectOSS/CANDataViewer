@@ -32,46 +32,6 @@ typedef enum can_ctrl_state
     MODE_FINISHED        //!< Finished
 } CAN_CTRL_STATE;
 
-typedef enum output_log_level
-{
-    /**
-     * @brief  Any logging levels that have been configured are logged at this log level.
-     */
-    OUTPUT_LOG_LEVEL_ALL,
-    /**
-     * @brief The TRACE log level records all of the application's behaviour details. Its purpose is primarily diagnostic, and it is more granular and finer than the DEBUG log level.
-     */
-    OUTPUT_LOG_LEVEL_TRACE,
-    /**
-     * @brief You are providing diagnostic information in a thorough manner with DEBUG. It's long and contains more information than you'll need when using the application.
-     */
-    OUTPUT_LOG_LEVEL_DEBUG,
-    /**
-     * @brief INFO messages are similar to how applications normally behave.
-     */
-    OUTPUT_LOG_LEVEL_INFO,
-    /**
-     * @briefWhen This log level signals operational messages
-     */
-    OUTPUT_LOG_LEVEL_MESSAGE,
-    /**
-     * @briefWhen an unexpected application issue has been identified, the WARN log level is used.  This indicates that you are unsure if the issue will recur or not. At this time, you may not notice any negative effects on your application.
-     */
-    OUTPUT_LOG_LEVEL_WARN,
-    /**
-     * @brief This log level is used when a serious issue is preventing the application's functionalities from functioning properly.
-     */
-    OUTPUT_LOG_LEVEL_ERROR,
-    /**
-     * @brief The FATAL level of logging indicates that the application's situation is critical, such as when a critical function fails.
-     */
-    OUTPUT_LOG_LEVEL_FATAL,
-    /**
-     * @brief Nothing is logged at this level of logging.
-     */
-    OUTPUT_LOG_LEVEL_OFF
-
-} OUTPUT_LOG_LEVEL;
 ////////////////////////////////////////////////////////////////
 
 /**
@@ -138,7 +98,6 @@ public:
 };
 
 ////////////////////////////////////////////////////////////////
-typedef std::function<void(OUTPUT_LOG_LEVEL, const char *, const char *, const char *, int)> MessageFunction;
 typedef std::function<void(CAN_CTRL_STATE, const char *)> ChangedModeFunction;
 typedef std::function<void(CanData)> GetReceivedFunction;
 typedef std::function<bool(CAN_CTRL_STATE, CanData *)> SendEventFunction;

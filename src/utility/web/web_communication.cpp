@@ -34,7 +34,6 @@ volatile bool flag_thread_wifi_fin                    = false;
 volatile unsigned long flag_thread_request_connection = 0;
 WebCommunicationImpl *ctrl_web;
 WebServer *ctrl_server;
-MessageFunction callback_mess;
 
 std::string request_ssid;
 std::string request_pass;
@@ -82,12 +81,7 @@ inline bool reconnection(void)
 void thread_wifi(void *args)
 {
     char buffer[255];
-#if DEBUG_MODE
-    sprintf(buffer, "<%s> - start", THREAD_NAME_WIFI);
-    if (nullptr != callback_mess) {
-        callback_mess(OUTPUT_LOG_LEVEL::OUTPUT_LOG_LEVEL_TRACE, buffer, __func__, __FILENAME__, __LINE__);
-    }
-#endif
+    log_v("<%s> - start", THREAD_NAME_WIFI);
 #if SETTING_WIFI_MODE_AP_AUTO_TRANSITIONS
     unsigned long err_begin = millis() + SETTING_WIFI_MODE_AP_AUTO_TRANSITIONS_TIMEOUT;
 #endif
@@ -97,10 +91,7 @@ void thread_wifi(void *args)
             vTaskDelay(THREAD_SEEK_INTERVAL_WIFI);
             (void)reconnection();
             if (false == ctrl_web->begin()) {
-                sprintf(buffer, "<%s> - NOT setup()", THREAD_NAME_WIFI);
-                if (nullptr != callback_mess) {
-                    callback_mess(OUTPUT_LOG_LEVEL::OUTPUT_LOG_LEVEL_ERROR, buffer, __func__, __FILENAME__, __LINE__);
-                }
+                log_e("<%s> - NOT setup()", THREAD_NAME_WIFI);
 #if SETTING_WIFI_MODE_AP_AUTO_TRANSITIONS
                 if (true != ctrl_web->is_ap_mode()) {
                     if (err_begin < millis()) {
@@ -116,20 +107,10 @@ void thread_wifi(void *args)
                     while (false == flag_thread_wifi_fin) {
                         ctrl_server->handleClient();
                         if (true == request_connection()) {
-#if DEBUG_MODE
-                            sprintf(buffer, "<%s> - Change connection()", THREAD_NAME_WIFI);
-                            if (nullptr != callback_mess) {
-                                callback_mess(OUTPUT_LOG_LEVEL::OUTPUT_LOG_LEVEL_TRACE, buffer, __func__, __FILENAME__, __LINE__);
-                            }
-#endif
+                            log_v("<%s> - Change connection()", THREAD_NAME_WIFI);
                             break;
                         } else if (true != ctrl_web->is_connected()) {
-#if DEBUG_MODE
-                            sprintf(buffer, "<%s> - Lost connection()", THREAD_NAME_WIFI);
-                            if (nullptr != callback_mess) {
-                                callback_mess(OUTPUT_LOG_LEVEL::OUTPUT_LOG_LEVEL_TRACE, buffer, __func__, __FILENAME__, __LINE__);
-                            }
-#endif
+                            log_v("<%s> - Lost connection()", THREAD_NAME_WIFI);
                             break;
                         }
                         vTaskDelay(THREAD_INTERVAL_WIFI);
@@ -138,10 +119,7 @@ void thread_wifi(void *args)
                 }
             }
         } catch (...) {
-            sprintf(buffer, "<%s> - ERROR()", THREAD_NAME_WIFI);
-            if (nullptr != callback_mess) {
-                callback_mess(OUTPUT_LOG_LEVEL::OUTPUT_LOG_LEVEL_FATAL, buffer, __func__, __FILENAME__, __LINE__);
-            }
+            log_e("<%s> - ERROR()", THREAD_NAME_WIFI);
         }
     }
     flag_thread_wifi_initialized = false;
@@ -171,11 +149,8 @@ bool WebCommunication::setup()
         this->get_server()->on("/get/network", std::bind(&WebCommunication::get_network, this));
 
         result = this->setup_server(this->get_server());
-#if DEBUG_MODE
-        this->happened_message(OUTPUT_LOG_LEVEL::OUTPUT_LOG_LEVEL_TRACE, "WebCommunication : setup()", __func__, __FILENAME__, __LINE__);
-#endif
+
     } catch (...) {
-        this->happened_message(OUTPUT_LOG_LEVEL::OUTPUT_LOG_LEVEL_FATAL, "WebCommunication : NOT setup()", __func__, __FILENAME__, __LINE__);
     }
     return result;
 }
@@ -276,9 +251,6 @@ void WebCommunication::handle_network_html()
 }
 void WebCommunication::set_network()
 {
-#if DEBUG_MODE
-    this->happened_message(OUTPUT_LOG_LEVEL::OUTPUT_LOG_LEVEL_TRACE, "ControllerPage : set_network()", __func__, __FILENAME__, __LINE__);
-#endif
     bool result  = false;
     String ssid  = "";
     String pass  = "";
@@ -434,26 +406,6 @@ bool WebCommunication::setup_server(WebServer *server)
 /////////////////////////////////////////
 // Set callback
 /////////////////////////////////////////
-
-bool WebCommunication::set_callback_message(MessageFunction callback)
-{
-    bool result = false;
-    try {
-        callback_mess          = callback;
-        this->callback_message = callback;
-        ctrl_web->set_callback_message(callback);
-        result = true;
-    } catch (...) {
-    }
-    return result;
-}
-
-void WebCommunication::happened_message(OUTPUT_LOG_LEVEL level, const char *message, const char *function_name, const char *file_name, int line)
-{
-    if (nullptr != this->callback_message) {
-        this->callback_message(level, message, function_name, file_name, line);
-    }
-}
 
 /////////////////////////////////////////
 // get  member valuable

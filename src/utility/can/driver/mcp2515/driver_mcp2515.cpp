@@ -43,11 +43,7 @@ bool DriverMcp2515::send(CanData data)
     if (CAN_OK != status) {
         result = false;
     }
-#if DEBUG_MODE
-    char buffer[255];
-    sprintf(buffer, "DriverMcp2515 : send state[%d]", status);
-    happened_message(OUTPUT_LOG_LEVEL::OUTPUT_LOG_LEVEL_DEBUG, buffer, __func__, __FILENAME__, __LINE__);
-#endif
+    log_v("DriverMcp2515 : send state[%d]", (int)status);
     return result;
 }
 
@@ -61,16 +57,16 @@ bool DriverMcp2515::interrupt()
                 result = true;
                 happened_received(data);
             } else {
-                happened_message(OUTPUT_LOG_LEVEL::OUTPUT_LOG_LEVEL_WARN, "Receive failed", __func__, __FILENAME__, __LINE__);
+                log_w("Receive failed");
             }
         }
 #if DEBUG_MODE
         if (false == result) {
-            happened_message(OUTPUT_LOG_LEVEL::OUTPUT_LOG_LEVEL_TRACE, "NO MESSAGE", __func__, __FILENAME__, __LINE__);
+            log_v("NO MESSAGE");
         }
 #endif
     } catch (...) {
-        happened_message(OUTPUT_LOG_LEVEL::OUTPUT_LOG_LEVEL_FATAL, "Receive panic", __func__, __FILENAME__, __LINE__);
+        log_e("Receive panic");
     }
     return result;
 }
@@ -82,7 +78,6 @@ bool DriverMcp2515::output_error()
 {
     bool result = false;
     //////////////////////////////////
-    char buffer[255];
     byte error_checkError   = this->mcp2515->checkError();
     byte error_getError     = this->mcp2515->getError();
     byte error_errorCountTX = this->mcp2515->errorCountTX();
@@ -90,17 +85,15 @@ bool DriverMcp2515::output_error()
     byte check_receive      = this->mcp2515->checkReceive();
     if (0 != (error_checkError)) {
         //////////////////////////////////
-        sprintf(buffer,
-                "CanCommunication : "
-                "ERROR[%d] tx[%d] / rx[%d]" // (2)(6)(7)
-                "%s",                       // --
-                //
-                (error_checkError == CAN_OK) ? 0 : error_getError, // (2)
-                error_errorCountTX,                                // (6)
-                error_errorCountRX,                                // (7)
-                (check_receive == CAN_NOMSG) ? "" : " : AVAIL"     // --
+        log_w("CanCommunication : "
+              "ERROR[%d] tx[%d] / rx[%d]" // (2)(6)(7)
+              "%s",                       // --
+              //
+              (error_checkError == CAN_OK) ? 0 : error_getError, // (2)
+              error_errorCountTX,                                // (6)
+              error_errorCountRX,                                // (7)
+              (check_receive == CAN_NOMSG) ? "" : " : AVAIL"     // --
         );
-        happened_message(OUTPUT_LOG_LEVEL::OUTPUT_LOG_LEVEL_WARN, buffer, __func__, __FILENAME__, __LINE__);
         result = true;
     }
     //////////////////////////////////

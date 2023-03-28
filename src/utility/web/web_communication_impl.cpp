@@ -22,22 +22,6 @@ namespace WEB
 #define CONTROLLER_PAGE_CONNECTION_CHECK_INTERVAL (5 * 1000)
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
-bool WebCommunicationImpl::set_callback_message(MessageFunction callback)
-{
-    bool result = false;
-    try {
-        this->callback_message = callback;
-        result                 = true;
-    } catch (...) {
-    }
-    return result;
-}
-void WebCommunicationImpl::happened_message(OUTPUT_LOG_LEVEL level, const char *message, const char *function_name, const char *file_name, int line)
-{
-    if (nullptr != this->callback_message) {
-        this->callback_message(level, message, __func__, __FILENAME__, __LINE__);
-    }
-}
 
 bool WebCommunicationImpl::setup()
 {
@@ -52,7 +36,7 @@ bool WebCommunicationImpl::setup()
         result = SPIFFS.exists(SETTING_WIFI_SETTING_FILE);
         SPIFFS.end();
     } else {
-        this->happened_message(OUTPUT_LOG_LEVEL::OUTPUT_LOG_LEVEL_ERROR, "SPIFFS Failed to Begin. You need to Run SPIFFS.format(),", __func__, __FILENAME__, __LINE__);
+        log_e("SPIFFS Failed to Begin. You need to Run SPIFFS.format().");
         skip = true;
     }
     if (false == skip) {
@@ -76,9 +60,6 @@ bool WebCommunicationImpl::_save_information(std::string ssid, std::string pass,
 #if STORAGE_SPI_FS
     bool force_write = false;
     if (true == this->_open_fs) {
-#if DEBUG_MODE
-        this->happened_message(OUTPUT_LOG_LEVEL::OUTPUT_LOG_LEVEL_TRACE, "SPIFFS save begin.", __func__, __FILENAME__, __LINE__);
-#endif
         if (SPIFFS.begin()) {
             if (true == SPIFFS.exists(SETTING_WIFI_SETTING_FILE)) {
                 this->_load_information_for_spiffs();
@@ -94,13 +75,6 @@ bool WebCommunicationImpl::_save_information(std::string ssid, std::string pass,
                 result = true;
             }
             SPIFFS.end();
-        }
-        if (true == result) {
-            this->happened_message(OUTPUT_LOG_LEVEL::OUTPUT_LOG_LEVEL_INFO, "Writing data to SPIFFS", __func__, __FILENAME__, __LINE__);
-        } else {
-#if DEBUG_MODE
-            this->happened_message(OUTPUT_LOG_LEVEL::OUTPUT_LOG_LEVEL_TRACE, "Finished SPIFFS", __func__, __FILENAME__, __LINE__);
-#endif
         }
     }
 #endif
@@ -167,22 +141,12 @@ bool WebCommunicationImpl::load_information()
     bool result = false;
 #if STORAGE_SPI_FS
     if (true == this->_open_fs) {
-#if DEBUG_MODE
-        this->happened_message(OUTPUT_LOG_LEVEL::OUTPUT_LOG_LEVEL_TRACE, "SPIFFS load begin.", __func__, __FILENAME__, __LINE__);
-#endif
         static int BUF_SIZE   = 255;
         char buffer[BUF_SIZE] = { 0 };
         if (SPIFFS.begin()) {
             result = this->_load_information_for_spiffs();
             SPIFFS.end();
         }
-#if DEBUG_MODE
-        if (true == result) {
-            this->happened_message(OUTPUT_LOG_LEVEL::OUTPUT_LOG_LEVEL_DEBUG, "Load data from SPIFFS", __func__, __FILENAME__, __LINE__);
-        } else {
-            this->happened_message(OUTPUT_LOG_LEVEL::OUTPUT_LOG_LEVEL_TRACE, "Finished SPIFFS", __func__, __FILENAME__, __LINE__);
-        }
-#endif
     }
 #endif
     return result;
@@ -232,13 +196,8 @@ std::vector<NetworkList> WebCommunicationImpl::get_wifi_list()
 {
     std::vector<NetworkList> list;
     int num = WiFi.scanNetworks();
-#if DEBUG_MODE
-    this->happened_message(OUTPUT_LOG_LEVEL::OUTPUT_LOG_LEVEL_TRACE, "WebCommunicationImpl : get_wifi_list", __func__, __FILENAME__, __LINE__);
-#endif
+
     if (num == 0) {
-#if DEBUG_MODE
-        this->happened_message(OUTPUT_LOG_LEVEL::OUTPUT_LOG_LEVEL_DEBUG, "WebCommunicationImpl : No networks found", __func__, __FILENAME__, __LINE__);
-#endif
     } else {
         for (int i = 0; i < num; i++) {
             NetworkList item;
@@ -304,42 +263,6 @@ bool WebCommunicationImpl::is_connected(bool force)
                     result = false;
                     break;
             }
-#if DEBUG_MODE
-            char buffer[255];
-            String tx_st = "";
-            switch (status) {
-                case wl_status_t::WL_NO_SHIELD:
-                    tx_st = "NO_SHIELD";
-                    break;
-                case wl_status_t::WL_IDLE_STATUS:
-                    tx_st = "IDLE_STATUS";
-                    break;
-                case wl_status_t::WL_NO_SSID_AVAIL:
-                    tx_st = "NO_SSID_AVAIL";
-                    break;
-                case wl_status_t::WL_SCAN_COMPLETED:
-                    tx_st = "SCAN_COMPLETED";
-                    break;
-                case wl_status_t::WL_CONNECTED:
-                    tx_st = "CONNECTED";
-                    break;
-                case wl_status_t::WL_CONNECT_FAILED:
-                    tx_st = "CONNECT_FAILED";
-                    break;
-                case wl_status_t::WL_CONNECTION_LOST:
-                    tx_st = "CONNECTION_LOST";
-                    break;
-                case wl_status_t::WL_DISCONNECTED:
-                    tx_st = "DISCONNECTED";
-                    break;
-
-                default:
-                    tx_st = "unkown";
-                    break;
-            }
-            sprintf(buffer, "WebCommunication : is_connected() : status[%s]", tx_st);
-            this->happened_message(OUTPUT_LOG_LEVEL::OUTPUT_LOG_LEVEL_DEBUG, buffer, __func__, __FILENAME__, __LINE__);
-#endif
         }
         return result;
     }
@@ -402,14 +325,12 @@ bool WebCommunicationImpl::connect(std::string ssid, std::string pass, bool ap_m
                 ((true == this->_mode_ap_current) ? "AP " : "STA"),
                 this->get_ssid(),
                 this->get_ip().toString().c_str());
-        this->happened_message(OUTPUT_LOG_LEVEL::OUTPUT_LOG_LEVEL_DEBUG, buffer, __func__, __FILENAME__, __LINE__);
     } else {
         sprintf(buffer, //
                 "WebCommunication : is NOT Connected : %s / SSID [%s] / IP [%s]",
                 ((true == this->_mode_ap_current) ? "AP " : "STA"),
                 this->_ssid,
                 this->get_ip().toString().c_str());
-        this->happened_message(OUTPUT_LOG_LEVEL::OUTPUT_LOG_LEVEL_WARN, buffer, __func__, __FILENAME__, __LINE__);
     }
     return result;
 }
@@ -432,22 +353,9 @@ bool WebCommunicationImpl::disconnect()
                 countdown -= CONTROLLER_PAGE_STARTUP_STA_SLEEP_MS;
                 if (0 >= countdown) {
                     result = false;
-#if DEBUG_MODE
-                    char buffer[255];
-                    sprintf(buffer, "[%s] Timeout disconnect", ((true == this->_mode_ap_current) ? "AP " : "STA"));
-                    this->happened_message(OUTPUT_LOG_LEVEL::OUTPUT_LOG_LEVEL_WARN, buffer, __func__, __FILENAME__, __LINE__);
-#endif
                     break;
                 }
             }
-#if DEBUG_MODE
-        } else {
-            if (true == this->_mode_ap_current) {
-                this->happened_message(OUTPUT_LOG_LEVEL::OUTPUT_LOG_LEVEL_DEBUG, "AP / disconnect", __func__, __FILENAME__, __LINE__);
-            } else {
-                this->happened_message(OUTPUT_LOG_LEVEL::OUTPUT_LOG_LEVEL_DEBUG, "STA / disconnect", __func__, __FILENAME__, __LINE__);
-            }
-#endif
         }
         (void)this->is_connected(true);
     }

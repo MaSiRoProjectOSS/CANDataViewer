@@ -43,16 +43,6 @@ public:
     // common function
     /////////////////////////////////
     CanDeviceInfo get_device_info() { return this->device_info; }
-    bool set_callback_message(MessageFunction callback)
-    {
-        bool result = false;
-        try {
-            this->callback_message = callback;
-            result                 = true;
-        } catch (...) {
-        }
-        return result;
-    }
 
     bool set_callback_get_received(GetReceivedFunction callback)
     {
@@ -69,13 +59,6 @@ protected:
     /////////////////////////////////
     // inner function
     /////////////////////////////////
-    void happened_message(OUTPUT_LOG_LEVEL level, const char *message, const char *function_name, const char *file_name, int line)
-    {
-        if (nullptr != this->callback_message) {
-            this->callback_message(level, message, function_name, file_name, line);
-        }
-    }
-
     void happened_received(CanData data)
     {
         if (nullptr != this->callback_get_received) {
@@ -90,7 +73,6 @@ protected:
     }
 
 protected:
-    MessageFunction callback_message;
     GetReceivedFunction callback_get_received;
     CanDeviceInfo device_info;
 };

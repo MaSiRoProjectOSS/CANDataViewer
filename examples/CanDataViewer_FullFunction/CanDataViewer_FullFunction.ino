@@ -56,21 +56,6 @@ void setup_m5()
     Serial.println("---------------------");
 }
 
-void output_message(OUTPUT_LOG_LEVEL level, const char *message, const char *function_name, const char *file_name, int line)
-{
-    char buffer[300];
-    unsigned long tm    = millis();
-    unsigned long tm_s  = tm / 1000;
-    unsigned long tm_ms = tm % 1000;
-
-    if (level >= OUTPUT_LOG_LEVEL::OUTPUT_LOG_LEVEL_WARN) {
-        sprintf(buffer, "[Error] [%7ld.%03ld][%s:%s:%d] : %s", tm_s, tm_ms, file_name, function_name, line, message);
-    } else {
-        sprintf(buffer, "[     ] [%7ld.%03ld] : %s", tm_s, tm_ms, message);
-    }
-    Serial.println(buffer);
-}
-
 void change_can_mode(CAN_CTRL_STATE mode, const char *text)
 {
     char buffer[255];
@@ -97,8 +82,7 @@ void change_can_mode(CAN_CTRL_STATE mode, const char *text)
             break;
     }
 #endif
-    sprintf(buffer, "CAN MODE [%s]", text);
-    output_message(OUTPUT_LOG_LEVEL::OUTPUT_LOG_LEVEL_INFO, buffer, __func__, __FILENAME__, __LINE__);
+    log_i("CAN MODE [%s]", text);
 }
 
 /**
@@ -208,7 +192,6 @@ void setup()
 
     // setup callback function
     can_data_viewer.set_callback_setting_default(&setting_default);
-    can_data_viewer.set_callback_message(&output_message);
     can_data_viewer.set_callback_changed_mode(&change_can_mode);
     can_data_viewer.set_callback_received(&received);
     can_data_viewer.set_callback_sendable_interrupt(&sendable);
@@ -255,14 +238,11 @@ void loop()
         UBaseType_t max_can      = can_data_viewer.get_stack_size_can();
         UBaseType_t max_server   = can_data_viewer.get_stack_size_server();
 
-        char msg_buffer[512];
-        sprintf(msg_buffer,
-                "STACK SIZE : can[%d/%d] server[%d/%d]", //
-                (max_can - stack_can),
-                max_can,
-                (max_server - stack_server),
-                max_server);
-        output_message(OUTPUT_LOG_LEVEL::OUTPUT_LOG_LEVEL_INFO, msg_buffer, __func__, __FILENAME__, __LINE__);
+        log_i("STACK SIZE : can[%d/%d] server[%d/%d]", //
+              (max_can - stack_can),
+              max_can,
+              (max_server - stack_server),
+              max_server);
     }
 #endif
     (void)delay(SETTING_LOOP_TIME_SLEEP_DETECT);

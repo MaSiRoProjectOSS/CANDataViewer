@@ -64,7 +64,6 @@ bool DriverEsp32can::send(CanData data)
 bool DriverEsp32can::interrupt()
 {
     bool result = false;
-    char buffer[255];
     try {
         CAN_frame_t rx_frame;
         while (xQueueReceive(CAN_cfg.rx_queue, &rx_frame, 3 * portTICK_PERIOD_MS) == pdTRUE) {
@@ -82,13 +81,11 @@ bool DriverEsp32can::interrupt()
         }
 #if DEBUG_MODE
         if (false == result) {
-            sprintf(buffer, "NO MESSAGE");
-            happened_message(OUTPUT_LOG_LEVEL::OUTPUT_LOG_LEVEL_TRACE, buffer, __func__, __FILENAME__, __LINE__);
+            log_v("NO MESSAGE");
         }
 #endif
     } catch (...) {
-        sprintf(buffer, "Receive panic");
-        happened_message(OUTPUT_LOG_LEVEL::OUTPUT_LOG_LEVEL_FATAL, buffer, __func__, __FILENAME__, __LINE__);
+        log_e("Receive panic");
     }
     return result;
 }

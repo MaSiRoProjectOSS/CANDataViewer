@@ -42,16 +42,12 @@ public:
     const char *get_ssid_ap_default();
     void request_connection_info(std::string ssid, std::string pass, bool ap_mode);
 
-    bool set_callback_message(MessageFunction callback);
-
     std::vector<NetworkList> get_wifi_list();
 
     bool check_connection();
 
 private:
-    void happened_message(OUTPUT_LOG_LEVEL level, const char *message, const char *function_name, const char *file_name, int line);
     bool _save_information(std::string ssid, std::string pass, bool ap_mode);
-    MessageFunction callback_message;
     bool load_information();
     int _get_rssi_as_quality(int rssi);
     bool _load_information_for_spiffs();

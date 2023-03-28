@@ -52,12 +52,10 @@ bool CanCommunicationImpl::begin()
         result = this->can->begin();
     }
     if (true == result) {
-#if DEBUG_MODE
-        happened_message(OUTPUT_LOG_LEVEL::OUTPUT_LOG_LEVEL_TRACE, "CanCommunication : Initialized Successfully!", __func__, __FILENAME__, __LINE__);
-#endif
+        log_v("CanCommunication : Initialized Successfully!");
         initialized = true;
     } else {
-        happened_message(OUTPUT_LOG_LEVEL::OUTPUT_LOG_LEVEL_WARN, "CanCommunication : Failed initialization...", __func__, __FILENAME__, __LINE__);
+        log_w("CanCommunication : Failed initialization...");
     }
     this->happened_changed_mode(this->mode_current);
     return result;
@@ -66,9 +64,7 @@ bool CanCommunicationImpl::loop()
 {
     bool result = true;
     if (true == flag_request_pause) {
-#if DEBUG_MODE
-        // happened_message(OUTPUT_LOG_LEVEL::OUTPUT_LOG_LEVEL_TRACE, "CanCommunication : pause", __func__, __FILENAME__, __LINE__);
-#endif
+        log_v("CanCommunication : pause");
     } else {
         bool flag_send = true;
         if (this->mode_current != this->mode_request) {
@@ -76,9 +72,7 @@ bool CanCommunicationImpl::loop()
             this->happened_changed_mode(this->mode_current);
         }
         if (true == this->interrupt()) {
-#if DEBUG_MODE
-            happened_message(OUTPUT_LOG_LEVEL::OUTPUT_LOG_LEVEL_TRACE, "CanCommunication : loop-receive", __func__, __FILENAME__, __LINE__);
-#endif
+            log_v("CanCommunication : loop-receive");
         }
         switch (this->mode_current) {
             case CAN_CTRL_STATE::MODE_READY:
@@ -131,16 +125,6 @@ CAN_CTRL_STATE CanCommunicationImpl::get_mode()
 // Callback
 /////////////////////////////////
 #pragma region Callback
-bool CanCommunicationImpl::set_callback_message(MessageFunction callback)
-{
-    bool result = false;
-    try {
-        this->callback_message = callback;
-        result                 = true;
-    } catch (...) {
-    }
-    return result;
-}
 bool CanCommunicationImpl::set_callback_changed_mode(ChangedModeFunction callback)
 {
     bool result = false;
@@ -367,23 +351,19 @@ bool CanCommunicationImpl::send(CanData data)
     if (true == result) {
         this->add_resume(data, false);
 #if OUTPUT_MESSAGE_FOR_SERIAL
-        char buffer[255];
-        sprintf(buffer,
-                "SEND   "
-                " : id = 0x%02lX / %02d / "
-                "0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X",
-                data.Id,
-                data.Length,
-                data.Data[0],
-                data.Data[1],
-                data.Data[2],
-                data.Data[3],
-                data.Data[4],
-                data.Data[5],
-                data.Data[6],
-                data.Data[7]);
-
-        happened_message(OUTPUT_LOG_LEVEL::OUTPUT_LOG_LEVEL_MESSAGE, buffer, __func__, __FILENAME__, __LINE__);
+        log_v("SEND   "
+              " : id = 0x%02lX / %02d / "
+              "0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X",
+              data.Id,
+              data.Length,
+              data.Data[0],
+              data.Data[1],
+              data.Data[2],
+              data.Data[3],
+              data.Data[4],
+              data.Data[5],
+              data.Data[6],
+              data.Data[7]);
 #endif
     }
 
@@ -505,12 +485,6 @@ void CanCommunicationImpl::happened_changed_mode(CAN_CTRL_STATE mode)
         this->callback_changed_mode(mode, buffer);
     }
 }
-void CanCommunicationImpl::happened_message(OUTPUT_LOG_LEVEL level, const char *message, const char *function_name, const char *file_name, int line)
-{
-    if (nullptr != this->callback_message) {
-        this->callback_message(level, message, function_name, file_name, line);
-    }
-}
 void CanCommunicationImpl::happened_received(CanData data)
 {
     bool flag_insert = true;
@@ -532,22 +506,19 @@ void CanCommunicationImpl::happened_received(CanData data)
     }
 #if OUTPUT_MESSAGE_FOR_SERIAL
     if (0 < data.Length) {
-        char buffer[255];
-        sprintf(buffer,
-                "RECEIVE"
-                " : id = 0x%02lX / %02d / "
-                "0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X",
-                data.Id,
-                data.Length,
-                data.Data[0],
-                data.Data[1],
-                data.Data[2],
-                data.Data[3],
-                data.Data[4],
-                data.Data[5],
-                data.Data[6],
-                data.Data[7]);
-        happened_message(OUTPUT_LOG_LEVEL::OUTPUT_LOG_LEVEL_MESSAGE, buffer, __func__, __FILENAME__, __LINE__);
+        log_v("RECEIVE"
+              " : id = 0x%02lX / %02d / "
+              "0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X",
+              data.Id,
+              data.Length,
+              data.Data[0],
+              data.Data[1],
+              data.Data[2],
+              data.Data[3],
+              data.Data[4],
+              data.Data[5],
+              data.Data[6],
+              data.Data[7]);
     }
 #endif
 }

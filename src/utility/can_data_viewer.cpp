@@ -24,13 +24,6 @@ using namespace MaSiRoProject;
 // setup function
 ////////////////////////////////////////////////
 #pragma region setup_function
-bool CanDataViewer::set_callback_message(MessageFunction callback)
-{
-    bool result = true;
-    ctrl_page->set_callback_message(callback);
-    ctrl_can->set_callback_message(callback);
-    return result;
-}
 bool CanDataViewer::set_callback_changed_mode(ChangedModeFunction callback)
 {
     bool result = true;

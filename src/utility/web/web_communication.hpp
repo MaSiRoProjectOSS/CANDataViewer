@@ -26,7 +26,6 @@ public:
 public:
     bool setup();
     bool begin();
-    bool set_callback_message(MessageFunction callback);
     void set_message(std::string message);
     std::vector<NetworkList> get_wifi_list();
     void request_reconnect(std::string ssid, std::string pass, bool ap_mode, bool force);
@@ -50,7 +49,6 @@ protected:
     void get_net_list();
 
 protected:
-    void happened_message(OUTPUT_LOG_LEVEL level, const char *message, const char *function_name, const char *file_name, int line);
     String ip_to_string(IPAddress ip);
     byte to_byte(String data);
     int to_int(String data);
@@ -64,7 +62,6 @@ public:
 
 private:
     bool initialized = false;
-    MessageFunction callback_message;
     TaskHandle_t task_handle;
     UBaseType_t task_assigned_size;
     std::string _message = "The system was reconfigured."

@@ -36,7 +36,6 @@ public:
     /////////////////////////////////
     // Set Callback
     /////////////////////////////////
-    bool set_callback_message(MessageFunction callback);
     bool set_callback_changed_mode(ChangedModeFunction callback);
     bool set_callback_received(GetReceivedFunction callback);
     bool set_callback_sendable(SendEventFunction callback);

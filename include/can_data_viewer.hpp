@@ -61,14 +61,6 @@ public:
     ////////////////////////////////////////////////
 public:
     /**
-     * @brief Set the callback message function
-     *
-     * @param callback  Callback function to be called
-     * @return true     Successfully
-     * @return false    Failed
-     */
-    bool set_callback_message(MessageFunction callback);
-    /**
      * @brief Set the callback changed mode function
      *
      * @param callback  Callback function to be called
