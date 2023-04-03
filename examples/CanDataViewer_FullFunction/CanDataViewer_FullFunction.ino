@@ -20,10 +20,6 @@
 #endif
 #include <can_data_viewer.hpp>
 
-#define SETTING_WIFI_MODE_AP false
-#define SETTING_WIFI_SSID    "(wifi ssid)"
-#define SETTING_WIFI_PASS    "(wifi password)"
-
 #define SETTING_LOOP_TIME_SLEEP_DETECT 100
 
 #if LIB_CAN_DRIVER == 0
@@ -197,9 +193,7 @@ void setup()
     can_data_viewer.set_callback_sendable_interrupt(&sendable);
 
     // Start CANDataViewer
-    can_data_viewer.begin(SETTING_WIFI_SSID, SETTING_WIFI_PASS, SETTING_WIFI_MODE_AP);
-
-    // Switch connection information programmatically
+    can_data_viewer.begin();
 }
 
 void loop()

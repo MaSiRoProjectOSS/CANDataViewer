@@ -66,7 +66,6 @@ void loop()
 {
     (void)M5.update();
     if (M5.Btn.wasPressed()) {
-        // Press the button to change the CAN output mode.
         can_data_viewer.set_mode();
     }
     (void)delay(SETTING_LOOP_TIME_SLEEP_DETECT);
