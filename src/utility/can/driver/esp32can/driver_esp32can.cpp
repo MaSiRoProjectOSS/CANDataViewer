@@ -21,7 +21,7 @@ namespace CAN
 /////////////////////////////////
 bool DriverEsp32can::begin()
 {
-    bool result = false;
+    bool result = true;
     //////////////////////////////////
     CAN_cfg.speed     = this->can_speed;
     CAN_cfg.tx_pin_id = (gpio_num_t)CAN_COMMUNICATION_GROVE_PIN_SDA;

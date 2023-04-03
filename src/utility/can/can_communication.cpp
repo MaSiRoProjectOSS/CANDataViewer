@@ -58,7 +58,7 @@ void thread_can(void *args)
         try {
             vTaskDelay(THREAD_SEEK_INTERVAL_CAN);
             if (false == can->begin()) {
-                log_w("<%s> - NOT begin()", THREAD_NAME_CAN);
+                log_w("<%s> - Failed begin()", THREAD_NAME_CAN);
                 vTaskDelay(THREAD_RETRY_INTERVAL_CAN);
             } else {
                 can->request_start();
