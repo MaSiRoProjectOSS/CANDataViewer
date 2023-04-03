@@ -14,15 +14,11 @@ The change method is as follows.
 ```c++
 #include <can_data_viewer.hpp>
 
-#define SETTING_WIFI_MODE_AP false
-#define SETTING_WIFI_SSID    "(wifi ssid)"
-#define SETTING_WIFI_PASS    "(wifi password)"
-
 CanDataViewer can_data_viewer;
 
 void setup()
 {
-    can_data_viewer.begin(SETTING_WIFI_SSID, SETTING_WIFI_PASS, SETTING_WIFI_MODE_AP);
+    can_data_viewer.begin();
 }
 ```
 
@@ -46,28 +42,13 @@ lib_deps =
 	m5stack/M5Atom@^0.1.0
 	fastled/FastLED@^3.5.0
 	https://github.com/MaSiRoProjectOSS/CANDataViewer
-build_flags =
-	-DSETTING_WIFI_SETTING_FILE="\"/info_wifi.txt\""
-	-DSETTING_WIFI_MODE_AP="\"/true\""
-	-DSETTING_WIFI_SSID_DEFAULT_AP="\"/AP_CAN_DATA_VIEWER\""
-	-DSETTING_WIFI_PASS_DEFAULT_AP="\"/password\""
-	-DSETTING_WIFI_SSID_DEFAULT_STA="\"/STA_CAN_DATA_VIEWER\""
-	-DSETTING_WIFI_PASS_DEFAULT_STA="\"/password\""
-	-DSETTING_WIFI_MODE_AP_AUTO_TRANSITIONS=0
-	-DSETTING_WIFI_MODE_AP_AUTO_TRANSITIONS_TIMEOUT=600000
+	https://github.com/MaSiRoProjectOSS/CushyWebServer
 ```
 
 
-| Definition Name                               | Default Value              | Notes                                                |
-| --------------------------------------------- | -------------------------- | ---------------------------------------------------- |
-| SETTING_WIFI_SETTING_FILE                     | "\"/info_wifi.txt\""       | File name to save settings                           |
-| SETTING_WIFI_MODE_AP                          | "\"/true\""                | True: Starts in AP mode / false: Start in STA mode   |
-| SETTING_WIFI_SSID_DEFAULT_AP                  | "\"/AP_CAN_DATA_VIEWER\""  | Default SSID in AP mode                              |
-| SETTING_WIFI_PASS_DEFAULT_AP                  | "\"/password\""            | Default passphrase in AP mode                        |
-| SETTING_WIFI_SSID_DEFAULT_STA                 | "\"/STA_CAN_DATA_VIEWER\"" | Default SSID in STA mode                             |
-| SETTING_WIFI_PASS_DEFAULT_STA                 | "\"/password\""            | Default passphrase in STA mode                       |
-| SETTING_WIFI_MODE_AP_AUTO_TRANSITIONS         | 0                          | Set 1 to switch to AP mode if not connecting via STA |
-| SETTING_WIFI_MODE_AP_AUTO_TRANSITIONS_TIMEOUT | 600000                     | Time to change from STA mode to AP mode              |
+| Definition Name | Default Value | Notes |
+| --------------- | ------------- | ----- |
+|                 |               |       |
 
 
 ### GUI operation method

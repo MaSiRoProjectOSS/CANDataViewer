@@ -11,9 +11,9 @@
 #ifndef MASIRO_PROJECT_TOY_BOX_CAN_COMMUNICATION_IMPL_HPP
 #define MASIRO_PROJECT_TOY_BOX_CAN_COMMUNICATION_IMPL_HPP
 
-#include "../../can_data_viewer_info.hpp"
 #include "driver/driver_can_abstract.hpp"
 
+#include <can_data_viewer_info.hpp>
 #include <vector>
 
 namespace MaSiRoProject
@@ -43,13 +43,11 @@ public:
     // Callback
     /////////////////////////////////
 public:
-    bool set_callback_message(MessageFunction callback);
     bool set_callback_changed_mode(ChangedModeFunction callback);
     bool set_callback_received(GetReceivedFunction callback);
     bool set_callback_sendable(SendEventFunction callback);
 
 private:
-    MessageFunction callback_message;
     ChangedModeFunction callback_changed_mode;
     GetReceivedFunction callback_received;
     SendEventFunction callback_sendable;
@@ -107,7 +105,6 @@ private:
     /////////////////////////////////
 private:
     void happened_changed_mode(CAN_CTRL_STATE mode);
-    void happened_message(OUTPUT_LOG_LEVEL level, const char *message, const char *function_name, const char *file_name, int line);
     void happened_received(CanData data);
 
     /////////////////////////////////

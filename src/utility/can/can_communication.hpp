@@ -11,8 +11,7 @@
 #ifndef MASIRO_PROJECT_TOY_BOX_CAN_COMMUNICATION_HPP
 #define MASIRO_PROJECT_TOY_BOX_CAN_COMMUNICATION_HPP
 
-#include "../../can_data_viewer_info.hpp"
-
+#include <can_data_viewer_info.hpp>
 #include <vector>
 
 namespace MaSiRoProject
@@ -37,7 +36,6 @@ public:
     /////////////////////////////////
     // Set Callback
     /////////////////////////////////
-    bool set_callback_message(MessageFunction callback);
     bool set_callback_changed_mode(ChangedModeFunction callback);
     bool set_callback_received(GetReceivedFunction callback);
     bool set_callback_sendable(SendEventFunction callback);

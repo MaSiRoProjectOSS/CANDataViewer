@@ -21,23 +21,22 @@
 
 #include <can_data_viewer.hpp>
 
-#define SETTING_WIFI_MODE_AP false
-#define SETTING_WIFI_SSID    "(wifi ssid)"
-#define SETTING_WIFI_PASS    "(wifi password)"
-
+#if LIB_CAN_DRIVER == 0
+// ESP32CAN does not require Interrupt Pin and Chip select Pin
+CanDataViewer can_data_viewer;
+#else
+// MCP2515 should be Pin set.
 #ifdef CONTROLLERS_M5STACK
 CanDataViewer can_data_viewer(G15, G12);
 #else
 // CONTROLLERS_ATOM_LITE
 CanDataViewer can_data_viewer(G25, G19);
 #endif
+#endif
 
 void setup()
 {
     can_data_viewer.begin();
-
-    // You can specify LAN connection information when this system boots.
-    // can_data_viewer.begin(SETTING_WIFI_SSID, SETTING_WIFI_PASS, SETTING_WIFI_MODE_AP);
 }
 
 void loop()

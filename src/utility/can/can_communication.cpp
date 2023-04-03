@@ -33,7 +33,6 @@ volatile CAN_CTRL_STATE request_mode       = CAN_CTRL_STATE::MODE_NOT_INITIALIZE
 volatile CAN_CTRL_STATE current_mode       = CAN_CTRL_STATE::MODE_NOT_INITIALIZE;
 ///////////////////////////////////////////////////////////////////
 ChangedModeFunction callback_changed_mode = nullptr;
-MessageFunction callback_mess;
 ///////////////////////////////////////////////////////////////////
 
 void change_can_mode(CAN_CTRL_STATE mode, const char *text)
@@ -54,21 +53,12 @@ void IRAM_ATTR thread_can_on_interrupt()
 void thread_can(void *args)
 {
     flag_thread_can_initialized = true;
-    char buffer[255];
-#if DEBUG_MODE
-    sprintf(buffer, "<%s> - start", THREAD_NAME_CAN);
-    if (nullptr != callback_mess) {
-        callback_mess(OUTPUT_LOG_LEVEL::OUTPUT_LOG_LEVEL_TRACE, buffer, __func__, __FILENAME__, __LINE__);
-    }
-#endif
+    log_v("<%s> - start", THREAD_NAME_CAN);
     while (false == flag_thread_can_fin) {
         try {
             vTaskDelay(THREAD_SEEK_INTERVAL_CAN);
             if (false == can->begin()) {
-                sprintf(buffer, "<%s> - NOT begin()", THREAD_NAME_CAN);
-                if (nullptr != callback_mess) {
-                    callback_mess(OUTPUT_LOG_LEVEL::OUTPUT_LOG_LEVEL_WARN, buffer, __func__, __FILENAME__, __LINE__);
-                }
+                log_w("<%s> - Failed begin()", THREAD_NAME_CAN);
                 vTaskDelay(THREAD_RETRY_INTERVAL_CAN);
             } else {
                 can->request_start();
@@ -104,10 +94,7 @@ void thread_can(void *args)
                 can->request_suspend();
             }
         } catch (...) {
-            sprintf(buffer, "<%s> - ERROR()", THREAD_NAME_CAN);
-            if (nullptr != callback_mess) {
-                callback_mess(OUTPUT_LOG_LEVEL::OUTPUT_LOG_LEVEL_FATAL, buffer, __func__, __FILENAME__, __LINE__);
-            }
+            log_e("<%s> - ERROR()", THREAD_NAME_CAN);
         }
     }
     flag_thread_can_initialized = false;
@@ -178,13 +165,6 @@ bool CanCommunication::setup_default(void)
 /////////////////////////////////
 #pragma region Callback
 
-bool CanCommunication::set_callback_message(MessageFunction callback)
-{
-    bool result   = true;
-    callback_mess = callback;
-    can->set_callback_message(callback);
-    return result;
-}
 bool CanCommunication::set_callback_changed_mode(ChangedModeFunction callback)
 {
     bool result = false;

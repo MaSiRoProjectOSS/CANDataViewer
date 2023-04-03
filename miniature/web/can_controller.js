@@ -65,18 +65,18 @@ if (!JS_CCtrl) {
                 , error => JS_CCtrl.none(error)
             );
         },
-        make: function (data) {
-            if (null != data) {
-                if ("OK" == data.result) {
-                    JS_CCtrl.can_data = data;
-                    JS_Table.add_table(data.resume, 'send_one_shot', 'send_one_shot_size', 0);
-                    JS_Table.add_table(data.send, 'send_loop', 'send_loop_size', 1);
-                    JS_Table.add_table(data.received, 'received_table', 'received_size', 2);
+        make: function (v) {
+            if (null != v) {
+                if ("OK" == v.result) {
+                    JS_CCtrl.can_data = v;
+                    JS_Table.add_table(v.data.resume, 'send_one_shot', 'send_one_shot_size', 0);
+                    JS_Table.add_table(v.data.send, 'send_loop', 'send_loop_size', 1);
+                    JS_Table.add_table(v.data.received, 'received_table', 'received_size', 2);
                     let txt_mode = document.getElementById("can_mode");
-                    if (txt_mode.innerHTML != data.status.mode) { txt_mode.innerHTML = data.status.mode; }
+                    if (txt_mode.innerHTML != v.data.mode) { txt_mode.innerHTML = v.data.mode; }
                     let txt_time = document.getElementById("current_time");
-                    if (0 != data.time) {
-                        txt_time.innerHTML = (Number(data.time) / 1000).toFixed(3);
+                    if (0 != v.data.time) {
+                        txt_time.innerHTML = (Number(v.data.time) / 1000).toFixed(3);
                     } else { txt_time.innerHTML = "--"; }
                 }
             }

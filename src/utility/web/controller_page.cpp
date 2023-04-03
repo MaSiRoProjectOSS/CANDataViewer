@@ -11,95 +11,82 @@
 #include "controller_page.hpp"
 
 #include "../can_data_viewer_conf.hpp"
+#include "web_data.h"
 
 namespace MaSiRoProject
 {
 
 namespace WEB
 {
-#define WEB_PAGE_HEADER_EXPIRES                "86400"
-#define WEB_PAGE_HEADER_CACHE_CONTROL_LONGTIME "max-age=604800, must-revalidate"
-#define WEB_PAGE_HEADER_CACHE_CONTROL_NO_CACHE "no-cache, no-store, must-revalidate"
+#define WEB_HEADER_CACHE_CONTROL_SHORT_TIME "max-age=100, immutable"
+#define WEB_HEADER_CACHE_CONTROL_LONGTIME   "max-age=31536000, immutable"
+#define WEB_HEADER_CACHE_CONTROL_NO_CACHE   "no-cache"
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-const std::string WEB_CSS_CDV PROGMEM
-        = "td{text-align:center}th{background-color:#d3d3d3}table{border-collapse:collapse;border:outset}td,th{border:outset;text-align:center;padding:5px;width:3em}input{text-align:center}.td_left{text-align:left}.td_view{background-color:ivory}.td_disable{background-color:#a9a9a9}.td_type{width:6em}.article_header{text-align:right;font-size:1.2rem;line-height:2.4rem}";
-const std::string WEB_JS_CAN_CONTROLLER PROGMEM
-        = "if(!JS_CCtrl)var JS_CCtrl={can_data:null,timerId:null,timerInterval:1e3,none:function(data){},send_can:function(id,len,loop,data0,data1,data2,data3,data4,data5,data6,data7){let num_loop=1e3*Number(loop);JS_AJAX.get('/set/can_data?id='+id+'&len='+len+(0==num_loop?'':'&loop='+num_loop)+'&d0='+data0+'&d1='+data1+'&d2='+data2+'&d3='+data3+'&d4='+data4+'&d5='+data5+'&d6='+data6+'&d7='+data7).then(ok=>JS_CCtrl.none(ok),error=>console.error(error.status.messages))},send:function(){JS_CCtrl.send_can(document.getElementById('b_send_id').value,document.getElementById('b_send_len').value,document.getElementById('send_time').innerText,document.getElementById('b_send_data_0').value,document.getElementById('b_send_data_1').value,document.getElementById('b_send_data_2').value,document.getElementById('b_send_data_3').value,document.getElementById('b_send_data_4').value,document.getElementById('b_send_data_5').value,document.getElementById('b_send_data_6').value,document.getElementById('b_send_data_7').value)},one_more:function(table_type,id){for(var i=0;i<JS_CCtrl.can_data.resume.length;i++)if(id==JS_CCtrl.can_data.resume[i].ID){JS_CCtrl.send_can(JS_CCtrl.can_data.resume[i].ID,JS_CCtrl.can_data.resume[i].LEN,JS_CCtrl.can_data.resume[i].INTERVAL,JS_CCtrl.can_data.resume[i].DATA[0],JS_CCtrl.can_data.resume[i].DATA[1],JS_CCtrl.can_data.resume[i].DATA[2],JS_CCtrl.can_data.resume[i].DATA[3],JS_CCtrl.can_data.resume[i].DATA[4],JS_CCtrl.can_data.resume[i].DATA[5],JS_CCtrl.can_data.resume[i].DATA[6],JS_CCtrl.can_data.resume[i].DATA[7]);break}},clear:function(table_type){JS_AJAX.get('/set/clear').then(ok=>JS_CCtrl.none(ok),error=>console.error(error.status.messages))},default:function(table_type){JS_AJAX.get('/set/default').then(ok=>JS_CCtrl.none(ok),error=>console.error(error.status.messages))},delete_row:function(table_type,id){JS_AJAX.get('/set/delete?id='+id).then(ok=>JS_CCtrl.none(ok),error=>console.error(error.status.messages))},change_mode:function(){JS_AJAX.get('/set/change_mode').then(ok=>JS_CCtrl.none(ok),error=>JS_CCtrl.none(error))},make:function(data){if(null!=data&&'OK'==data.result){JS_CCtrl.can_data=data,JS_Table.add_table(data.resume,'send_one_shot','send_one_shot_size',0),JS_Table.add_table(data.send,'send_loop','send_loop_size',1),JS_Table.add_table(data.received,'received_table','received_size',2);let txt_mode=document.getElementById('can_mode');txt_mode.innerHTML!=data.status.mode&&(txt_mode.innerHTML=data.status.mode);let txt_time=document.getElementById('current_time');0!=data.time?txt_time.innerHTML=(Number(data.time)/1e3).toFixed(3):txt_time.innerHTML='--'}},interval:function(){JS_AJAX.get('/get/can_data').then(ok=>JS_CCtrl.make(ok),error=>console.error(error.status.messages))}};window.onload=function(){JS_CCtrl.timerId=setInterval(JS_CCtrl.interval,JS_CCtrl.timerInterval)},window.onunload=function(){null!=JS_CCtrl.timerId&&clearInterval(JS_CCtrl.timerId)};";
-const std::string WEB_JS_TABLE PROGMEM
-        = "if(!JS_Table)var JS_Table={del_head:function(elm){let tbody=document.getElementById(elm);for(;2<tbody.rows.length;)tbody.deleteRow(tbody.rows.length-1)},change:function(){0==document.getElementById('b_send_time_s').value&&0==document.getElementById('b_send_time_ms').value?(document.getElementById('send_type').innerHTML='One shot',document.getElementById('send_time').innerHTML='0.000'):(document.getElementById('send_type').innerHTML='Loop',1e3==document.getElementById('b_send_time_ms').value?document.getElementById('send_time').innerHTML=Number(document.getElementById('b_send_time_s').value)+1+'.000':document.getElementById('send_time').innerHTML=document.getElementById('b_send_time_s').value+'.'+document.getElementById('b_send_time_ms').value.toString().padStart(3,'0')),document.getElementById('send_id').innerHTML='0x'+Number(document.getElementById('b_send_id').value).toString(16),document.getElementById('send_len').innerHTML=document.getElementById('b_send_len').value,document.getElementById('send_data_0').innerHTML='0x'+Number(document.getElementById('b_send_data_0').value).toString(16),document.getElementById('send_data_1').innerHTML='0x'+Number(document.getElementById('b_send_data_1').value).toString(16),document.getElementById('send_data_2').innerHTML='0x'+Number(document.getElementById('b_send_data_2').value).toString(16),document.getElementById('send_data_3').innerHTML='0x'+Number(document.getElementById('b_send_data_3').value).toString(16),document.getElementById('send_data_4').innerHTML='0x'+Number(document.getElementById('b_send_data_4').value).toString(16),document.getElementById('send_data_5').innerHTML='0x'+Number(document.getElementById('b_send_data_5').value).toString(16),document.getElementById('send_data_6').innerHTML='0x'+Number(document.getElementById('b_send_data_6').value).toString(16),document.getElementById('send_data_7').innerHTML='0x'+Number(document.getElementById('b_send_data_7').value).toString(16)},copy_row:function(table_type,id){for(var i=0;i<JS_CCtrl.can_data.resume.length;i++)if(id==JS_CCtrl.can_data.resume[i].ID){document.getElementById('b_send_id').value=JS_CCtrl.can_data.resume[i].ID,document.getElementById('b_send_len').value=JS_CCtrl.can_data.resume[i].LEN,0==JS_CCtrl.can_data.resume[i].INTERVAL?(document.getElementById('b_send_time_s').value=0,document.getElementById('b_send_time_ms').value=0):(document.getElementById('b_send_time_ms').value=JS_CCtrl.can_data.resume[i].INTERVAL%1e3,document.getElementById('b_send_time_s').value=(JS_CCtrl.can_data.resume[i].INTERVAL-document.getElementById('b_send_time_ms').value)/1e3),document.getElementById('b_send_data_0').value=JS_CCtrl.can_data.resume[i].DATA[0],document.getElementById('b_send_data_1').value=JS_CCtrl.can_data.resume[i].DATA[1],document.getElementById('b_send_data_2').value=JS_CCtrl.can_data.resume[i].DATA[2],document.getElementById('b_send_data_3').value=JS_CCtrl.can_data.resume[i].DATA[3],document.getElementById('b_send_data_4').value=JS_CCtrl.can_data.resume[i].DATA[4],document.getElementById('b_send_data_5').value=JS_CCtrl.can_data.resume[i].DATA[5],document.getElementById('b_send_data_6').value=JS_CCtrl.can_data.resume[i].DATA[6],document.getElementById('b_send_data_7').value=JS_CCtrl.can_data.resume[i].DATA[7],JS_Table.change();break}},add_table:function(data,elm_ta,elm_size,table_type){if(null!=data){let len=data.length,l_size=0,t_size=document.getElementById(elm_size);JS_Table.del_head(elm_ta);let tbody=document.getElementById(elm_ta);for(i=0;i<len;i++){if(0==table_type&&0!=data[i].INTERVAL)continue;l_size++;let tr=document.createElement('tr');if(0==table_type||1==table_type){let td_del=document.createElement('th'),elm_input_del=document.createElement('input');elm_input_del.type='button',elm_input_del.value='delete',elm_input_del.setAttribute('onclick','JS_CCtrl.delete_row('+table_type+','+data[i].ID+');'),td_del.appendChild(elm_input_del),tr.appendChild(td_del);let td_copy=document.createElement('th'),elm_input_copy=document.createElement('input');elm_input_copy.type='button',elm_input_copy.value='copy',elm_input_copy.setAttribute('onclick','JS_Table.copy_row('+table_type+','+data[i].ID+');'),td_copy.appendChild(elm_input_copy),tr.appendChild(td_copy)}let td_time=document.createElement('th');if(td_time.innerHTML=(data[i].TIME/1e3).toFixed(3),tr.appendChild(td_time),1==table_type){let td_loop=document.createElement('td');td_loop.innerHTML=(data[i].INTERVAL/1e3).toFixed(3),tr.appendChild(td_loop)}let td_id=document.createElement('td');td_id.innerHTML='0x'+data[i].ID.toString(16),tr.appendChild(td_id);let td_len=document.createElement('td'),td_size=data[i].LEN;td_len.innerHTML=td_size,tr.appendChild(td_len);for(let j=0;j<td_size;j++){let td_data=document.createElement('td');td_data.innerHTML='0x'+data[i].DATA[j].toString(16),tr.appendChild(td_data)}if(8>td_size){let td_data=document.createElement('td');td_data.colSpan=8-td_size,tr.appendChild(td_data)}if(0==table_type){let td_one_more=document.createElement('th'),elm_input_one_more=document.createElement('input');elm_input_one_more.type='button',elm_input_one_more.value='one more',elm_input_one_more.setAttribute('onclick','JS_CCtrl.one_more('+table_type+','+data[i].ID+');'),td_one_more.appendChild(elm_input_one_more),tr.appendChild(td_one_more)}tbody.appendChild(tr)}t_size.innerHTML=l_size}}};";
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-bool ControllerPage::setup_server(WebServer *server)
+bool ControllerPage::setup_server(AsyncWebServer *server)
 {
     bool result = true;
     if (nullptr != server) {
-        server->on("/cdv.css", std::bind(&ControllerPage::handle_css, this));
-        server->on("/can_controller.js", std::bind(&ControllerPage::handle_js_can_controller, this));
-        server->on("/table_view.js", std::bind(&ControllerPage::handle_js_table_view, this));
-        server->on("/", std::bind(&ControllerPage::handle_root, this));
+        server->on("/custom.css", std::bind(&ControllerPage::handle_css, this, std::placeholders::_1));
+        server->on("/can_controller.js", std::bind(&ControllerPage::handle_js_can_controller, this, std::placeholders::_1));
+        server->on("/table_view.js", std::bind(&ControllerPage::handle_js_table_view, this, std::placeholders::_1));
+        server->on("/", std::bind(&ControllerPage::handle_root, this, std::placeholders::_1));
 
-        server->on("/get/can_data", std::bind(&ControllerPage::get_can_data, this));
-        server->on("/set/can_data", std::bind(&ControllerPage::set_can_data, this));
-        server->on("/set/btn_on", std::bind(&ControllerPage::set_mode_on, this));
-        server->on("/set/btn_off", std::bind(&ControllerPage::set_mode_off, this));
-        server->on("/set/change_mode", std::bind(&ControllerPage::set_change_mode, this));
+        server->on("/get/can_data", std::bind(&ControllerPage::get_can_data, this, std::placeholders::_1));
+        server->on("/set/can_data", std::bind(&ControllerPage::set_can_data, this, std::placeholders::_1));
+        server->on("/set/btn_on", std::bind(&ControllerPage::set_mode_on, this, std::placeholders::_1));
+        server->on("/set/btn_off", std::bind(&ControllerPage::set_mode_off, this, std::placeholders::_1));
+        server->on("/set/change_mode", std::bind(&ControllerPage::set_change_mode, this, std::placeholders::_1));
 
-        server->on("/set/clear", std::bind(&ControllerPage::set_clear, this));
-        server->on("/set/default", std::bind(&ControllerPage::set_default, this));
-        server->on("/set/delete", std::bind(&ControllerPage::set_delete, this));
+        server->on("/set/clear", std::bind(&ControllerPage::set_clear, this, std::placeholders::_1));
+        server->on("/set/default", std::bind(&ControllerPage::set_default, this, std::placeholders::_1));
+        server->on("/set/delete", std::bind(&ControllerPage::set_delete, this, std::placeholders::_1));
 
         result = true;
-#if DEBUG_MODE
-        this->happened_message(OUTPUT_LOG_LEVEL::OUTPUT_LOG_LEVEL_DEBUG, "ControllerPage : setup()", __func__, __FILENAME__, __LINE__);
-#endif
+        log_d("ControllerPage : setup()");
+
     } else {
-        this->happened_message(OUTPUT_LOG_LEVEL::OUTPUT_LOG_LEVEL_ERROR, "ControllerPage : NOT setup()", __func__, __FILENAME__, __LINE__);
+        log_e("ControllerPage : NOT setup()");
     }
     return result;
 }
 
 /////////////////////////////////////////////////
 
-void ControllerPage::handle_css()
+void ControllerPage::handle_css(AsyncWebServerRequest *request)
 {
-    this->get_server()->sendHeader("Location", String("http://") + this->get_ip().toString(), true);
-    this->get_server()->sendHeader("Cache-Control", WEB_PAGE_HEADER_CACHE_CONTROL_LONGTIME);
-    // this->get_server()->sendHeader("Pragma", "no-cache");
-    this->get_server()->sendHeader("Expires", WEB_PAGE_HEADER_EXPIRES);
-    this->get_server()->sendHeader("Content-Length", String(WEB_CSS_CDV.length()));
-    this->get_server()->send(200, "text/css", WEB_CSS_CDV.c_str());
+    AsyncWebServerResponse *response = request->beginResponse_P(200, "text/css; charset=utf-8", WEB_CSS_COMMON);
+    response->addHeader("Location", String("http://") + this->get_ip().toString());
+    response->addHeader("Cache-Control", WEB_HEADER_CACHE_CONTROL_LONGTIME);
+    response->addHeader("X-Content-Type-Options", "nosniff");
+    request->send(response);
 }
-void ControllerPage::handle_js_can_controller()
+void ControllerPage::handle_js_can_controller(AsyncWebServerRequest *request)
 {
-    this->get_server()->sendHeader("Location", String("http://") + this->get_ip().toString(), true);
-    this->get_server()->sendHeader("Cache-Control", WEB_PAGE_HEADER_CACHE_CONTROL_LONGTIME);
-    // this->get_server()->sendHeader("Pragma", "no-cache");
-    this->get_server()->sendHeader("Expires", WEB_PAGE_HEADER_EXPIRES);
-    this->get_server()->sendHeader("Content-Length", String(WEB_JS_CAN_CONTROLLER.length()));
-    this->get_server()->send(200, "text/javascript", WEB_JS_CAN_CONTROLLER.c_str());
+    AsyncWebServerResponse *response = request->beginResponse_P(200, "text/javascript; charset=utf-8", WEB_JS_CAN_CONTROLLER);
+    response->addHeader("Location", String("http://") + this->get_ip().toString());
+    response->addHeader("Cache-Control", WEB_HEADER_CACHE_CONTROL_LONGTIME);
+    response->addHeader("X-Content-Type-Options", "nosniff");
+    request->send(response);
 }
-void ControllerPage::handle_js_table_view()
+void ControllerPage::handle_js_table_view(AsyncWebServerRequest *request)
 {
-    this->get_server()->sendHeader("Location", String("http://") + this->get_ip().toString(), true);
-    this->get_server()->sendHeader("Cache-Control", WEB_PAGE_HEADER_CACHE_CONTROL_LONGTIME);
-    // this->get_server()->sendHeader("Pragma", "no-cache");
-    this->get_server()->sendHeader("Expires", WEB_PAGE_HEADER_EXPIRES);
-    this->get_server()->sendHeader("Content-Length", String(WEB_JS_TABLE.length()));
-    this->get_server()->send(200, "text/javascript", WEB_JS_TABLE.c_str());
+    AsyncWebServerResponse *response = request->beginResponse_P(200, "text/javascript; charset=utf-8", WEB_JS_TABLE);
+    response->addHeader("Location", String("http://") + this->get_ip().toString());
+    response->addHeader("Cache-Control", WEB_HEADER_CACHE_CONTROL_LONGTIME);
+    response->addHeader("X-Content-Type-Options", "nosniff");
+    request->send(response);
 }
-void ControllerPage::handle_root()
+void ControllerPage::handle_root(AsyncWebServerRequest *request)
 {
     std::string html = this->page_html(this->page_body().c_str());
 
-    this->get_server()->sendHeader("Location", String("http://") + this->get_ip().toString(), true);
-    this->get_server()->sendHeader("Cache-Control", WEB_PAGE_HEADER_CACHE_CONTROL_LONGTIME);
-    // this->get_server()->sendHeader("Pragma", "no-cache");
-    this->get_server()->sendHeader("Expires", WEB_PAGE_HEADER_EXPIRES);
-    this->get_server()->sendHeader("Content-Length", String(html.length()));
-    this->get_server()->send(200, "text/html", html.c_str());
+    AsyncWebServerResponse *response = request->beginResponse(200, "text/html; charset=utf-8", html.c_str());
+    response->addHeader("Location", String("http://") + this->get_ip().toString());
+    response->addHeader("Cache-Control", WEB_HEADER_CACHE_CONTROL_SHORT_TIME);
+    response->addHeader("X-Content-Type-Options", "nosniff");
+    request->send(response);
 }
 
 std::string ControllerPage::page_body()
@@ -109,7 +96,11 @@ std::string ControllerPage::page_body()
         device_info = this->callback_device_info();
     }
 
-    std::string html = "<article><div class='article_header'><a href='/network' target='_self'>Network Config</a></div></article>";
+    std::string html = "<article><div class='article_header'>";
+    html.append("<a href='/network' target='_self'>Network Config</a><br>");
+    html.append("<a href='/update' target='_self'>OTA</a></div>");
+    html.append("</article>");
+
     html.append("<article><p><span>CanType : <b>");
     switch (device_info.can_type) {
         case 0:
@@ -190,7 +181,7 @@ std::string ControllerPage::page_html(const std::string body)
     std::string html = "<!DOCTYPE html><html lang=\"en\"><head>"
                        "<meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">";
 
-    html.append("<link href='/cdv.css' rel='stylesheet' type='text/css' media='all'>");
+    html.append("<link href='/custom.css' rel='stylesheet' type='text/css' media='all'>");
 
     html.append("<script type='text/javascript' src='/can_controller.js'></script>");
     html.append("<script type='text/javascript' src='/ajax.js'></script>");
@@ -206,135 +197,106 @@ std::string ControllerPage::page_html(const std::string body)
     return html;
 }
 /////////////////////////////////////////////////
-void ControllerPage::set_clear()
+void ControllerPage::set_clear(AsyncWebServerRequest *request)
 {
-#if DEBUG_MODE
-    this->happened_message(OUTPUT_LOG_LEVEL::OUTPUT_LOG_LEVEL_TRACE, "ControllerPage : set_clear()", __func__, __FILENAME__, __LINE__);
-#endif
-    bool result      = false;
-    std::string json = "{";
-    result           = this->callback_data_clear(0);
-    if (true == result) {
-        json.append("\"result\":\"OK\"");
-    } else {
-        json.append("\"result\":\"NG\"");
-    }
-    json.append(",\"status\":{\"num\": 200, \"messages\": \"\"}");
-    json.append("}");
+    log_v("ControllerPage : set_clear()");
 
-    this->get_server()->sendHeader("Location", String("http://") + this->get_ip().toString(), true);
-    this->get_server()->sendHeader("Cache-Control", WEB_PAGE_HEADER_CACHE_CONTROL_NO_CACHE);
-    this->get_server()->sendHeader("Pragma", "no-cache");
-    this->get_server()->sendHeader("Expires", "0");
-    this->get_server()->sendHeader("Content-Length", String(json.length()));
-    this->get_server()->send(200, "application/json", json.c_str());
+    bool result = this->callback_data_clear(0);
+
+    ////////////////////////////////////////////////////////////////////////////////////
+    std::string json = this->template_json_result(result);
+
+    AsyncWebServerResponse *response = request->beginResponse(200, "application/json; charset=utf-8", json.c_str());
+    response->addHeader("Location", String("http://") + this->get_ip().toString());
+    response->addHeader("Cache-Control", WEB_HEADER_CACHE_CONTROL_NO_CACHE);
+    response->addHeader("X-Content-Type-Options", "nosniff");
+    request->send(response);
 }
 
-void ControllerPage::set_default()
+void ControllerPage::set_default(AsyncWebServerRequest *request)
 {
-#if DEBUG_MODE
-    this->happened_message(OUTPUT_LOG_LEVEL::OUTPUT_LOG_LEVEL_TRACE, "ControllerPage : set_default()", __func__, __FILENAME__, __LINE__);
-#endif
-    bool result      = false;
-    std::string json = "{";
-    result           = this->callback_data_default(0);
-    if (true == result) {
-        json.append("\"result\":\"OK\"");
-    } else {
-        json.append("\"result\":\"NG\"");
-    }
-    json.append(",\"status\":{\"num\": 200, \"messages\": \"\"}");
-    json.append("}");
+    log_v("ControllerPage : set_default()");
 
-    this->get_server()->sendHeader("Location", String("http://") + this->get_ip().toString(), true);
-    this->get_server()->sendHeader("Cache-Control", WEB_PAGE_HEADER_CACHE_CONTROL_NO_CACHE);
-    this->get_server()->sendHeader("Pragma", "no-cache");
-    this->get_server()->sendHeader("Expires", "0");
-    this->get_server()->sendHeader("Content-Length", String(json.length()));
-    this->get_server()->send(200, "application/json", json.c_str());
+    bool result = false;
+    result      = this->callback_data_default(0);
+    ////////////////////////////////////////////////////////////////////////////////////
+    std::string json = this->template_json_result(result);
+
+    AsyncWebServerResponse *response = request->beginResponse(200, "application/json; charset=utf-8", json.c_str());
+    response->addHeader("Location", String("http://") + this->get_ip().toString());
+    response->addHeader("Cache-Control", WEB_HEADER_CACHE_CONTROL_NO_CACHE);
+    response->addHeader("X-Content-Type-Options", "nosniff");
+    request->send(response);
 }
 
-void ControllerPage::set_delete()
+void ControllerPage::set_delete(AsyncWebServerRequest *request)
 {
-#if DEBUG_MODE
-    this->happened_message(OUTPUT_LOG_LEVEL::OUTPUT_LOG_LEVEL_TRACE, "ControllerPage : set_delete()", __func__, __FILENAME__, __LINE__);
-#endif
-    bool result      = false;
-    std::string json = "{";
-    if (this->get_server()->args() > 0) {
-        if (this->get_server()->hasArg("id")) {
-            int value = this->to_int(this->get_server()->arg("id"));
+    log_v("ControllerPage : set_delete()");
+
+    bool result = false;
+    if (request->args() > 0) {
+        if (request->hasArg("id")) {
+            int value = this->to_int(request->arg("id"));
             if (nullptr != callback_data_delete) {
                 result = this->callback_data_delete(value);
             }
         }
     }
-    if (true == result) {
-        json.append("\"result\":\"OK\"");
-    } else {
-        json.append("\"result\":\"NG\"");
-    }
-    json.append(",\"status\":{\"num\": 200, \"messages\": \"\"}");
-    json.append("}");
+    ////////////////////////////////////////////////////////////////////////////////////
+    std::string json = this->template_json_result(result);
 
-    this->get_server()->sendHeader("Location", String("http://") + this->get_ip().toString(), true);
-    this->get_server()->sendHeader("Cache-Control", WEB_PAGE_HEADER_CACHE_CONTROL_NO_CACHE);
-    this->get_server()->sendHeader("Pragma", "no-cache");
-    this->get_server()->sendHeader("Expires", "0");
-    this->get_server()->sendHeader("Content-Length", String(json.length()));
-    this->get_server()->send(200, "application/json", json.c_str());
+    AsyncWebServerResponse *response = request->beginResponse(200, "application/json; charset=utf-8", json.c_str());
+    response->addHeader("Location", String("http://") + this->get_ip().toString());
+    response->addHeader("Cache-Control", WEB_HEADER_CACHE_CONTROL_NO_CACHE);
+    response->addHeader("X-Content-Type-Options", "nosniff");
+    request->send(response);
 }
 
-void ControllerPage::set_mode_on()
+void ControllerPage::set_mode_on(AsyncWebServerRequest *request)
 {
-#if DEBUG_MODE
-    this->happened_message(OUTPUT_LOG_LEVEL::OUTPUT_LOG_LEVEL_TRACE, "ControllerPage : set_mode_on()", __func__, __FILENAME__, __LINE__);
-#endif
+    log_v("ControllerPage : set_mode_on()");
+    bool result = false;
     if (nullptr != callback_can_mode) {
-        this->callback_can_mode(CAN_CTRL_STATE::MODE_RUNNING);
+        result = this->callback_can_mode(CAN_CTRL_STATE::MODE_RUNNING);
     }
 
-    std::string html = this->page_html(this->page_body().c_str());
+    std::string json = this->template_json_result(result);
 
-    this->get_server()->sendHeader("Location", String("http://") + this->get_ip().toString(), true);
-    this->get_server()->sendHeader("Cache-Control", WEB_PAGE_HEADER_CACHE_CONTROL_NO_CACHE);
-    this->get_server()->sendHeader("Pragma", "no-cache");
-    this->get_server()->sendHeader("Expires", "0");
-    this->get_server()->sendHeader("Content-Length", String(html.length()));
-    this->get_server()->send(200, "text/html", html.c_str());
+    AsyncWebServerResponse *response = request->beginResponse(200, "application/json; charset=utf-8", json.c_str());
+    response->addHeader("Location", String("http://") + this->get_ip().toString());
+    response->addHeader("Cache-Control", WEB_HEADER_CACHE_CONTROL_NO_CACHE);
+    response->addHeader("X-Content-Type-Options", "nosniff");
+    request->send(response);
 }
 
-void ControllerPage::set_mode_off()
+void ControllerPage::set_mode_off(AsyncWebServerRequest *request)
 {
-#if DEBUG_MODE
-    this->happened_message(OUTPUT_LOG_LEVEL::OUTPUT_LOG_LEVEL_TRACE, "ControllerPage : set_mode_off()", __func__, __FILENAME__, __LINE__);
-#endif
+    log_v("ControllerPage : set_mode_off()");
+    bool result = false;
     if (nullptr != callback_can_mode) {
-        this->callback_can_mode(CAN_CTRL_STATE::MODE_STOPPING);
+        result = this->callback_can_mode(CAN_CTRL_STATE::MODE_STOPPING);
     }
-    std::string html = this->page_html(this->page_body().c_str());
+    std::string json = this->template_json_result(result);
 
-    this->get_server()->sendHeader("Location", String("http://") + this->get_ip().toString(), true);
-    this->get_server()->sendHeader("Cache-Control", WEB_PAGE_HEADER_CACHE_CONTROL_NO_CACHE);
-    this->get_server()->sendHeader("Pragma", "no-cache");
-    this->get_server()->sendHeader("Expires", "0");
-    this->get_server()->sendHeader("Content-Length", String(html.length()));
-    this->get_server()->send(200, "text/html", html.c_str());
+    AsyncWebServerResponse *response = request->beginResponse(200, "application/json; charset=utf-8", json.c_str());
+    response->addHeader("Location", String("http://") + this->get_ip().toString());
+    response->addHeader("Cache-Control", WEB_HEADER_CACHE_CONTROL_NO_CACHE);
+    response->addHeader("X-Content-Type-Options", "nosniff");
+    request->send(response);
 }
 
-void ControllerPage::get_can_data()
+void ControllerPage::get_can_data(AsyncWebServerRequest *request)
 {
-#if DEBUG_MODE
-    this->happened_message(OUTPUT_LOG_LEVEL::OUTPUT_LOG_LEVEL_TRACE, "ControllerPage : get_can_data()", __func__, __FILENAME__, __LINE__);
-#endif
+    log_v("ControllerPage : get_can_data()");
+
     CanDeviceInfo device_info;
     if (nullptr != callback_device_info) {
         device_info = this->callback_device_info();
     }
-    std::string json = "{";
+    std::string json = "";
     char buffer[255];
     sprintf(buffer, //
-            "\"result\":\"OK\", \"time\": %d ,\"status\":{\"num\": 200, \"messages\": \"\", \"mode\": \"%s\"},",
+            "{\"time\": %lu, \"mode\": \"%s\",",
             millis(),
             device_info.mode_text);
     json.append(buffer);
@@ -347,23 +309,23 @@ void ControllerPage::get_can_data()
     json.append("\"send\": [");
     json.append(get_can_data_text(this->callback_data_request_send));
     json.append("]}");
+    ////////////////////////////////////////////////////////////////////////////////////
+    std::string send_data = this->template_json_result(true, json.c_str());
 
-    this->get_server()->sendHeader("Location", String("http://") + this->get_ip().toString(), true);
-    this->get_server()->sendHeader("Cache-Control", WEB_PAGE_HEADER_CACHE_CONTROL_NO_CACHE);
-    this->get_server()->sendHeader("Pragma", "no-cache");
-    this->get_server()->sendHeader("Expires", "0");
-    this->get_server()->sendHeader("Content-Length", String(json.length()));
-    this->get_server()->send(200, "application/json", json.c_str());
+    AsyncWebServerResponse *response = request->beginResponse(200, "application/json; charset=utf-8", send_data.c_str());
+    response->addHeader("Location", String("http://") + this->get_ip().toString());
+    response->addHeader("Cache-Control", WEB_HEADER_CACHE_CONTROL_NO_CACHE);
+    response->addHeader("X-Content-Type-Options", "nosniff");
+    request->send(response);
 }
-void ControllerPage::set_change_mode()
+void ControllerPage::set_change_mode(AsyncWebServerRequest *request)
 {
-#if DEBUG_MODE
-    this->happened_message(OUTPUT_LOG_LEVEL::OUTPUT_LOG_LEVEL_TRACE, "ControllerPage : set_change_mode()", __func__, __FILENAME__, __LINE__);
-#endif
+    log_v("ControllerPage : set_change_mode()");
+
     CAN_CTRL_STATE mode = CAN_CTRL_STATE::MODE_UNKNOW;
-    if (this->get_server()->args() > 0) {
-        if (this->get_server()->hasArg("mode")) {
-            int value = this->to_int(this->get_server()->arg("mode"));
+    if (request->args() > 0) {
+        if (request->hasArg("mode")) {
+            int value = this->to_int(request->arg("mode"));
             if ((0 <= value) && (value <= CAN_CTRL_STATE::MODE_FINISHED)) {
                 mode = (CAN_CTRL_STATE)value;
             }
@@ -378,74 +340,70 @@ void ControllerPage::set_change_mode()
         device_info = this->callback_device_info();
     }
     char buffer[255];
-    std::string json = "{";
     sprintf(buffer, //
-            "\"result\":\"OK\",\"status\":{\"num\": 200, \"messages\": \"\", \"mode\": \"%s\" }",
+            "{\"mode\": \"%s\"}",
             device_info.mode_text);
-    json.append(buffer);
-    json.append("}");
+    ////////////////////////////////////////////////////////////////////////////////////
+    std::string json = this->template_json_result(true, buffer);
 
-    this->get_server()->sendHeader("Location", String("http://") + this->get_ip().toString(), true);
-    this->get_server()->sendHeader("Cache-Control", WEB_PAGE_HEADER_CACHE_CONTROL_NO_CACHE);
-    this->get_server()->sendHeader("Pragma", "no-cache");
-    this->get_server()->sendHeader("Expires", "0");
-    this->get_server()->sendHeader("Content-Length", String(json.length()));
-    this->get_server()->send(200, "application/json", json.c_str());
+    AsyncWebServerResponse *response = request->beginResponse(200, "application/json; charset=utf-8", json.c_str());
+    response->addHeader("Location", String("http://") + this->get_ip().toString());
+    response->addHeader("Cache-Control", WEB_HEADER_CACHE_CONTROL_NO_CACHE);
+    response->addHeader("X-Content-Type-Options", "nosniff");
+    request->send(response);
 }
 
-void ControllerPage::set_can_data()
+void ControllerPage::set_can_data(AsyncWebServerRequest *request)
 {
-#if DEBUG_MODE
-    this->happened_message(OUTPUT_LOG_LEVEL::OUTPUT_LOG_LEVEL_TRACE, "ControllerPage : set_can_data()", __func__, __FILENAME__, __LINE__);
-#endif
+    log_v("ControllerPage : set_can_data()");
+
     bool result = false;
     ////////////////////////////////////////////////////////////////////////////////////
     bool flag_loop = false;
     CanData data;
     try {
-        WebServer *server = this->get_server();
-
-        if (server->args() > 0) {
-            if (server->hasArg("id")) {
-                data.Id = this->to_ulong(server->arg("id"));
-                if (server->hasArg("loop")) {
-                    int value = this->to_int(server->arg("loop"));
+        if (request->args() > 0) {
+            if (request->hasArg("id")) {
+                data.Id = this->to_ulong(request->arg("id"));
+                if (request->hasArg("loop")) {
+                    int value = this->to_int(request->arg("loop"));
                     if (value > 0) {
                         flag_loop          = true;
                         data.loop_interval = value;
                     }
                 }
-                if (server->hasArg("len")) {
-                    data.Length = this->to_byte(server->arg("len"));
+                if (request->hasArg("len")) {
+                    data.Length = this->to_byte(request->arg("len"));
                 }
-                if (server->hasArg("d0")) {
-                    data.Data[0] = this->to_byte(server->arg("d0"));
+                if (request->hasArg("d0")) {
+                    data.Data[0] = this->to_byte(request->arg("d0"));
                 }
-                if (server->hasArg("d1")) {
-                    data.Data[1] = this->to_byte(server->arg("d1"));
+                if (request->hasArg("d1")) {
+                    data.Data[1] = this->to_byte(request->arg("d1"));
                 }
-                if (server->hasArg("d2")) {
-                    data.Data[2] = this->to_byte(server->arg("d2"));
+                if (request->hasArg("d2")) {
+                    data.Data[2] = this->to_byte(request->arg("d2"));
                 }
-                if (server->hasArg("d3")) {
-                    data.Data[3] = this->to_byte(server->arg("d3"));
+                if (request->hasArg("d3")) {
+                    data.Data[3] = this->to_byte(request->arg("d3"));
                 }
-                if (server->hasArg("d4")) {
-                    data.Data[4] = this->to_byte(server->arg("d4"));
+                if (request->hasArg("d4")) {
+                    data.Data[4] = this->to_byte(request->arg("d4"));
                 }
-                if (server->hasArg("d5")) {
-                    data.Data[5] = this->to_byte(server->arg("d5"));
+                if (request->hasArg("d5")) {
+                    data.Data[5] = this->to_byte(request->arg("d5"));
                 }
-                if (server->hasArg("d6")) {
-                    data.Data[6] = this->to_byte(server->arg("d6"));
+                if (request->hasArg("d6")) {
+                    data.Data[6] = this->to_byte(request->arg("d6"));
                 }
-                if (server->hasArg("d7")) {
-                    data.Data[7] = this->to_byte(server->arg("d7"));
+                if (request->hasArg("d7")) {
+                    data.Data[7] = this->to_byte(request->arg("d7"));
                 }
             }
         }
 
-        if ((0 != data.Id) && (0 < data.Length)) {
+        if (0 < data.Length) {
+            this->callback_data_delete(data.Id);
             if (true == flag_loop) {
                 if (nullptr != this->callback_loop) {
                     result = this->callback_loop(data);
@@ -455,46 +413,41 @@ void ControllerPage::set_can_data()
                     result = this->callback_on_shot(data);
                 }
             }
-#if DEBUG_MODE
-            char buffer[255];
-            sprintf(buffer,
-                    "set_can_data / interval [%d]"
-                    " : id = 0x%02lX[%02d] /  %02d / "
-                    "0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X",
-                    this->get_server()->args(),
-                    data.Id,
-                    data.loop_interval,
-                    data.Length,
-                    data.Data[0],
-                    data.Data[1],
-                    data.Data[2],
-                    data.Data[3],
-                    data.Data[4],
-                    data.Data[5],
-                    data.Data[6],
-                    data.Data[7]);
-            this->happened_message(OUTPUT_LOG_LEVEL::OUTPUT_LOG_LEVEL_TRACE, buffer, __func__, __FILENAME__, __LINE__);
-#endif
+            log_v("set_can_data / interval [%d]"
+                  " : id = 0x%02lX[%02d] /  %02d / "
+                  "0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X",
+                  request->args(),
+                  data.Id,
+                  data.loop_interval,
+                  data.Length,
+                  data.Data[0],
+                  data.Data[1],
+                  data.Data[2],
+                  data.Data[3],
+                  data.Data[4],
+                  data.Data[5],
+                  data.Data[6],
+                  data.Data[7]);
         }
     } catch (...) {
     }
     ////////////////////////////////////////////////////////////////////////////////////
-    std::string json = "{";
-    if (true == result) {
-        json.append("\"result\":\"OK\"");
-    } else {
-        json.append("\"result\":\"NG\"");
-    }
-    json.append(",\"status\":{\"num\": 200, \"messages\": \"\"}");
-    json.append("}");
+    std::string json = this->template_json_result(result);
 
-    this->get_server()->sendHeader("Location", String("http://") + this->get_ip().toString(), true);
-    this->get_server()->sendHeader("Cache-Control", WEB_PAGE_HEADER_CACHE_CONTROL_NO_CACHE);
-    this->get_server()->sendHeader("Pragma", "no-cache");
-    this->get_server()->sendHeader("Expires", "0");
-    this->get_server()->sendHeader("Content-Length", String(json.length()));
-    this->get_server()->send(200, "application/json", json.c_str());
-    ////////////////////////////////////////////////////////////////////////////////////
+    AsyncWebServerResponse *response = request->beginResponse(200, "application/json; charset=utf-8", json.c_str());
+    response->addHeader("Location", String("http://") + this->get_ip().toString());
+    response->addHeader("Cache-Control", WEB_HEADER_CACHE_CONTROL_NO_CACHE);
+    response->addHeader("X-Content-Type-Options", "nosniff");
+    request->send(response);
+}
+
+void ControllerPage::handle_favicon_ico(AsyncWebServerRequest *request)
+{
+    AsyncWebServerResponse *response = request->beginResponse_P(200, "image/x-icon", WEB_IMAGE_FAVICON_ICO, WEB_IMAGE_FAVICON_ICO_LEN);
+    response->addHeader("Location", String("http://") + this->get_ip().toString());
+    response->addHeader("Cache-Control", WEB_HEADER_CACHE_CONTROL_LONGTIME);
+    response->addHeader("X-Content-Type-Options", "nosniff");
+    request->send(response);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -582,7 +535,7 @@ std::string ControllerPage::get_can_data_text(RequestCanDataFunction callback)
     return json;
 }
 
-ControllerPage::ControllerPage() : WEB::WebCommunication()
+ControllerPage::ControllerPage() : CushyWebServer()
 {
 }
 ControllerPage::~ControllerPage()

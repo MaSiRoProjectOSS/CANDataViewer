@@ -11,7 +11,8 @@
 #ifndef MASIRO_PROJECT_CAN_DATA_VIEWER_HPP
 #define MASIRO_PROJECT_CAN_DATA_VIEWER_HPP
 
-#include "can_data_viewer_info.hpp"
+#include <can_data_viewer_info.hpp>
+#include <cushy_web_server.hpp>
 
 class CanDataViewer {
     ////////////////////////////////////////////////
@@ -29,22 +30,6 @@ public:
      */
     ~CanDataViewer();
     /**
-     * @brief Configure access point
-     *
-     * @param ip        access point IP
-     * @param subnet    subnet mask
-     * @param gateway   gateway IP
-     */
-    void config_address_ap(IPAddress ip = INADDR_NONE, IPAddress subnet = INADDR_NONE, IPAddress gateway = INADDR_NONE);
-    /**
-     * @brief Change IP configuration settings disabling the dhcp client
-     *
-     * @param ip        Static ip configuration
-     * @param subnet    Static Subnet mask
-     * @param gateway   Static gateway configuration
-     */
-    void config_address_sta(IPAddress ip = INADDR_NONE, IPAddress subnet = INADDR_NONE, IPAddress gateway = INADDR_NONE);
-    /**
      * @brief
      *
      * @param ssid      Pointer to the SSID string.
@@ -53,20 +38,12 @@ public:
      * @return true     Successfully
      * @return false    Failed
      */
-    bool begin(std::string ssid = "", std::string pass = "", bool ap_mode = true);
+    bool begin();
 
     ////////////////////////////////////////////////
     // setup function
     ////////////////////////////////////////////////
 public:
-    /**
-     * @brief Set the callback message function
-     *
-     * @param callback  Callback function to be called
-     * @return true     Successfully
-     * @return false    Failed
-     */
-    bool set_callback_message(MessageFunction callback);
     /**
      * @brief Set the callback changed mode function
      *
@@ -99,15 +76,6 @@ public:
      * @return false    Failed
      */
     bool set_callback_setting_default(SettingDefaultFunction callback);
-
-    /**
-     * @brief Set the wifi information
-     *
-     * @param ssid      Pointer to the SSID string.
-     * @param pass      Passphrase. Valid characters in a passphrase must be between ASCII 32-126 (decimal).
-     * @param ap_mode   true: Access Point mode / false: Station mode
-     */
-    void set_wifi_info(std::string ssid, std::string pass, bool ap_mode);
 
     ////////////////////////////////////////////////
     // control function

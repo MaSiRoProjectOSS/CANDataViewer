@@ -30,20 +30,6 @@ void setup_m5()
     Serial.printf("    Loop interval : %d ms\n", SETTING_LOOP_TIME_SLEEP_DETECT);
     Serial.println("---------------------");
 }
-void output_message(OUTPUT_LOG_LEVEL level, const char *message, const char *function_name, const char *file_name, int line)
-{
-    char buffer[300];
-    unsigned long tm    = millis();
-    unsigned long tm_s  = tm / 1000;
-    unsigned long tm_ms = tm % 1000;
-
-    if (level >= OUTPUT_LOG_LEVEL::OUTPUT_LOG_LEVEL_WARN) {
-        sprintf(buffer, "[Error] [%7ld.%03ld][%s:%s:%d] : %s", tm_s, tm_ms, file_name, function_name, line, message);
-    } else {
-        sprintf(buffer, "[     ] [%7ld.%03ld] : %s", tm_s, tm_ms, message);
-    }
-    Serial.println(buffer);
-}
 void change_can_mode(CAN_CTRL_STATE mode, const char *text)
 {
     char buffer[255];
@@ -66,14 +52,12 @@ void change_can_mode(CAN_CTRL_STATE mode, const char *text)
             M5.dis.fillpix(CRGB::Red);
             break;
     }
-    sprintf(buffer, "CAN MODE [%s]", text);
-    output_message(OUTPUT_LOG_LEVEL::OUTPUT_LOG_LEVEL_INFO, buffer, __func__, __FILENAME__, __LINE__);
+    log_i("CAN MODE [%s]", text);
 }
 
 void setup()
 {
     setup_m5();
-    can_data_viewer.set_callback_message(&output_message);
     can_data_viewer.set_callback_changed_mode(&change_can_mode);
     can_data_viewer.begin();
 }
@@ -82,7 +66,6 @@ void loop()
 {
     (void)M5.update();
     if (M5.Btn.wasPressed()) {
-        // Press the button to change the CAN output mode.
         can_data_viewer.set_mode();
     }
     (void)delay(SETTING_LOOP_TIME_SLEEP_DETECT);

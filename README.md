@@ -25,7 +25,9 @@ The following features are provided so that the target unit can be operated in a
 * Function to continue to flow specific CAN data
 * Function to send specific CAN data at mode transition (requires source code modification)
 * Network connections can be configured via a browser.
-  * The data is stored in SPIIFS.
+  * The data is stored in the SPIFFS of ATOM Lite.
+  * Network settings can be changed from the web
+    * http://<address>/network
 
 ```plantuml
 @startuml
@@ -112,6 +114,8 @@ This system is compiled using PlatformIO.Please install the extension from VS Co
 
 * platformio.ini
 
+
+
 ```ini
 [env:CanDataViewer-esp32can(m5stack-atom)]
 platform = espressif32
@@ -122,25 +126,24 @@ lib_deps =
 	m5stack/M5Atom@^0.1.0
 	fastled/FastLED@^3.5.0
 	https://github.com/MaSiRoProjectOSS/CANDataViewer
+	https://github.com/MaSiRoProjectOSS/CushyWebServer
 build_flags =
 	-DLIB_CAN_DRIVER=0
 	-DOUTPUT_MESSAGE_FOR_SERIAL=1
 ```
 
+Setting '**LIB_CAN_DRIVER**' to 0 works with **ESP32CAN**.
+Setting '**LIB_CAN_DRIVER**' to 1 works with **MCP_CAN**.
+
 * main.cpp
 
 ```c++
 #include <can_data_viewer.hpp>
-#define SETTING_WIFI_MODE_AP false
-#define SETTING_WIFI_SSID    "(wifi ssid)"
-#define SETTING_WIFI_PASS    "(wifi password)"
-
 CanDataViewer can_data_viewer;
+
 void setup()
 {
     can_data_viewer.begin();
-    // You can specify LAN connection information when this system boots.
-    // can_data_viewer.begin(SETTING_WIFI_SSID, SETTING_WIFI_PASS, SETTING_WIFI_MODE_AP);
 }
 
 void loop()

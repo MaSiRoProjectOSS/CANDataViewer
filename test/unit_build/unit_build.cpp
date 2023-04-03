@@ -1,11 +1,11 @@
 /**
- * @file main.cpp
+ * @file unit_build.cpp
  * @author Akari (masiro.to.akari@gmail.com)
- * @brief main function on CanDataViewer_PlatformIO
- * @version 0.2
- * @date 2022-12-25
+ * @brief
+ * @version 0.3
+ * @date 2023-03-28
  *
- * @copyright Copyright (c) 2022 / MaSiRo Project.
+ * @copyright Copyright (c) 2023 / MaSiRo Project.
  *
  */
 //#define CONTROLLERS_M5STACK
@@ -15,7 +15,6 @@
 #ifdef CONTROLLERS_M5STACK
 #include <M5Stack.h>
 #else
-// CONTROLLERS_ATOM_LITE
 #include <M5Atom.h>
 #endif
 #include <can_data_viewer.hpp>
@@ -224,7 +223,7 @@ void loop()
         UBaseType_t max_can      = can_data_viewer.get_stack_size_can();
         UBaseType_t max_server   = can_data_viewer.get_stack_size_server();
 
-        log_i("STACK SIZE : can[%d/%d] server[%d/%d]", //
+        log_d("STACK SIZE : can[%d/%d] server[%d/%d]", //
               (max_can - stack_can),
               max_can,
               (max_server - stack_server),
