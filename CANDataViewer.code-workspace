@@ -22,6 +22,7 @@
 			"MISO",
 			"MOSI",
 			"nosniff",
+			"onclick",
 			"PROGMEM"
 		],
 		"doxdocgen.generic.useGitUserName": true,
