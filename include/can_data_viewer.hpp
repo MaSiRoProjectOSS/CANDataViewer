@@ -132,6 +132,7 @@ public:
 ////////////////////////////////////////////////
 // debug function
 ////////////////////////////////////////////////
+
 #if DEBUG_MODE
 public:
     /**
@@ -159,7 +160,6 @@ public:
      * @return UBaseType_t  The size of the task stack specified as the number of bytes.
      */
     UBaseType_t get_stack_size_server();
-
     /**
      * @brief Get the stack high water mark on wifi thread
      *
@@ -172,6 +172,7 @@ public:
      * @return UBaseType_t  The smallest amount of free stack space
      */
     UBaseType_t get_stack_high_water_mark_wifi();
+
 #endif
 };
 
