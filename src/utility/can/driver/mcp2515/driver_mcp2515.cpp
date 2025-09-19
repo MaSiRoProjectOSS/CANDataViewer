@@ -1,13 +1,15 @@
 /**
  * @file driver_mcp2515.cpp
- * @author Akari (masiro.to.akari@gmail.com)
- * @brief
+ * @brief MCP2515 CANドライバの実装ファイル
+ *
+ * このファイルは、MCP2515 CANコントローラを用いたCAN通信の初期化、送信、受信、エラー出力などの機能を提供します。
+ * SPI通信を利用してMCP2515と接続し、CANデータの送受信やフィルタ設定などを行います。
+ *
  * @version 0.1
  * @date 2022-12-09
- *
  * @copyright Copyright (c) 2022 / MaSiRo Project.
- *
  */
+#if LIB_CAN_DRIVER == 1
 #include "driver_mcp2515.hpp"
 
 namespace MaSiRoProject
@@ -231,3 +233,5 @@ bool DriverMcp2515::setup_filter()
 
 } // namespace CAN
 } // namespace MaSiRoProject
+
+#endif

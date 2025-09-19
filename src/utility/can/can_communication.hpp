@@ -1,12 +1,12 @@
 /**
  * @file can_communication.hpp
- * @author Akari (masiro.to.akari@gmail.com)
- * @brief
+ * @brief CAN通信を管理するクラスのヘッダファイル
  * @version 0.1
  * @date 2022-12-05
  *
+ * このファイルは、CAN通信の初期化、データ送受信、コールバック設定、モード変更などの機能を提供する
+ * CanCommunicationクラスの宣言を含みます。CANデータビューア用ユーティリティです。
  * @copyright Copyright (c) 2022 / MaSiRo Project.
- *
  */
 #ifndef MASIRO_PROJECT_TOY_BOX_CAN_COMMUNICATION_HPP
 #define MASIRO_PROJECT_TOY_BOX_CAN_COMMUNICATION_HPP
@@ -24,7 +24,11 @@ public:
     /////////////////////////////////
     // Constructor
     /////////////////////////////////
-    CanCommunication(const uint8_t interrupt, const uint8_t cs);
+#if LIB_CAN_DRIVER == 1
+    CanCommunication(const uint8_t cs, const uint8_t interrupt = -1);
+#else
+    CanCommunication(const uint8_t rx, const uint8_t tx);
+#endif
     ~CanCommunication();
 
     /////////////////////////////////
@@ -86,7 +90,7 @@ public:
     // Member
     /////////////////////////////////
 private:
-    uint8_t interrupt;
+    int8_t interrupt = -1;
     SettingDefaultFunction callback_setting_default;
     TaskHandle_t task_handle;
     UBaseType_t task_assigned_size;

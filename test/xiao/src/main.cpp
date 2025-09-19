@@ -8,7 +8,7 @@ unsigned char rxBuf[8];
 char msgString[128]; // Array to store serial string
 
 const byte CAN_MODE  = MCP_STDEXT;
-const byte CAN_SPEED = CAN_250KBPS;
+const byte CAN_SPEED = CAN_500KBPS;
 const byte CAN_CLOCK = MCP_8MHZ;
 
 #ifndef SETTING_CAN_INT

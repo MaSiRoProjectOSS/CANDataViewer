@@ -1,10 +1,10 @@
 /**
  * @file unit_build.cpp
- * @author Akari (masiro.to.akari@gmail.com)
- * @brief
+ * @brief このファイルはCANDataViewerのユニットテスト用サンプルコードです。
+ *        M5StackまたはM5Atom Lite上でCANデータの送受信やモード切替、定期送信などの動作確認を行います。
+ *        コールバック関数を用いて、CANデータの初期設定・受信・送信可能タイミング・モード変更時の処理を実装しています。
  * @version 0.3
  * @date 2023-03-28
- *
  * @copyright Copyright (c) 2023 / MaSiRo Project.
  *
  */

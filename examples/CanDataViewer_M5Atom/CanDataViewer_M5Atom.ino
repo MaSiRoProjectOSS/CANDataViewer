@@ -1,12 +1,9 @@
 /**
  * @file CanDataViewer_M5Atom.ino
- * @author Akari (masiro.to.akari@gmail.com)
- * @brief
+ * @brief M5Atomを使ってCANデータを表示・管理するサンプルプログラムです。
  * @version 0.2
  * @date 2022-12-28
- *
  * @copyright Copyright (c) 2022 / MaSiRo Project.
- *
  */
 #include <Arduino.h>
 #include <M5Atom.h>

@@ -1,12 +1,13 @@
 /**
  * @file can_communication.cpp
- * @author Akari (masiro.to.akari@gmail.com)
- * @brief
+ * @brief CAN通信の実装クラス
  * @version 0.1
  * @date 2022-11-27
- *
  * @copyright Copyright (c) 2022 / MaSiRo Project.
  *
+ * このファイルはCAN通信の制御を行うクラスの実装です。
+ * MCP2515やESP32のCANドライバを切り替えて利用でき、送受信やモード管理、コールバック処理などを提供します。
+ * 送信データの管理（ワンショット・ループ送信）、受信データの管理、デバイス情報の取得なども行います。
  */
 #include "can_communication_impl.hpp"
 
@@ -24,13 +25,13 @@ namespace CAN
 // Constructor
 /////////////////////////////////
 #pragma region Constructor
-CanCommunicationImpl::CanCommunicationImpl(const uint8_t cs)
+CanCommunicationImpl::CanCommunicationImpl(const uint8_t pin_1, const uint8_t pin_2)
         : mode_request(CAN_CTRL_STATE::MODE_NOT_INITIALIZE), mode_current(CAN_CTRL_STATE::MODE_NOT_INITIALIZE), initialized(false), flag_request_pause(false)
 {
 #if LIB_CAN_DRIVER == 1
-    this->can = new DriverMcp2515(cs);
+    this->can = new DriverMcp2515(pin_1);
 #else
-    this->can = new DriverEsp32can();
+    this->can = new DriverEsp32can(pin_1, pin_2);
 #endif
     if (nullptr != this->can) {
         this->can->set_callback_get_received(std::bind(&CanCommunicationImpl::happened_received, this, std::placeholders::_1));
@@ -64,7 +65,7 @@ bool CanCommunicationImpl::loop()
 {
     bool result = true;
     if (true == flag_request_pause) {
-        log_v("CanCommunication : pause");
+        //log_v("CanCommunication : pause");
     } else {
         bool flag_send = true;
         if (this->mode_current != this->mode_request) {

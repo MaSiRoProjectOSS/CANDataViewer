@@ -1,12 +1,11 @@
 /**
- * @file can_communication.hpp
- * @author Akari (masiro.to.akari@gmail.com)
- * @brief
+ * @file can_communication.cpp
+ * @brief CAN通信の制御を行うクラスの実装ファイルです。
+ *        CANデバイスとの初期化、モード変更、データ送受信、割り込み処理、コールバック設定などを管理します。
+ *        FreeRTOSのタスクを利用してCAN通信の状態管理やデータ処理を行います。
  * @version 0.1
  * @date 2022-12-05
- *
  * @copyright Copyright (c) 2022 / MaSiRo Project.
- *
  */
 #include "can_communication.hpp"
 
@@ -107,15 +106,22 @@ void thread_can(void *args)
 // Constructor
 /////////////////////////////////
 #pragma region Constructor
-CanCommunication::CanCommunication(const uint8_t interrupt, const uint8_t cs)
+#if LIB_CAN_DRIVER == 1
+CanCommunication::CanCommunication(const uint8_t cs, const uint8_t interrupt)
 {
-    if (0 != interrupt) {
+    if (-1 != interrupt) {
         this->interrupt = interrupt;
     } else {
         this->interrupt = CAN_COMMUNICATION_PIN_INTERRUPT;
     }
     can = new CanCommunicationImpl(cs);
 }
+#else
+CanCommunication::CanCommunication(const uint8_t rx, const uint8_t tx)
+{
+    can = new CanCommunicationImpl(rx, tx);
+}
+#endif
 
 CanCommunication::~CanCommunication()
 {
@@ -134,9 +140,9 @@ bool CanCommunication::begin()
     if (false == flag_thread_can_initialized) {
         flag_thread_can_initialized == true;
         this->setup_default();
-        if (-1 != interrupt) {
-            pinMode(interrupt, INPUT);
-            attachInterrupt(interrupt, thread_can_on_interrupt, FALLING);
+        if (-1 != this->interrupt) {
+            pinMode(this->interrupt, INPUT);
+            attachInterrupt(this->interrupt, thread_can_on_interrupt, FALLING);
         }
         this->task_assigned_size = 4096;
         xTaskCreatePinnedToCore(thread_can, //

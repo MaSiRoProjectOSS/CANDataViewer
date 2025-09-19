@@ -1,15 +1,15 @@
 /**
  * @file driver_mcp2515.hpp
- * @author Akari (masiro.to.akari@gmail.com)
- * @brief
+ * @brief MCP2515 CANドライバのヘッダファイル
  * @version 0.1
  * @date 2022-12-09
  *
- * @copyright Copyright (c) 2022 / MaSiRo Project.
+ * このファイルは、MCP2515 CANコントローラ用のドライバクラス定義を提供します。
  *
  */
 #ifndef MASIRO_PROJECT_TOY_BOX_CAN_DRIVER_MCP2515_HPP
 #define MASIRO_PROJECT_TOY_BOX_CAN_DRIVER_MCP2515_HPP
+#if LIB_CAN_DRIVER == 1
 
 #include "../driver_can_abstract.hpp"
 #include "driver_mcp2515_config.hpp"
@@ -56,4 +56,6 @@ private:
 };
 } // namespace CAN
 } // namespace MaSiRoProject
+
+#endif
 #endif

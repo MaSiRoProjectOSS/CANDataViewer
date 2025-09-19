@@ -1,12 +1,10 @@
 /**
  * @file can_data_viewer.cpp
- * @author Akari (masiro.to.akari@gmail.com)
- * @brief
+ * @brief CAN通信とWebコントローラの連携を管理するクラスの実装ファイルです。
+ *        CANデータの送受信、モード変更、コールバック設定などの機能を提供します。
  * @version 0.1
  * @date 2022-12-20
- *
  * @copyright Copyright (c) 2022 / MaSiRo Project.
- *
  */
 #include "can/can_communication.hpp"
 #include "web/controller_page.hpp"
@@ -190,11 +188,19 @@ UBaseType_t CanDataViewer::get_stack_size_wifi()
 ////////////////////////////////////////////////
 #pragma region standard_function
 
+#if LIB_CAN_DRIVER == 1
 CanDataViewer::CanDataViewer(const uint8_t interrupt, const uint8_t cs)
 {
     ctrl_page = new MaSiRoProject::WEB::ControllerPage();
     ctrl_can  = new MaSiRoProject::CAN::CanCommunication(interrupt, cs);
 }
+#else
+CanDataViewer::CanDataViewer(const uint8_t rx, const uint8_t tx)
+{
+    ctrl_page = new MaSiRoProject::WEB::ControllerPage();
+    ctrl_can  = new MaSiRoProject::CAN::CanCommunication(rx, tx);
+}
+#endif
 
 CanDataViewer::~CanDataViewer()
 {

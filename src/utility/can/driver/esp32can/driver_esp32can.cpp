@@ -1,13 +1,15 @@
 /**
  * @file driver_esp32can.cpp
- * @author Akari (masiro.to.akari@gmail.com)
- * @brief
+ * @brief ESP32用CANドライバの実装ファイル
  * @version 0.1
  * @date 2022-12-09
- *
  * @copyright Copyright (c) 2022 / MaSiRo Project.
  *
+ * このファイルは、ESP32マイコンでCAN通信を行うためのドライバクラスの実装です。
+ * CAN通信の初期化、送信、受信割り込み処理、エラー出力、フィルタ設定などの機能を提供します。
+ * MaSiRoProject::CAN名前空間内でDriverEsp32canクラスとして定義されています。
  */
+#if LIB_CAN_DRIVER != 1
 #include "driver_esp32can.hpp"
 
 CAN_device_t CAN_cfg;
@@ -21,14 +23,19 @@ namespace CAN
 /////////////////////////////////
 bool DriverEsp32can::begin()
 {
-    bool result = true;
+    bool result = false;
+    if (0 <= this->_pin_tx && 0 <= this->_pin_rx) {
+        //////////////////////////////////
+        CAN_cfg.speed     = this->can_speed;
+        CAN_cfg.tx_pin_id = (gpio_num_t)this->_pin_tx;
+        CAN_cfg.rx_pin_id = (gpio_num_t)this->_pin_rx;
+        CAN_cfg.rx_queue  = xQueueCreate(rx_queue_size, sizeof(CAN_frame_t));
+        if (0 == ESP32Can.CANInit()) {
+            result = true;
+        }
+    }
     //////////////////////////////////
-    CAN_cfg.speed     = this->can_speed;
-    CAN_cfg.tx_pin_id = (gpio_num_t)CAN_COMMUNICATION_GROVE_PIN_SDA;
-    CAN_cfg.rx_pin_id = (gpio_num_t)CAN_COMMUNICATION_GROVE_PIN_SCL;
-    CAN_cfg.rx_queue  = xQueueCreate(rx_queue_size, sizeof(CAN_frame_t));
-    ESP32Can.CANInit();
-    //////////////////////////////////
+    this->_initialized = result;
     return result;
 }
 /////////////////////////////////
@@ -37,26 +44,22 @@ bool DriverEsp32can::begin()
 bool DriverEsp32can::send(CanData data)
 {
     bool result = true;
+    if (true == this->_initialized) {
+        CAN_frame_t tx_frame;
+        if (false == data.ExtFlag) {
+            tx_frame.FIR.B.FF = CAN_frame_std;
+        } else {
+            tx_frame.FIR.B.FF = CAN_frame_ext;
+        }
+        tx_frame.MsgID     = data.Id;
+        tx_frame.FIR.B.DLC = data.Length;
+        for (int i = 0; i < 8; i++) {
+            tx_frame.data.u8[i] = data.Data[i];
+        }
 
-    CAN_frame_t tx_frame;
-    if (false == data.ExtFlag) {
-        tx_frame.FIR.B.FF = CAN_frame_std;
-    } else {
-        tx_frame.FIR.B.FF = CAN_frame_ext;
-    }
-    tx_frame.MsgID      = data.Id;
-    tx_frame.FIR.B.DLC  = data.Length;
-    tx_frame.data.u8[0] = data.Data[0];
-    tx_frame.data.u8[1] = data.Data[1];
-    tx_frame.data.u8[2] = data.Data[2];
-    tx_frame.data.u8[3] = data.Data[3];
-    tx_frame.data.u8[4] = data.Data[4];
-    tx_frame.data.u8[5] = data.Data[5];
-    tx_frame.data.u8[6] = data.Data[6];
-    tx_frame.data.u8[7] = data.Data[7];
-
-    if (0 != ESP32Can.CANWriteFrame(&tx_frame)) {
-        result = false;
+        if (0 != ESP32Can.CANWriteFrame(&tx_frame)) {
+            result = false;
+        }
     }
     return result;
 }
@@ -64,28 +67,30 @@ bool DriverEsp32can::send(CanData data)
 bool DriverEsp32can::interrupt()
 {
     bool result = false;
-    try {
-        CAN_frame_t rx_frame;
-        while (xQueueReceive(CAN_cfg.rx_queue, &rx_frame, 3 * portTICK_PERIOD_MS) == pdTRUE) {
-            CanData data;
-            data.ExtFlag = (rx_frame.FIR.B.FF == CAN_frame_std) ? 0 : 1;
-            data.Id      = rx_frame.MsgID;
-            data.Length  = rx_frame.FIR.B.DLC;
-            if (rx_frame.FIR.B.RTR != CAN_RTR) {
-                for (int i = 0; i < rx_frame.FIR.B.DLC; i++) {
-                    data.Data[i] = rx_frame.data.u8[i];
+    if (true == this->_initialized) {
+        try {
+            CAN_frame_t rx_frame;
+            while (xQueueReceive(CAN_cfg.rx_queue, &rx_frame, 3 * portTICK_PERIOD_MS) == pdTRUE) {
+                CanData data;
+                data.ExtFlag = (rx_frame.FIR.B.FF == CAN_frame_std) ? 0 : 1;
+                data.Id      = rx_frame.MsgID;
+                data.Length  = rx_frame.FIR.B.DLC;
+                if (rx_frame.FIR.B.RTR != CAN_RTR) {
+                    for (int i = 0; i < rx_frame.FIR.B.DLC; i++) {
+                        data.Data[i] = rx_frame.data.u8[i];
+                    }
+                    result = true;
+                    happened_received(data);
                 }
-                result = true;
-                happened_received(data);
             }
-        }
 #if DEBUG_MODE
-        if (false == result) {
-            log_v("NO MESSAGE");
-        }
+            if (false == result) {
+                log_v("NO MESSAGE");
+            }
 #endif
-    } catch (...) {
-        log_e("Receive panic");
+        } catch (...) {
+            log_e("Receive panic");
+        }
     }
     return result;
 }
@@ -102,8 +107,10 @@ bool DriverEsp32can::output_error()
 /////////////////////////////////
 // Constructor
 /////////////////////////////////
-DriverEsp32can::DriverEsp32can() : DriverCanAbstract()
+DriverEsp32can::DriverEsp32can(const uint8_t pin_rx, const uint8_t pin_tx) : DriverCanAbstract()
 {
+    this->_pin_rx = pin_rx;
+    this->_pin_tx = pin_tx;
     this->setup_can(this->can_speed);
 }
 DriverEsp32can::~DriverEsp32can()
@@ -165,3 +172,5 @@ bool DriverEsp32can::setup_filter()
 
 } // namespace CAN
 } // namespace MaSiRoProject
+
+#endif

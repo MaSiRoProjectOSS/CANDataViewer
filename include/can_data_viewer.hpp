@@ -1,12 +1,11 @@
 /**
  * @file can_data_viewer.hpp
- * @author Akari (masiro.to.akari@gmail.com)
- * @brief
+ * @brief CANデータビューアのクラス定義ファイル
+ * @details CAN通信データの管理・送受信・表示を行うためのクラスを定義します。
+ *          コールバック関数による各種イベント処理や、デバッグ用のスタック情報取得機能も備えています。
  * @version 0.1
  * @date 2022-12-20
- *
  * @copyright Copyright (c) 2022 / MaSiRo Project.
- *
  */
 #ifndef MASIRO_PROJECT_CAN_DATA_VIEWER_HPP
 #define MASIRO_PROJECT_CAN_DATA_VIEWER_HPP
@@ -14,6 +13,40 @@
 #include <can_data_viewer_info.hpp>
 #include <cushy_web_server.hpp>
 
+/**
+ * @class CanDataViewer
+ * @brief CANデータの表示および制御を行うクラス
+ *
+ * このクラスはCANデータの送受信、表示、モード変更、コールバック設定などの機能を提供します。
+ * デバッグモードでは、各スレッドのスタック情報取得も可能です。
+ *
+ * 標準関数:
+ *   - CanDataViewer: コンストラクタ。割り込み番号とCS番号を指定可能。
+ *   - ~CanDataViewer: デストラクタ。
+ *   - begin: 初期化処理を行う。
+ *
+ * セットアップ関数:
+ *   - set_callback_changed_mode: モード変更時のコールバックを設定。
+ *   - set_callback_received: CANデータ受信時のコールバックを設定。
+ *   - set_callback_sendable_interrupt: 送信可能割り込み時のコールバックを設定。
+ *   - set_callback_setting_default: デフォルト設定時のコールバックを設定。
+ *
+ * 制御関数:
+ *   - set_mode: モードを設定または切り替える。
+ *   - clear_resume: ブラウザ表示用CANデータリストをクリア。
+ *   - clear_loop_shot: 定期送信CANデータをクリア。
+ *   - add_one_shot: 1回のみ送信するCANデータを追加。
+ *   - add_loop_shot: 定期送信するCANデータを追加。
+ *   - add_resume: ブラウザ表示用リストにCANデータを追加。
+ *
+ * デバッグ関数 (DEBUG_MODE時):
+ *   - get_stack_high_water_mark_can: CANスレッドのスタック使用量取得。
+ *   - get_stack_size_can: CANスレッドのスタックサイズ取得。
+ *   - get_stack_high_water_mark_server: サーバースレッドのスタック使用量取得。
+ *   - get_stack_size_server: サーバースレッドのスタックサイズ取得。
+ *   - get_stack_size_wifi: WiFiスレッドのスタックサイズ取得。
+ *   - get_stack_high_water_mark_wifi: WiFiスレッドのスタック使用量取得。
+ */
 class CanDataViewer {
     ////////////////////////////////////////////////
     // standard function
@@ -23,14 +56,18 @@ public:
      * @brief Construct a new Can Data Viewer object
      *
      */
+#if LIB_CAN_DRIVER == 1
     CanDataViewer(const uint8_t interrupt = 0, const uint8_t cs = 0);
+#else
+    CanDataViewer(const uint8_t rx, const uint8_t tx);
+#endif
     /**
      * @brief Destroy the Can Data Viewer object
      *
      */
     ~CanDataViewer();
     /**
-     * @brief
+     * @brief 初期化処理を行う。
      *
      * @param ssid      Pointer to the SSID string.
      * @param pass      Passphrase. Valid characters in a passphrase must be between ASCII 32-126 (decimal).
@@ -129,9 +166,9 @@ public:
      */
     bool add_resume(CanData data);
 
-////////////////////////////////////////////////
-// debug function
-////////////////////////////////////////////////
+    ////////////////////////////////////////////////
+    // debug function
+    ////////////////////////////////////////////////
 
 #if DEBUG_MODE
 public:
