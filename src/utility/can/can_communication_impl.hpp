@@ -17,8 +17,6 @@
 #include <can_data_viewer_info.hpp>
 #include <vector>
 
-namespace MaSiRoProject
-{
 namespace CAN
 {
 class CanCommunicationImpl {
@@ -122,5 +120,5 @@ private:
     bool initialized;
 };
 } // namespace CAN
-} // namespace MaSiRoProject
+
 #endif

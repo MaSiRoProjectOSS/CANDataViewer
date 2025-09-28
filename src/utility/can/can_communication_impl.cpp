@@ -17,8 +17,6 @@
 #include "driver/esp32can/driver_esp32can.hpp"
 #endif
 
-namespace MaSiRoProject
-{
 namespace CAN
 {
 /////////////////////////////////
@@ -73,7 +71,6 @@ bool CanCommunicationImpl::loop()
             this->happened_changed_mode(this->mode_current);
         }
         if (true == this->interrupt()) {
-            log_v("CanCommunication : loop-receive");
         }
         switch (this->mode_current) {
             case CAN_CTRL_STATE::MODE_READY:
@@ -527,4 +524,3 @@ void CanCommunicationImpl::happened_received(CanData data)
 
 //////////////////////////////////////////////////////////////////////////
 } // namespace CAN
-} // namespace MaSiRoProject

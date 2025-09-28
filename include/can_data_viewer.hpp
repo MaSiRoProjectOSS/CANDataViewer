@@ -10,8 +10,8 @@
 #ifndef MASIRO_PROJECT_CAN_DATA_VIEWER_HPP
 #define MASIRO_PROJECT_CAN_DATA_VIEWER_HPP
 
-#include <can_data_viewer_info.hpp>
-#include <cushy_web_server.hpp>
+#include "can_data_viewer_info.hpp"
+#include "controller_page.hpp"
 
 /**
  * @class CanDataViewer
@@ -167,10 +167,14 @@ public:
     bool add_resume(CanData data);
 
     ////////////////////////////////////////////////
-    // debug function
+    // Get Instance
     ////////////////////////////////////////////////
+public:
+    WEB::ControllerPage *get_web_instance();
 
-#if DEBUG_MODE
+    ////////////////////////////////////////////////
+    // water_mark function
+    ////////////////////////////////////////////////
 public:
     /**
      * @brief Get the stack high water mark on can thread
@@ -209,8 +213,6 @@ public:
      * @return UBaseType_t  The smallest amount of free stack space
      */
     UBaseType_t get_stack_high_water_mark_wifi();
-
-#endif
 };
 
 #endif

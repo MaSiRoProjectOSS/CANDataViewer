@@ -7,17 +7,15 @@
  *
  * このファイルは、ESP32マイコンでCAN通信を行うためのドライバクラスの実装です。
  * CAN通信の初期化、送信、受信割り込み処理、エラー出力、フィルタ設定などの機能を提供します。
- * MaSiRoProject::CAN名前空間内でDriverEsp32canクラスとして定義されています。
+ * CAN名前空間内でDriverEsp32canクラスとして定義されています。
  */
 #if LIB_CAN_DRIVER != 1
 #include "driver_esp32can.hpp"
 
-CAN_device_t CAN_cfg;
-
-namespace MaSiRoProject
-{
 namespace CAN
 {
+CAN_device_t CAN_cfg;
+
 /////////////////////////////////
 // setup function
 /////////////////////////////////
@@ -45,6 +43,21 @@ bool DriverEsp32can::send(CanData data)
 {
     bool result = true;
     if (true == this->_initialized) {
+#if DEBUG_MODE
+        log_i("SEND   "
+              " : id = 0x%02lX / %02d / "
+              " : data = 0x%02lX 0x%02lX 0x%02lX 0x%02lX 0x%02lX 0x%02lX 0x%02lX 0x%02lX",
+              data.Id,
+              data.Length,
+              data.Data[0],
+              data.Data[1],
+              data.Data[2],
+              data.Data[3],
+              data.Data[4],
+              data.Data[5],
+              data.Data[6],
+              data.Data[7]);
+#endif
         CAN_frame_t tx_frame;
         if (false == data.ExtFlag) {
             tx_frame.FIR.B.FF = CAN_frame_std;
@@ -57,9 +70,13 @@ bool DriverEsp32can::send(CanData data)
             tx_frame.data.u8[i] = data.Data[i];
         }
 
+        log_v("DriverEsp32can : send Id=0x%lX / len=%d", tx_frame.MsgID, tx_frame.FIR.B.DLC);
         if (0 != ESP32Can.CANWriteFrame(&tx_frame)) {
             result = false;
         }
+        log_v("DriverEsp32can : send state[%d]", (int)result);
+    } else {
+        log_v("DriverEsp32can : Not initialized");
     }
     return result;
 }
@@ -171,6 +188,5 @@ bool DriverEsp32can::setup_filter()
 }
 
 } // namespace CAN
-} // namespace MaSiRoProject
 
 #endif

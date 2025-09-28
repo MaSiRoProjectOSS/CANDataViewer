@@ -12,8 +12,6 @@
 #if LIB_CAN_DRIVER == 1
 #include "driver_mcp2515.hpp"
 
-namespace MaSiRoProject
-{
 namespace CAN
 {
 /////////////////////////////////
@@ -232,6 +230,5 @@ bool DriverMcp2515::setup_filter()
 }
 
 } // namespace CAN
-} // namespace MaSiRoProject
 
 #endif

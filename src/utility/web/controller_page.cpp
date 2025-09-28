@@ -13,9 +13,6 @@
 #include "../can_data_viewer_conf.hpp"
 #include "web_data.h"
 
-namespace MaSiRoProject
-{
-
 namespace WEB
 {
 #define WEB_HEADER_CACHE_CONTROL_SHORT_TIME "max-age=100, immutable"
@@ -528,4 +525,3 @@ ControllerPage::~ControllerPage()
 }
 /////////////////////////////////////////////////
 } // namespace WEB
-} // namespace MaSiRoProject

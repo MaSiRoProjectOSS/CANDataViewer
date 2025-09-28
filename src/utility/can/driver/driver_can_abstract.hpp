@@ -12,8 +12,6 @@
 
 #include <can_data_viewer_info.hpp>
 
-namespace MaSiRoProject
-{
 namespace CAN
 {
 class DriverCanAbstract {
@@ -82,6 +80,5 @@ protected:
 };
 
 } // namespace CAN
-} // namespace MaSiRoProject
 
 #endif

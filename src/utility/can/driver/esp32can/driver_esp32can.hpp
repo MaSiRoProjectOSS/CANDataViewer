@@ -16,8 +16,6 @@
 #include "../driver_can_abstract.hpp"
 #include "driver_esp32can_config.hpp"
 
-namespace MaSiRoProject
-{
 namespace CAN
 {
 class DriverEsp32can : public DriverCanAbstract {
@@ -59,7 +57,6 @@ private:
     bool _initialized = false;
 };
 } // namespace CAN
-} // namespace MaSiRoProject
 
 #endif
 #endif

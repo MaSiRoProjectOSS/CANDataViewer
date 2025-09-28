@@ -7,16 +7,11 @@
  * @copyright Copyright (c) 2022 / MaSiRo Project.
  */
 #include "can/can_communication.hpp"
-#include "web/controller_page.hpp"
 
 #include <can_data_viewer.hpp>
 
-namespace MaSiRoProject
-{
-MaSiRoProject::WEB::ControllerPage *ctrl_page;
-MaSiRoProject::CAN::CanCommunication *ctrl_can;
-} // namespace MaSiRoProject
-using namespace MaSiRoProject;
+WEB::ControllerPage *ctrl_page;
+CAN::CanCommunication *ctrl_can;
 
 ////////////////////////////////////////////////
 // setup function
@@ -52,6 +47,7 @@ bool CanDataViewer::set_callback_setting_default(SettingDefaultFunction callback
 #pragma region control_function
 bool CanDataViewer::set_mode(CAN_CTRL_STATE mode)
 {
+    log_v("set_mode : mode=%d", mode);
     return ctrl_can->change_mode(mode);
 }
 
@@ -74,19 +70,23 @@ CanDeviceInfo get_can_device_info()
 
 bool can_data_one_shot(CanData data)
 {
+    log_v("can_data_one_shot : Id=0x%lX", data.Id);
     return ctrl_can->add_one_shot(data);
 }
 bool can_data_loop(CanData data)
 {
+    log_v("can_data_loop : Id=0x%lX", data.Id);
     return ctrl_can->add_loop_shot(data, data.loop_interval);
 }
 bool can_set_mode(CAN_CTRL_STATE mode)
 {
+    log_v("can_set_mode : mode=%d", mode);
     ctrl_can->change_mode(mode);
     return true;
 }
 bool can_data_clear(int id)
 {
+    log_v("can_data_clear : Id=0x%lX", id);
     bool result = ctrl_can->request_pause();
     if (true == result) {
         result = ctrl_can->clear_loop_shot();
@@ -99,6 +99,7 @@ bool can_data_clear(int id)
 }
 bool can_data_default(int id)
 {
+    log_v("can_data_default : Id=0x%lX", id);
     bool result = ctrl_can->request_pause();
     if (true == result) {
         result = ctrl_can->clear_resume();
@@ -115,6 +116,7 @@ bool can_data_default(int id)
 }
 bool can_data_delete(int id)
 {
+    log_v("can_data_delete : Id=0x%lX", id);
     bool result = ctrl_can->request_pause();
     if (true == result) {
         result = ctrl_can->delete_loop_shot(id);
@@ -132,16 +134,19 @@ bool CanDataViewer::clear_resume(void)
 
 bool CanDataViewer::add_one_shot(CanData data)
 {
+    log_v("add_one_shot : Id=0x%lX", data.Id);
     return ctrl_can->add_one_shot(data);
 }
 
 bool CanDataViewer::add_resume(CanData data)
 {
+    log_v("add_resume : Id=0x%lX", data.Id);
     return ctrl_can->add_resume(data);
 }
 
 bool CanDataViewer::add_loop_shot(CanData data, int interval)
 {
+    log_v("add_loop_shot : Id=0x%lX", data.Id);
     return ctrl_can->add_loop_shot(data, interval);
 }
 
@@ -155,7 +160,6 @@ bool CanDataViewer::clear_loop_shot(void)
 // debug function
 ////////////////////////////////////////////////
 #pragma region debug_function
-#if DEBUG_MODE
 UBaseType_t CanDataViewer::get_stack_high_water_mark_can()
 {
     return ctrl_can->get_stack_high_water_mark();
@@ -180,7 +184,6 @@ UBaseType_t CanDataViewer::get_stack_size_wifi()
 {
     return ctrl_page->get_stack_size_wifi();
 }
-#endif
 #pragma endregion
 
 ////////////////////////////////////////////////
@@ -191,14 +194,14 @@ UBaseType_t CanDataViewer::get_stack_size_wifi()
 #if LIB_CAN_DRIVER == 1
 CanDataViewer::CanDataViewer(const uint8_t interrupt, const uint8_t cs)
 {
-    ctrl_page = new MaSiRoProject::WEB::ControllerPage();
-    ctrl_can  = new MaSiRoProject::CAN::CanCommunication(interrupt, cs);
+    ctrl_page = new WEB::ControllerPage();
+    ctrl_can  = new CAN::CanCommunication(interrupt, cs);
 }
 #else
 CanDataViewer::CanDataViewer(const uint8_t rx, const uint8_t tx)
 {
-    ctrl_page = new MaSiRoProject::WEB::ControllerPage();
-    ctrl_can  = new MaSiRoProject::CAN::CanCommunication(rx, tx);
+    ctrl_page = new WEB::ControllerPage();
+    ctrl_can  = new CAN::CanCommunication(rx, tx);
 }
 #endif
 
@@ -229,4 +232,9 @@ bool CanDataViewer::begin()
     }
     return result;
 }
+WEB::ControllerPage *CanDataViewer::get_web_instance()
+{
+    return ctrl_page;
+}
+
 #pragma endregion

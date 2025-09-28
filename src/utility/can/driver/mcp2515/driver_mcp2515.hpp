@@ -14,8 +14,6 @@
 #include "../driver_can_abstract.hpp"
 #include "driver_mcp2515_config.hpp"
 
-namespace MaSiRoProject
-{
 namespace CAN
 {
 class DriverMcp2515 : public DriverCanAbstract {
@@ -55,7 +53,6 @@ private:
     byte can_clock = CAN_COMMUNICATION_MCP2515_CLOCK;
 };
 } // namespace CAN
-} // namespace MaSiRoProject
 
 #endif
 #endif

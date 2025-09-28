@@ -12,8 +12,6 @@
 #include <can_data_viewer_info.hpp>
 #include <cushy_web_server.hpp>
 
-namespace MaSiRoProject
-{
 namespace WEB
 {
 
@@ -78,5 +76,5 @@ private:
     std::string get_can_data_text(RequestCanDataFunction callback);
 };
 } // namespace WEB
-} // namespace MaSiRoProject
+
 #endif

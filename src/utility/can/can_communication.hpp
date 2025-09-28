@@ -14,8 +14,6 @@
 #include <can_data_viewer_info.hpp>
 #include <vector>
 
-namespace MaSiRoProject
-{
 namespace CAN
 {
 
@@ -78,13 +76,11 @@ public:
     bool request_running();
 
     /////////////////////////////////
-    // Debug
+    // water_mark
     /////////////////////////////////
-#if DEBUG_MODE
 public:
     UBaseType_t get_stack_high_water_mark();
     UBaseType_t get_stack_size();
-#endif
 
     /////////////////////////////////
     // Member
@@ -96,5 +92,5 @@ private:
     UBaseType_t task_assigned_size;
 };
 } // namespace CAN
-} // namespace MaSiRoProject
+
 #endif

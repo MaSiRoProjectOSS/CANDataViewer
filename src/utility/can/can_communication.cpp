@@ -13,8 +13,6 @@
 #include "can_communication_impl.hpp"
 #include "driver/can_config.h"
 
-namespace MaSiRoProject
-{
 namespace CAN
 {
 #pragma region ThreadCAN
@@ -325,10 +323,9 @@ bool CanCommunication::request_running()
 #pragma endregion
 
 /////////////////////////////////
-// Debug
+// water_mark
 /////////////////////////////////
-#pragma region Debug
-#if DEBUG_MODE
+#pragma region water_mark
 UBaseType_t CanCommunication::get_stack_size()
 {
     return this->task_assigned_size;
@@ -337,9 +334,7 @@ UBaseType_t CanCommunication::get_stack_high_water_mark()
 {
     return uxTaskGetStackHighWaterMark(this->task_handle);
 }
-#endif
 #pragma endregion
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 } // namespace CAN
-} // namespace MaSiRoProject

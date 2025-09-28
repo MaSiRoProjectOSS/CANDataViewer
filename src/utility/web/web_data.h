@@ -13,8 +13,6 @@
 #define MASIRO_PROJECT_TOY_BOX_WEB_DATA_HPP
 #include <Arduino.h>
 
-namespace MaSiRoProject
-{
 namespace WEB
 {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -146,5 +144,5 @@ const unsigned char WEB_IMAGE_FAVICON_ICO[] PROGMEM = {
     0xE3, 0xFF, 0x00, 0xA9, 0xA9, 0x93, 0x90, 0x47, 0x08, 0x92, 0x2D, 0x00, 0x00, 0x00, 0x00, 0x49, 0x45, 0x4E, 0x44, 0xAE, 0x42, 0x60, 0x82
 };
 } // namespace WEB
-} // namespace MaSiRoProject
+
 #endif
