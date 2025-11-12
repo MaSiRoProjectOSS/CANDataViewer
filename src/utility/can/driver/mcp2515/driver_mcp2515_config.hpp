@@ -1,15 +1,13 @@
 /**
  * @file driver_mcp2515_config.hpp
- * @author Akari (masiro.to.akari@gmail.com)
- * @brief
+ * @brief MCP2515 CANドライバの設定を定義するヘッダファイルです。
  * @version 0.1
  * @date 2022-12-22
- *
  * @copyright Copyright (c) 2022 / MaSiRo Project.
- *
  */
 #ifndef MASIRO_PROJECT_TOY_BOX_CAN_DRIVER_MCP2515_CONFIG_HPP
 #define MASIRO_PROJECT_TOY_BOX_CAN_DRIVER_MCP2515_CONFIG_HPP
+#if LIB_CAN_DRIVER == 1
 
 #include <Arduino.h>
 #include <mcp_can.h>
@@ -39,4 +37,5 @@
 #endif
 ////////////////////////////////////////////////////////////////////////////////////
 
+#endif
 #endif

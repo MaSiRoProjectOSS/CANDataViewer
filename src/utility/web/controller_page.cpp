@@ -1,20 +1,17 @@
 /**
  * @file controller_page.cpp
- * @author Akari (masiro.to.akari@gmail.com)
- * @brief
+ * @brief CANデータビューアのWebコントローラページの実装ファイルです。
+ *        このファイルは、CANデータの送受信やモード変更、各種設定をWebインターフェース経由で操作するための
+ *        サーバー処理やレスポンス生成を担当します。
+ *        また、HTMLやCSS、JavaScriptの配信、JSONデータの生成なども行います。
  * @version 0.1
  * @date 2022-11-26
- *
  * @copyright Copyright (c) 2022 / MaSiRo Project.
- *
  */
 #include "controller_page.hpp"
 
 #include "../can_data_viewer_conf.hpp"
 #include "web_data.h"
-
-namespace MaSiRoProject
-{
 
 namespace WEB
 {
@@ -56,24 +53,21 @@ bool ControllerPage::setup_server(AsyncWebServer *server)
 
 void ControllerPage::handle_css(AsyncWebServerRequest *request)
 {
-    AsyncWebServerResponse *response = request->beginResponse_P(200, "text/css; charset=utf-8", WEB_CSS_COMMON);
-    response->addHeader("Location", String("http://") + this->get_ip().toString());
+    AsyncWebServerResponse *response = request->beginResponse(200, "text/css; charset=utf-8", WEB_CSS_COMMON);
     response->addHeader("Cache-Control", WEB_HEADER_CACHE_CONTROL_LONGTIME);
     response->addHeader("X-Content-Type-Options", "nosniff");
     request->send(response);
 }
 void ControllerPage::handle_js_can_controller(AsyncWebServerRequest *request)
 {
-    AsyncWebServerResponse *response = request->beginResponse_P(200, "text/javascript; charset=utf-8", WEB_JS_CAN_CONTROLLER);
-    response->addHeader("Location", String("http://") + this->get_ip().toString());
+    AsyncWebServerResponse *response = request->beginResponse(200, "text/javascript; charset=utf-8", WEB_JS_CAN_CONTROLLER);
     response->addHeader("Cache-Control", WEB_HEADER_CACHE_CONTROL_LONGTIME);
     response->addHeader("X-Content-Type-Options", "nosniff");
     request->send(response);
 }
 void ControllerPage::handle_js_table_view(AsyncWebServerRequest *request)
 {
-    AsyncWebServerResponse *response = request->beginResponse_P(200, "text/javascript; charset=utf-8", WEB_JS_TABLE);
-    response->addHeader("Location", String("http://") + this->get_ip().toString());
+    AsyncWebServerResponse *response = request->beginResponse(200, "text/javascript; charset=utf-8", WEB_JS_TABLE);
     response->addHeader("Cache-Control", WEB_HEADER_CACHE_CONTROL_LONGTIME);
     response->addHeader("X-Content-Type-Options", "nosniff");
     request->send(response);
@@ -83,7 +77,6 @@ void ControllerPage::handle_root(AsyncWebServerRequest *request)
     std::string html = this->page_html(this->page_body().c_str());
 
     AsyncWebServerResponse *response = request->beginResponse(200, "text/html; charset=utf-8", html.c_str());
-    response->addHeader("Location", String("http://") + this->get_ip().toString());
     response->addHeader("Cache-Control", WEB_HEADER_CACHE_CONTROL_SHORT_TIME);
     response->addHeader("X-Content-Type-Options", "nosniff");
     request->send(response);
@@ -176,15 +169,13 @@ std::string ControllerPage::page_body()
 }
 std::string ControllerPage::page_html(const std::string body)
 {
-    std::string ip_text = this->get_ip().toString().c_str();
-
     std::string html = "<!DOCTYPE html><html lang=\"en\"><head>"
                        "<meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">";
 
     html.append("<link href='/custom.css' rel='stylesheet' type='text/css' media='all'>");
 
     html.append("<script type='text/javascript' src='/can_controller.js'></script>");
-    html.append("<script type='text/javascript' src='/ajax.js'></script>");
+    html.append("<script type='text/javascript' src='/CushyWebServer/ajax.js'></script>");
     html.append("<script type='text/javascript' src='/table_view.js'></script>");
 
     html.append("<title>" SETTING_SYSTEM_NAME "</title>"
@@ -207,7 +198,6 @@ void ControllerPage::set_clear(AsyncWebServerRequest *request)
     std::string json = this->template_json_result(result);
 
     AsyncWebServerResponse *response = request->beginResponse(200, "application/json; charset=utf-8", json.c_str());
-    response->addHeader("Location", String("http://") + this->get_ip().toString());
     response->addHeader("Cache-Control", WEB_HEADER_CACHE_CONTROL_NO_CACHE);
     response->addHeader("X-Content-Type-Options", "nosniff");
     request->send(response);
@@ -223,7 +213,6 @@ void ControllerPage::set_default(AsyncWebServerRequest *request)
     std::string json = this->template_json_result(result);
 
     AsyncWebServerResponse *response = request->beginResponse(200, "application/json; charset=utf-8", json.c_str());
-    response->addHeader("Location", String("http://") + this->get_ip().toString());
     response->addHeader("Cache-Control", WEB_HEADER_CACHE_CONTROL_NO_CACHE);
     response->addHeader("X-Content-Type-Options", "nosniff");
     request->send(response);
@@ -246,7 +235,6 @@ void ControllerPage::set_delete(AsyncWebServerRequest *request)
     std::string json = this->template_json_result(result);
 
     AsyncWebServerResponse *response = request->beginResponse(200, "application/json; charset=utf-8", json.c_str());
-    response->addHeader("Location", String("http://") + this->get_ip().toString());
     response->addHeader("Cache-Control", WEB_HEADER_CACHE_CONTROL_NO_CACHE);
     response->addHeader("X-Content-Type-Options", "nosniff");
     request->send(response);
@@ -263,7 +251,6 @@ void ControllerPage::set_mode_on(AsyncWebServerRequest *request)
     std::string json = this->template_json_result(result);
 
     AsyncWebServerResponse *response = request->beginResponse(200, "application/json; charset=utf-8", json.c_str());
-    response->addHeader("Location", String("http://") + this->get_ip().toString());
     response->addHeader("Cache-Control", WEB_HEADER_CACHE_CONTROL_NO_CACHE);
     response->addHeader("X-Content-Type-Options", "nosniff");
     request->send(response);
@@ -279,7 +266,6 @@ void ControllerPage::set_mode_off(AsyncWebServerRequest *request)
     std::string json = this->template_json_result(result);
 
     AsyncWebServerResponse *response = request->beginResponse(200, "application/json; charset=utf-8", json.c_str());
-    response->addHeader("Location", String("http://") + this->get_ip().toString());
     response->addHeader("Cache-Control", WEB_HEADER_CACHE_CONTROL_NO_CACHE);
     response->addHeader("X-Content-Type-Options", "nosniff");
     request->send(response);
@@ -287,7 +273,7 @@ void ControllerPage::set_mode_off(AsyncWebServerRequest *request)
 
 void ControllerPage::get_can_data(AsyncWebServerRequest *request)
 {
-    log_v("ControllerPage : get_can_data()");
+    //log_v("ControllerPage : get_can_data()");
 
     CanDeviceInfo device_info;
     if (nullptr != callback_device_info) {
@@ -313,7 +299,6 @@ void ControllerPage::get_can_data(AsyncWebServerRequest *request)
     std::string send_data = this->template_json_result(true, json.c_str());
 
     AsyncWebServerResponse *response = request->beginResponse(200, "application/json; charset=utf-8", send_data.c_str());
-    response->addHeader("Location", String("http://") + this->get_ip().toString());
     response->addHeader("Cache-Control", WEB_HEADER_CACHE_CONTROL_NO_CACHE);
     response->addHeader("X-Content-Type-Options", "nosniff");
     request->send(response);
@@ -347,7 +332,6 @@ void ControllerPage::set_change_mode(AsyncWebServerRequest *request)
     std::string json = this->template_json_result(true, buffer);
 
     AsyncWebServerResponse *response = request->beginResponse(200, "application/json; charset=utf-8", json.c_str());
-    response->addHeader("Location", String("http://") + this->get_ip().toString());
     response->addHeader("Cache-Control", WEB_HEADER_CACHE_CONTROL_NO_CACHE);
     response->addHeader("X-Content-Type-Options", "nosniff");
     request->send(response);
@@ -435,7 +419,6 @@ void ControllerPage::set_can_data(AsyncWebServerRequest *request)
     std::string json = this->template_json_result(result);
 
     AsyncWebServerResponse *response = request->beginResponse(200, "application/json; charset=utf-8", json.c_str());
-    response->addHeader("Location", String("http://") + this->get_ip().toString());
     response->addHeader("Cache-Control", WEB_HEADER_CACHE_CONTROL_NO_CACHE);
     response->addHeader("X-Content-Type-Options", "nosniff");
     request->send(response);
@@ -443,8 +426,7 @@ void ControllerPage::set_can_data(AsyncWebServerRequest *request)
 
 void ControllerPage::handle_favicon_ico(AsyncWebServerRequest *request)
 {
-    AsyncWebServerResponse *response = request->beginResponse_P(200, "image/x-icon", WEB_IMAGE_FAVICON_ICO, WEB_IMAGE_FAVICON_ICO_LEN);
-    response->addHeader("Location", String("http://") + this->get_ip().toString());
+    AsyncWebServerResponse *response = request->beginResponse(200, "image/x-icon", WEB_IMAGE_FAVICON_ICO, WEB_IMAGE_FAVICON_ICO_LEN);
     response->addHeader("Cache-Control", WEB_HEADER_CACHE_CONTROL_LONGTIME);
     response->addHeader("X-Content-Type-Options", "nosniff");
     request->send(response);
@@ -543,4 +525,3 @@ ControllerPage::~ControllerPage()
 }
 /////////////////////////////////////////////////
 } // namespace WEB
-} // namespace MaSiRoProject

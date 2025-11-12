@@ -1,12 +1,12 @@
 /**
  * @file can_data_viewer_conf.hpp
- * @author Akari (masiro.to.akari@gmail.com)
- * @brief
+ * @brief CAN Data Viewerの設定定義ファイル
  * @version 0.1
  * @date 2022-11-26
  *
+ * このファイルはCAN Data Viewerの各種設定値（スレッド間隔、コア番号、システム名など）を定義します。
+ * プロジェクト全体で共通して利用される定数をまとめています。
  * @copyright Copyright (c) 2022 / MaSiRo Project.
- *
  */
 #ifndef CAN_DATA_VIEWER_CONF_HPP
 #define CAN_DATA_VIEWER_CONF_HPP

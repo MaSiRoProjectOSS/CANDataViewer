@@ -94,8 +94,4 @@ window.onload = function () {
     JS_CCtrl.timerId =
         setInterval(JS_CCtrl.interval, JS_CCtrl.timerInterval);
 };
-window.onunload = function () {
-    if (null != JS_CCtrl.timerId) {
-        clearInterval(JS_CCtrl.timerId);
-    }
-};
+

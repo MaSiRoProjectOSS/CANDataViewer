@@ -130,6 +130,11 @@ lib_deps =
 build_flags =
 	-DLIB_CAN_DRIVER=0
 	-DOUTPUT_MESSAGE_FOR_SERIAL=1
+lib_ignore =
+  RPAsyncTCP
+  ESPAsyncTCP
+lib_compat_mode = strict
+lib_ldf_mode = chain
 ```
 
 Setting '**LIB_CAN_DRIVER**' to 0 works with **ESP32CAN**.

@@ -1,12 +1,10 @@
 /**
  * @file controller_page.hpp
- * @author Akari (masiro.to.akari@gmail.com)
- * @brief
+ * @brief CANデータビューアのWebコントローラページを管理するクラスのヘッダファイルです。
+ *        Webサーバーとの連携や、CANデータの取得・設定、デバイス情報の取得、各種操作コールバックの登録を行います。
  * @version 0.1
  * @date 2022-11-26
- *
  * @copyright Copyright (c) 2022 / MaSiRo Project.
- *
  */
 #ifndef MASIRO_PROJECT_TOY_BOX_CONTROLLER_PAGE
 #define MASIRO_PROJECT_TOY_BOX_CONTROLLER_PAGE
@@ -14,8 +12,6 @@
 #include <can_data_viewer_info.hpp>
 #include <cushy_web_server.hpp>
 
-namespace MaSiRoProject
-{
 namespace WEB
 {
 
@@ -80,5 +76,5 @@ private:
     std::string get_can_data_text(RequestCanDataFunction callback);
 };
 } // namespace WEB
-} // namespace MaSiRoProject
+
 #endif

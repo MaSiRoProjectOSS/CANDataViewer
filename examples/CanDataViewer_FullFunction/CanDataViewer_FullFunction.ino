@@ -1,12 +1,13 @@
 /**
  * @file CanDataViewer_FullFunction.ino
- * @author Akari (masiro.to.akari@gmail.com)
- * @brief
+ * @brief このファイルは、CANデータビューアのフル機能サンプルです。
+ * M5StackまたはM5Atom Liteをコントローラとして使用し、CAN通信の送受信やモード切替、
+ * データ表示などを行います。コールバック関数を利用して、CANデータの初期設定や受信処理、
+ * 送信可能タイミングの通知、モード変更時の処理を実装しています。
+ * デバッグモードでは、タスクのスタック使用状況も表示します。
  * @version 0.2
  * @date 2022-12-28
- *
  * @copyright Copyright (c) 2022 / MaSiRo Project.
- *
  */
 #define CONTROLLERS_M5STACK
 //#define CONTROLLERS_ATOM_LITE

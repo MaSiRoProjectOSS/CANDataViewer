@@ -1,12 +1,12 @@
 /**
  * @file CanDataViewer_M5STACK.ino
- * @author Akari (masiro.to.akari@gmail.com)
- * @brief
+ * @brief M5StackでCANデータを表示するサンプルプログラム
  * @version 0.2
  * @date 2022-12-28
- *
  * @copyright Copyright (c) 2022 / MaSiRo Project.
  *
+ * このファイルは、M5Stackを使ってCANデータを表示・管理するためのサンプルコードです。
+ * M5Stackの初期化、CANデータビューアのセットアップ、ボタン操作によるモード変更などを行います。
  */
 #include <Arduino.h>
 #include <M5Stack.h>

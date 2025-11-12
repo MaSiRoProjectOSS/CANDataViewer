@@ -1,20 +1,17 @@
 /**
  * @file driver_can_abstract.hpp
- * @author Akari (masiro.to.akari@gmail.com)
- * @brief
+ * @brief CANドライバーの抽象クラスを定義するヘッダファイルです。
+ *        このクラスはCAN通信の基本的なインターフェース（初期化、送信、割り込み、エラー出力など）を提供します。
+ *        また、受信データのコールバック設定やデバイス情報の取得機能も備えています。
  * @version 0.2
  * @date 2022-12-22
- *
  * @copyright Copyright (c) 2022 / MaSiRo Project.
- *
  */
 #ifndef MASIRO_PROJECT_TOY_BOX_DRIVER_CAN_ABSTRACT_HPP
 #define MASIRO_PROJECT_TOY_BOX_DRIVER_CAN_ABSTRACT_HPP
 
 #include <can_data_viewer_info.hpp>
 
-namespace MaSiRoProject
-{
 namespace CAN
 {
 class DriverCanAbstract {
@@ -22,7 +19,9 @@ public:
     /////////////////////////////////
     // Constructor
     /////////////////////////////////
-    DriverCanAbstract() {}
+    DriverCanAbstract()
+    {
+    }
 
     /////////////////////////////////
     // setup function
@@ -42,7 +41,10 @@ public:
     /////////////////////////////////
     // common function
     /////////////////////////////////
-    CanDeviceInfo get_device_info() { return this->device_info; }
+    CanDeviceInfo get_device_info()
+    {
+        return this->device_info;
+    }
 
     bool set_callback_get_received(GetReceivedFunction callback)
     {
@@ -78,6 +80,5 @@ protected:
 };
 
 } // namespace CAN
-} // namespace MaSiRoProject
 
 #endif

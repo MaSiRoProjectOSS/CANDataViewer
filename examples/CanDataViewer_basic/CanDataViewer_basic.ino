@@ -1,12 +1,14 @@
 /**
  * @file CanDataViewer_basic.ino
- * @author Akari (masiro.to.akari@gmail.com)
- * @brief
+ * @brief CANデータビューアの基本的なサンプルコードです。
+ *        M5StackまたはM5Atom Liteコントローラで動作し、CANデータの受信を開始します。
  * @version 0.2
  * @date 2022-12-25
- *
  * @copyright Copyright (c) 2022 / MaSiRo Project.
  *
+ * このファイルは、CANDataViewerライブラリを使用してCANバスデータを取得するための
+ * 基本的なセットアップ例です。コントローラの種類（M5StackまたはAtom Lite）に応じて
+ * 必要なライブラリやピン設定を切り替えています。
  */
 //#define CONTROLLERS_M5STACK
 #define CONTROLLERS_ATOM_LITE

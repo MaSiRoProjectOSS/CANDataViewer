@@ -1,12 +1,13 @@
 /**
  * @file can_data_viewer_info.hpp
- * @author Akari (masiro.to.akari@gmail.com)
- * @brief
+ * @brief CANデータビューア用の情報定義ヘッダファイル
  * @version 0.1
  * @date 2022-12-05
  *
+ * このファイルは、CANデータの構造体やネットワーク情報、デバイス状態管理など、
+ * CANデータビューアで使用する各種情報の定義をまとめています。
+ * また、コールバック関数型の定義も含まれています。
  * @copyright Copyright (c) 2022 / MaSiRo Project.
- *
  */
 #ifndef MASIRO_PROJECT_CAN_DATA_VIEWER_INFO_HPP
 #define MASIRO_PROJECT_CAN_DATA_VIEWER_INFO_HPP
@@ -57,7 +58,10 @@ public:
      * @return true
      * @return false
      */
-    static bool compar_Id(const CanData &left, const CanData &right) { return left.Id < right.Id; }
+    static bool compar_Id(const CanData &left, const CanData &right)
+    {
+        return left.Id < right.Id;
+    }
     /**
      * @brief Sort by time
      *
@@ -66,7 +70,10 @@ public:
      * @return true
      * @return false
      */
-    static bool compar_Time(const CanData &left, const CanData &right) { return left.time > right.time; }
+    static bool compar_Time(const CanData &left, const CanData &right)
+    {
+        return left.time > right.time;
+    }
 };
 
 class NetworkList {
@@ -85,7 +92,10 @@ public:
      * @return true
      * @return false
      */
-    static bool compar_rssi(const NetworkList &left, const NetworkList &right) { return left.rssi > right.rssi; }
+    static bool compar_rssi(const NetworkList &left, const NetworkList &right)
+    {
+        return left.rssi > right.rssi;
+    }
 };
 
 class CanDeviceInfo {

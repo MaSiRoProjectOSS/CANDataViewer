@@ -1,12 +1,13 @@
 /**
  * @file can_communication_impl.hpp
- * @author Akari (masiro.to.akari@gmail.com)
- * @brief
+ * @brief CAN通信の実装クラス定義ファイル
  * @version 0.1
  * @date 2022-12-05
  *
+ * このファイルは、CAN通信の制御やデータ送受信、コールバック処理などを行う
+ * CanCommunicationImplクラスの宣言を含みます。
+ * モード管理、送信・受信データの管理、イベント通知などを担当します。
  * @copyright Copyright (c) 2022 / MaSiRo Project.
- *
  */
 #ifndef MASIRO_PROJECT_TOY_BOX_CAN_COMMUNICATION_IMPL_HPP
 #define MASIRO_PROJECT_TOY_BOX_CAN_COMMUNICATION_IMPL_HPP
@@ -16,8 +17,6 @@
 #include <can_data_viewer_info.hpp>
 #include <vector>
 
-namespace MaSiRoProject
-{
 namespace CAN
 {
 class CanCommunicationImpl {
@@ -27,7 +26,7 @@ class CanCommunicationImpl {
     // Constructor
     /////////////////////////////////
 public:
-    CanCommunicationImpl(const uint8_t cs);
+    CanCommunicationImpl(const uint8_t pin_1 = 0, const uint8_t pin_2 = 0);
     ~CanCommunicationImpl();
 
     /////////////////////////////////
@@ -121,5 +120,5 @@ private:
     bool initialized;
 };
 } // namespace CAN
-} // namespace MaSiRoProject
+
 #endif
